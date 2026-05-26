@@ -1,0 +1,183 @@
+---
+project: "Zagroda Hub"
+version: 1
+status: draft
+created: 2026-05-25
+context_type: greenfield
+product_type: web-app
+target_scale:
+  users: medium
+  qps: low
+  data_volume: small
+timeline_budget:
+  mvp_weeks: 3
+  hard_deadline: null
+  after_hours_only: true
+---
+
+## Vision & Problem Statement
+
+Właściciel zagrody edukacyjnej traci czas reagując na telefoniczne zapytania o rezerwacje wycieczek szkolnych. Telefon dzwoni w trakcie pracy w terenie (przy zwierzętach, w trakcie zajęć z dziećmi, w pracach gospodarskich), więc każde zapytanie albo przerywa właściciela, albo zostaje nieobsłużone — a kartka z notatkami prowadzi do podwójnych rezerwacji i awantur. Po drugiej stronie nauczyciel nie wie, czy danej daty jest sens dzwonić, więc obdzwania kilka zagród zanim znajdzie wolny termin.
+
+Insight: właściciel zagrody pracuje na telefonie w terenie, a nie przy biurku — istniejące serwisy bookingowe celują w obsługę z desktopu/recepcji i są nieadekwatne. Drugi insight (kontekstowy): polski rynek wycieczek edukacyjnych ma swoją specyfikę (sezonowość maj-czerwiec, dotacje, klasa = ~25 dzieci) — produkt może to dopasować w wersjach następnych.
+
+## User & Persona
+
+**Primary persona — Właściciel zagrody edukacyjnej.** Prowadzi jedną zagrodę edukacyjną z programem dla dzieci (zajęcia, kontakt ze zwierzętami, rękodzieło itp.). Pracuje fizycznie — w polu, z dziećmi, w zwierzętarni. Sięga po aplikację gdy: (a) ma chwilę przerwy między zajęciami, (b) wieczorem zbiera nieobsłużone zapytania, (c) telefon dzwoni i chce szybko sprawdzić czy ten termin jest wolny — wszystko na telefonie, jednoręcznie, brudnymi palcami. (Właściciele z wieloma lokalizacjami pozostają poza zakresem MVP — patrz Non-Goals.)
+
+### Secondary persona
+
+**Nauczyciel / wychowawca.** Szuka zagrody na wycieczkę klasową, zazwyczaj 2-4 tygodnie przed terminem. Chce minimalnie: znaleźć zagrodę w swoim województwie, zobaczyć czy termin jest sensowny, wysłać zapytanie z liczbą uczniów i kontaktem. Konwersja od kontaktu do potwierdzenia może iść poza systemem (telefon, email).
+
+## Success Criteria
+
+### Primary
+
+- System w 100% przypadków poprawnie blokuje overbooking i konflikty współbieżnych rezerwacji w momencie zatwierdzania terminu przez właściciela. To jest test domain rule: jeśli kiedykolwiek dwie rezerwacje na ten sam termin lub przekroczenie limitu miejsc zostaną zaakceptowane, produkt zawiódł.
+
+### Secondary
+
+- Właściciel zagrody jest w stanie zweryfikować i zmienić status rezerwacji w czasie poniżej 15 sekund na urządzeniu mobilnym. Mocne, ale niewystarczające samo w sobie — jeśli czas obsługi jest 15s ale system pozwala na overbooking, produkt jest gorszy od kartki.
+
+### Guardrails
+
+- Panel właściciela jest używalny na telefonie w pionie, jednoręcznie (przy zwierzętach / w terenie). Desktop-only panel = produkt do kosza.
+
+## User Stories
+
+### US-01: Właściciel akceptuje rezerwację bez ryzyka overbooking
+
+- **Given** właściciel z opublikowaną zagrodą (dzienny limit np. 30 osób), zalogowany na telefonie
+- **And** w skrzynce zapytań są dwa oczekujące zapytania na ten sam dzień (klasa A: 20 osób, klasa B: 15 osób)
+- **When** właściciel otwiera pierwsze zapytanie (klasa A: 20 osób) i klika "Akceptuj"
+- **Then** system zapisuje rezerwację i wysyła email do nauczyciela klasy A
+- **And** gdy właściciel otwiera drugie zapytanie (klasa B: 15 osób) i klika "Akceptuj"
+- **Then** system blokuje akceptację, pokazuje "Limit dzienny przekroczony (20 z 30 zajęte, 15 wymaga miejsca)" i pozostawia status oczekujące
+
+#### Acceptance Criteria
+
+- Akceptacja musi sprawdzić limit miejsc na konkretny dzień rezerwacji, nie tylko czy są inne rezerwacje
+- Komunikat błędu musi wskazać konkretną liczbę zajętych vs wymaganych miejsc
+- Po cofnięciu akceptacji (FR-016) miejsca muszą być natychmiast dostępne dla kolejnych akceptacji
+- Współbieżność: jeśli dwie sesje jednocześnie akceptują konfliktujące zapytania, dokładnie jedna akceptacja zostaje przyjęta
+
+### US-02: Nauczyciel znajduje zagrodę i wysyła zapytanie
+
+- **Given** niezalogowany nauczyciel szukający zagrody w województwie mazowieckim na konkretny dzień (2026-06-12) dla klasy 25 uczniów
+- **When** otwiera stronę główną i przegląda katalog
+- **And** filtruje listę po województwie "mazowieckie" i mieście "Płock"
+- **Then** widzi listę zagród spełniających kryteria (lub komunikat "brak wyników" jeśli pusta)
+- **When** klika kartę zagrody i wypełnia formularz (data, liczba uczniów, imię, email, telefon) i wysyła
+- **Then** widzi potwierdzenie wysłania i otrzymuje email z linkiem do anulowania zapytania
+- **And** właściciel otrzymuje email "masz nowe zapytanie"
+
+#### Acceptance Criteria
+
+- Filtr województwo + miasto działa jako AND (nie OR)
+- Formularz waliduje: data w przyszłości, liczba uczniów > 0, email w prawidłowym formacie, telefon w polskim formacie
+- Email do gościa zawiera token w linku anulowania (bez tokena = brak możliwości anulowania cudzego zapytania)
+- Zapytanie ląduje na liście "oczekujące" w panelu właściciela natychmiast po wysłaniu (max 2s)
+
+## Functional Requirements
+
+### Catalog (publiczne)
+
+- FR-001: Gość może przeglądać publiczny katalog opublikowanych zagród. Priority: must-have
+  > Socrates: stands as written — standardowy public listing, brak ryzyka domenowego; bez tego nie ma katalogu.
+- FR-002: Gość może filtrować katalog po województwie, mieście oraz (opcjonalnie) dacie wycieczki i liczbie uczestników. Zagrody bez wolnych miejsc na podany dzień/liczbę osób są filtrowane z wyników (lub oznaczone jako niedostępne). Priority: must-have
+  > Socrates: Kontrargument: "filtr po lokalizacji bez filtra dostępności daty jest połowiczny — nauczyciel i tak musi wejść w każdą zagrodę". Rezolucja: rozszerzono FR-002 o opcjonalny filtr data + liczba osób; pokazujemy tylko zagrody z wolnymi miejscami na ten dzień. Bez tego ścieżka wyszukiwania pozostaje frustrująca.
+- FR-003: Gość może otworzyć stronę pojedynczej zagrody z jej opisem i zdjęciem. Priority: must-have
+  > Socrates: stands as written — strona zagrody jest pre-requisite formularza FR-004.
+
+### Booking request (gość)
+
+- FR-004: Gość może wysłać zapytanie o rezerwację z formularza na karcie zagrody, podając datę wycieczki, wybrany turnus (z listy slotów zdefiniowanych przez tę zagrodę), liczbę uczestników, swoje imię/nazwisko, email i telefon. Priority: must-have
+  > Socrates: Kontrargument: "sama data nie wystarczy — dwie klasy mogą być w różnych slotach tego samego dnia". Rezolucja: dodano pole 'turnus' do formularza; sloty definiowane per-zagroda przez właściciela (FR-009). Limit miejsc liczony łącznie per dzień (suma uczestników wszystkich slotów ≤ limit dzienny), nie per slot — zwykle te same fizyczne zasoby (sala, zwierzęta) obsługują wszystkie turnusy.
+- FR-005: Gość otrzymuje email z potwierdzeniem akceptacji rezerwacji po decyzji właściciela. Priority: must-have
+  > Socrates: stands as written — kanał wybrany świadomie podczas shapingu (email obustronny); bez tego gość nie wie czy może planować wycieczkę.
+- FR-015: Gość może anulować swoje zapytanie przed akceptacją przez właściciela poprzez tokenizowany link w mailu potwierdzającym wysłanie zapytania. Priority: must-have
+  > Socrates: stands as written — bez tej ścieżki anulowanie wraca na telefon (główny pain point produktu); tokenizowany link to jedyny sposób autoryzacji bez konta gościa.
+
+### Authentication (właściciel)
+
+- FR-006: Właściciel może zarejestrować konto (email + hasło). Po rejestracji system wysyła link weryfikacyjny na podany email — publikacja zagrody (FR-010) i zarządzanie rezerwacjami (FR-014, FR-016) są niedostępne dopóki email nie zostanie zweryfikowany. Priority: must-have
+  > Socrates: stands as written — weryfikacja emaila rozszerzona w odpowiedzi na Socrates FR-010 (bramka anty-spam). Standardowy auth flow.
+- FR-007: Właściciel może zalogować się i wylogować. Priority: must-have
+  > Socrates: stands as written — podstawa auth, brak ryzyka domenowego.
+- FR-008: Właściciel może zresetować hasło przez email. Priority: must-have
+  > Socrates: stands as written — bez resetu serwis manualny dla każdego zapomnianego hasła; dostarczanie maili i tak wymagane przez FR-006 (weryfikację) i FR-011 (notyfikacje).
+
+### Owner profile (właściciel)
+
+- FR-009: Właściciel może dodać i edytować profil swojej zagrody: nazwa, opis, lokalizacja (województwo + miasto), zdjęcie, dzienny limit uczestników, lista oferowanych turnusów (każdy turnus: nazwa wyświetlana + obowiązkowy zakres czasowy w formacie HH:MM-HH:MM), min. 1 turnus. Priority: must-have
+  > Socrates: Kontrargument: "wolny tekst dla slotów → chaos: '9-12' / 'rano' / '9.00-12.00' = niemożliwe filtrowanie". Rezolucja: zakres czasowy ustrukturyzowany jako HH:MM-HH:MM (walidacja przy zapisie); etykieta wyświetlana może być dowolna ("Rano", "Po południu"). Dwie wartości per slot: label + time_range.
+- FR-010: Zagroda dodana przez właściciela ze zweryfikowanym emailem jest natychmiast widoczna w katalogu publicznym — brak moderacji treści przez admina w MVP. Priority: must-have
+  > Socrates: Kontrargument: "fake-profile / spam zniszczą reputację katalogu jeśli każdy może publikować". Rezolucja: brama na publikację to weryfikacja emaila (FR-006 rozszerzone); ręczne kasowanie śmieci przez operatora 1x/tydzień przez pierwsze 2-3 miesiące akceptowane jako koszt MVP. Moderacja admin draftów wraca w v2 gdy katalog przekroczy ~50 zagród.
+
+### Owner panel (właściciel)
+
+- FR-011: Właściciel otrzymuje email gdy pojawi się nowe zapytanie na jego zagrodę. Priority: must-have
+  > Socrates: stands as written — bez powiadomienia właściciel sam musi się logować by zobaczyć zapytania; kanał wybrany świadomie podczas shapingu.
+- FR-012: Właściciel może zobaczyć listę zapytań na swoją zagrodę (oczekujące, zaakceptowane, odrzucone, anulowane), posortowaną wg daty zapytania. Priority: must-have
+  > Socrates: stands as written — pure read-only listing, brak ryzyka domenowego.
+- FR-013: Właściciel może otworzyć szczegóły zapytania (data wycieczki, liczba uczestników, kontakt nauczyciela). Priority: must-have
+  > Socrates: stands as written — szczegóły to dane wprowadzone przez gościa w FR-004; widoczne tylko dla właściciela tej zagrody (privacy guardrail).
+- FR-014: Właściciel może zaakceptować lub odrzucić zapytanie. Akceptacja uruchamia sprawdzenie sumy uczestników wszystkich zaakceptowanych rezerwacji na dany dzień; jeśli suma + liczba uczestników nowego zapytania przekroczyłaby limit dzienny zagrody, system blokuje akceptację i pokazuje "Limit dzienny przekroczony (X z Y zajęte, Z wymaga miejsca)". Priority: must-have
+  > Socrates: Kontrargument: "współbieżne akceptacje (dwie sesje, dwa zapytania kolidujące) mogą oba przejść walidację jednocześnie". Rezolucja: właściwość 'exactly one succeeds' jest już w US-01 Acceptance Criteria. Mechanizm gwarantujący atomowość pozostaje decyzją downstream (warstwa implementacji), ale PRD wymaga tej własności jako observable behavior — test: dwie równoległe próby akceptacji konfliktujących zapytań → dokładnie jedna kończy się sukcesem, dokładnie jedna jest zablokowana z komunikatem przekroczenia limitu.
+- FR-016: Właściciel może cofnąć akceptację rezerwacji (np. nauczyciel odwołał telefonicznie), zwalniając termin/miejsca dla innych zapytań. System wysyła email do nauczyciela informujący o cofnięciu akceptacji. Priority: must-have
+  > Socrates: Kontrargument: "bez notyfikacji do nauczyciela o cofnięciu → niespójność informacji: nauczyciel myśli że ma akceptację, a system zwolnił termin". Rezolucja: cofnięcie akceptacji wyzwala email do gościa (analogiczny do FR-005 ale w odwrotną stronę). Bez tego cofnięcie powoduje gorszy chaos niż brak rezerwacji.
+
+## Non-Functional Requirements
+
+- Lista wyników katalogu publicznego jest widoczna dla gościa w czasie poniżej 2 sekund od kliknięcia filtra, p95.
+- Akceptacja zapytania przez właściciela kończy się widocznym potwierdzeniem (zaakceptowane lub zablokowane z powodem) w czasie poniżej 15 sekund od dotarcia do listy oczekujących na urządzeniu mobilnym, p95.
+- Pod równoczesnymi próbami akceptacji konfliktujących zapytań na tę samą datę dokładnie jedna kończy się sukcesem; pozostałe widzą komunikat blokady.
+- Panel właściciela i katalog publiczny są używalne (pełna ścieżka MVP możliwa do ukończenia) na dwóch ostatnich wersjach głównych mobilnych przeglądarek (mobile Chrome Android, mobile Safari iOS), w orientacji pionowej, jednoręcznie.
+- Email transakcyjny (nowe zapytanie do właściciela, akceptacja do gościa, cofnięcie akceptacji do gościa, link weryfikacyjny, reset hasła) jest dostarczany w czasie poniżej 5 minut od akcji uruchamiającej, w warunkach typowych (brak masowego outage'u dostawcy email).
+- Dane kontaktowe nauczyciela (email + telefon) są widoczne wyłącznie dla właściciela tej zagrody, do której zapytanie zostało wysłane — żaden inny zalogowany właściciel ani niezalogowany użytkownik ich nie widzi.
+- Historia zapytań (we wszystkich stanach) jest dostępna w panelu właściciela przez minimum 12 miesięcy od daty wysłania zapytania.
+
+## Business Logic
+
+Zagroda Hub przy każdej akceptacji zapytania o rezerwację sumuje zaakceptowanych uczestników na ten dzień w wybranej zagrodzie i gwarantuje, że suma + nowi uczestnicy nie przekroczy dziennego limitu miejsc zdefiniowanego przez właściciela — w przeciwnym razie odmawia akceptacji.
+
+Wejścia (z perspektywy użytkownika):
+
+- Data wycieczki, liczba uczestników (wybrane przez gościa w formularzu — FR-004)
+- Dzienny limit uczestników (zdefiniowany przez właściciela w profilu zagrody — FR-009)
+- Zbiór wcześniej zaakceptowanych rezerwacji na tę zagrodę na ten dzień (suma uczestników)
+
+Wyjście: akceptacja zostaje zatwierdzona (rezerwacja przechodzi w stan "zaakceptowana", gość otrzymuje email) lub odrzucona z komunikatem wskazującym liczbę zajętych vs wymaganych miejsc.
+
+Gdzie użytkownik to spotyka: właściciel klika "Akceptuj" w panelu na liście oczekujących zapytań (FR-014). Reguła zostaje wykonana raz, atomowo — przy równoległych próbach akceptacji konfliktujących zapytań dokładnie jedna kończy się sukcesem.
+
+Workflow stanów zapytania: `oczekujące` → `zaakceptowane` (akcja: FR-014 akceptacja) lub `odrzucone` (akcja: FR-014 odrzucenie) lub `anulowane przez gościa` (akcja: FR-015) lub `cofnięte przez właściciela` (akcja: FR-016, ze stanu "zaakceptowane"). Stan `cofnięte przez właściciela` zwalnia miejsca dla kolejnych akceptacji.
+
+## Access Control
+
+Dwie role w MVP:
+
+- **Gość (nauczyciel)** — może przeglądać katalog publiczny i wysłać zapytanie o rezerwację bez logowania ani zakładania konta. Komunikacja statusu rezerwacji (potwierdzenie wysłania, akceptacja, cofnięcie akceptacji) odbywa się wyłącznie przez email. Anulowanie zapytania przed akceptacją — przez tokenizowany link w mailu (FR-015).
+- **Właściciel zagrody** — rejestracja otwarta (email + hasło). Po rejestracji system wymaga weryfikacji emaila (link), zanim odblokuje publikację zagrody i zarządzanie rezerwacjami (FR-006). Właściciel prowadzi w MVP dokładnie jedną zagrodę przypisaną do swojego konta. Zarządza wyłącznie zapytaniami na swoją zagrodę.
+
+Auth: email + hasło. **Brak** OAuth zewnętrznych dostawców tożsamości. Reset hasła przez email jest must-have (FR-008).
+
+Niezalogowany użytkownik trafiający na route panelu właściciela → przekierowanie na login. Gość z formularzem publicznym i tokenizowanym linkiem anulowania → brak gate.
+
+Role nieobecne w MVP (patrz Non-Goals): admin do moderacji draftów (publikacja od razu po weryfikacji emaila), konto gościa z panelem śledzenia (komunikacja przez email + token).
+
+## Non-Goals
+
+- **Mapy / geolokalizacja GPS** — filtr lokalizacji to wybór województwa i miasta z listy, koniec. Mapy podnoszą koszt MVP bez zmiany core flow.
+- **Płatności online + fakturowanie** — rozliczenia gotówka/przelew na miejscu po wizycie. Integracja gateway-a płatności = osobny moduł, nie pasuje do "anti-overbooking" jako rule.
+- **System ocen / opinii / recenzji** — reputacja przez pocztę pantoflową. Recenzje wymagają moderacji + obsługi sporów = nie MVP.
+- **SMS / push notifications / advanced digesty** — tylko email transakcyjny (FR-005, FR-011, FR-016 + reset hasła, weryfikacja). SMS = koszt + integracja dodatkowego dostawcy.
+- **OAuth zewnętrznych dostawców tożsamości** — tylko klasyczny email + hasło. OAuth wymagałby konfiguracji per-dostawca + obsługi merge'u kont = niewspółmierny do skali MVP.
+- **Multi-zagroda na konto właściciela** — w MVP jedno konto = jedna zagroda. Multi przesunięte do v2 gdy pierwsi właściciele będą prosić.
+- **Konto gościa z panelem śledzenia zapytań** — gość nie zakłada konta; komunikacja przez email (potwierdzenie wysłania z linkiem anulowania, akceptacja/cofnięcie). Konto gościa w v2.
+- **Moderacja admin draftów zagród** — brak roli admin w MVP. Anti-spam przez weryfikację emaila (FR-006) + ręczne kasowanie śmieci przez operatora 1x/tydzień. Moderacja w v2 gdy katalog przekroczy ~50 zagród.
+- **Negocjacja liczby uczestników poza limit** — system odrzuca twardo zapytania > wolnych miejsc. "Weź 30 zamiast 35" załatwia się telefonicznie poza systemem. Implikuje akceptowany trade-off: część rezerwacji ucieknie na telefon przy szczytach.
+
+## Open Questions
+
+Brak nierozwiązanych pytań — quality cross-check podczas `/10x-shape` przeszedł jako `accepted`, wszystkie load-bearing elementy (Vision, Persona, Success Criteria, FRs z Socrates, Business Logic z one-sentence rule, Access Control, Non-Goals, frontmatter) są obecne. Dalsze decyzje (wybór języka/frameworka, baza danych, hosting, CI/CD, dostawca dostarczania maili) są celowo poza zakresem PRD i należą do `/10x-tech-stack-selector`.
