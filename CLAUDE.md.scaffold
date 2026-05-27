@@ -4,12 +4,7 @@ This file provides guidance to AI Agent when working with code in this repositor
 
 ## Commands
 
-- `npm run dev` — start the Astro dev server (Vite, Node runtime)
-- `npm run build` — production build (SSR via `@astrojs/vercel`)
-- `npm run preview` — preview the production build
-- `npm run lint` — ESLint with type-checked rules
-- `npm run lint:fix` — auto-fix lint issues
-- `npm run format` — Prettier (includes prettier-plugin-astro + prettier-plugin-tailwindcss)
+Scripts live in `@package.json`. Non-obvious notes: `dev` is the Vite/Node dev server (not workerd); `build` SSRs through the `@astrojs/vercel` adapter; `lint` runs type-checked ESLint rules.
 
 No test runner is configured yet.
 

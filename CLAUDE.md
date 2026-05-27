@@ -1,3 +1,13 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Codebase guidance
+
+For project-specific architecture, commands, and conventions (Astro 6 SSR + React 19 + Supabase + Vercel), see @CLAUDE.md.scaffold.
+
+---
+
 ## 10xDevs AI Toolkit — Module 1, Lesson 1
 
 Bootstrap a greenfield project end-to-end with the **shaping chain**:
