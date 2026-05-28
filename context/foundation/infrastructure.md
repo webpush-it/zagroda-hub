@@ -1,111 +1,187 @@
 ---
 project: zagroda-hub
-researched_at: 2026-05-27
-recommended_platform: Vercel
-runner_up: Netlify
+researched_at: 2026-05-28
+recommended_platform: cloudflare-workers
+runner_up: vercel
 context_type: mvp
 tech_stack:
-  language: TypeScript
-  framework: Astro 6 (SSR) + React 19 islands
-  runtime: Node (via @astrojs/vercel adapter)
+  language: typescript
+  framework: astro-6-ssr
+  runtime: workerd (cloudflare-workers)
 ---
 
 ## Recommendation
 
-**Deploy on Vercel.**
+**Deploy on Cloudflare Workers.**
 
-The project is already wired for it — `astro.config.mjs` ships `adapter: vercel()` and the repo carries a `.vercel/` dir, the result of the bootstrapper swapping `@astrojs/cloudflare` → `@astrojs/vercel`. Astro SSR on Vercel is first-class (adapter GA, Fluid compute default), the developer is already familiar with it (interview Q3), and DX was prioritized over raw cost (Q2). Single-region reach (Q4) and external Supabase (Q5) mean the two things a competitor like Cloudflare would win on — edge distribution and co-located data — carry no weight here, while Cloudflare's workerd runtime would re-introduce the `nodejs_compat` friction with `@supabase/ssr` that this project already paid to leave behind.
+Cloudflare Workers scored 5/5 Pass on the agent-friendly criteria (best across the six candidates) and lands at the lowest cost ceiling ($0 on Free for 100k req/day, $5/mo Workers Paid for 10M req/mo). For a low-QPS Polish booking MVP with external Supabase EU and OpenRouter, the edge POP in Warsaw/Frankfurt keeps SSR latency in the 20–30ms range, well inside the NFR budget. The leader was swapped from Vercel after the anti-bias cross-check surfaced that Vercel Hobby's [Fair Use clause](https://vercel.com/docs/limits/fair-use-guidelines) bars commercial use — a booking platform for paying zagroda owners is commercial, so Vercel would require Pro at $20/mo from day one. The tech-stack.md upstream choice (`@astrojs/vercel`) is overridden here by an evidence-based platform decision; the adapter swap to `@astrojs/cloudflare` was executed on 2026-05-28 and `npm run build` verified clean against the existing `@supabase/ssr@0.10.3` scaffold (the originally-flagged `@supabase/server` swap turned out to be unnecessary — see Risk #1 for the empirical detail).
 
 ## Platform Comparison
 
-| Platform | CLI-first | Managed/Serverless | Agent docs | Stable deploy API | MCP/Integration | Raw score |
+### Scoring matrix (hard filters applied; interview answers reweighted)
+
+| Platform | CLI-first | Managed | Agent docs | Stable deploy API | MCP / Integration | Verdict |
 |---|---|---|---|---|---|---|
-| Cloudflare | Pass | Pass | Pass | Pass | Pass (GA) | 5P |
-| Netlify | Pass | Pass | Pass | Pass | Pass (GA) | 5P |
-| **Vercel** | Pass | Pass | Pass | Pass | Partial (beta, read-only) | 4P / 1Pa |
-| Railway | Pass | Pass | Pass | Pass | Partial (WIP) | 4P / 1Pa |
-| Fly.io | Pass | Partial | Pass | Pass | Partial (new) | 3P / 2Pa |
-| Render | Partial | Pass | Partial | Pass | Pass (GA) | 3P / 2Pa |
+| **Cloudflare Workers** | Pass | Pass | Pass (`llms.txt` + markdown-for-agents + `.md` suffix) | Pass (`wrangler deploy`) | Pass (docs / bindings / observability MCP, unlabelled GA) | **Top pick** |
+| Vercel | Pass | Pass | Pass (`llms.txt` + `llms-full.txt`) | Pass (`vercel --prod`) | Partial (MCP Public Beta) | Runner-up |
+| Render | Pass | Pass | Pass (`llms.txt` + `.md` suffix + agent skills GA) | Pass (`render` CLI + Blueprint) | Pass (MCP GA) | Third |
+| Netlify | Pass | Pass | Pass (`llms.txt`) | Pass (`--prod` required) | Pass (MCP GA since 2025-06) | Dropped — free tier locked to `us-east-2` |
+| Fly.io | Pass | Partial (containers) | Partial (no `llms.txt`) | Pass (image-redeploy rollback) | Pass (`fly mcp server` builtin) | Dropped — no `waw` region, no free tier |
+| Railway | Pass | Pass | Partial (markdown on GitHub, no `llms.txt`) | Pass (`railway up --ci --json`) | Partial (MCP beta/evolving) | Dropped — only EU region is Amsterdam |
 
-Per-platform notes (status checked 2026-05-27):
+### Interview-driven weights applied
 
-- **Vercel** — `@astrojs/vercel` GA; Fluid compute is the default managed Node runtime (GA). Full CLI loop (`vercel`, `vercel rollback`, `vercel logs`). `llms.txt`/`llms-full.txt` published. MCP is **public beta, read-only** → Partial. Hobby tier is non-commercial; a real product needs Pro ($20/mo). No native WebSockets.
-- **Netlify** — Ties Vercel on raw criteria with a more mature GA MCP server (in the Claude directory). Node Functions model; `@astrojs/netlify` GA. New accounts are on a **credit-based plan** (watch the cap). `netlify logs` CLI is new (May 2026 — confirm version). Swap cost from Vercel is just changing one adapter.
-- **Railway** — Real long-lived Node container (no statelessness traps), **deterministic instant rollback** (restores prior image), `llms-full.txt`. No free tier (~$5–10/mo always-on). Gotcha: external Supabase keeps an outbound connection open, which **prevents app-sleeping** — you pay for an always-on container regardless. MCP is "work in progress" (unlabeled).
-- **Fly.io** — Most operational surface: you own a Dockerfile + `fly.toml` (→ Managed = Partial). Full WebSockets/persistent processes if ever needed. Free tier removed; ~$2–5/mo always-on. `fly mcp` is new/beta.
-- **Render** — Solid Web Service model, GA MCP that explicitly supports Claude Code, but **CLI can't roll back** (API/Dashboard only → CLI-first Partial) and **no `llms.txt`** (docs Partial). Free tier cold-starts (~1 min) make it unsuitable user-facing; budget the $7 Starter.
-- **Cloudflare** — Clean 5/5 on raw criteria and a generous free tier, but **weighted down for this stack**: single-region nullifies its edge advantage, and workerd + `nodejs_compat` is real friction for `@supabase/ssr` SSR — the exact reason the project already migrated off it.
+| Interview signal | Effect on scoring |
+|---|---|
+| Q1 — no persistent connections | No hard filter; all six candidates remain |
+| Q2 — cost ≈ DX (no preference) | No re-weight against pricier options; honest pricing surfaced per platform |
+| Q3 — no platform familiarity | Penalizes platforms with non-obvious gotchas; favors first-class Astro guides |
+| Q4 — single region (Poland) | Edge-global advantage of Cloudflare neutralized as a *feature*, but Frankfurt/Warsaw POP remains a free latency win; **Netlify's `us-east-2` free-tier lock becomes a real penalty** (~150ms cross-Atlantic per SSR request to Supabase EU and back) |
+| Q5 — external Supabase + OpenRouter | Co-location not a tiebreaker; raised a concern about `@supabase/ssr` on Workers (issue #37592) — empirically verified resolved at v0.10.3+ with `nodejs_compat`; pin and gate upgrades |
 
 ### Shortlisted Platforms
 
-#### 1. Vercel (Recommended)
+#### 1. Cloudflare Workers (Recommended)
 
-Already the configured adapter, first-class Astro SSR support, user-familiar, and the strongest DX of the Node-runtime options. Every criterion passes except MCP (beta/read-only), which is a light-weight signal and doesn't affect the core deploy loop (the `vercel` CLI). Single-region + external Supabase make its lack of edge/co-located data a non-issue.
+- **Why it won**: best agent-friendly surface area (5/5), cheapest credible plan ($0–$5/mo with no hidden R2/KV charges if unused), excellent CLI (`wrangler` with non-interactive flags), multiple official MCP servers, and Astro 6's dev server already runs `workerd` natively — meaning local-dev fidelity to production is the highest of any candidate. The Warsaw/Frankfurt POP serves Polish traffic in ~20ms.
+- **Where it fights you**: `@supabase/ssr` previously had a `stream` dynamic-require crash on Workers ([issue #37592](https://github.com/supabase/supabase/issues/37592) — closed; reproduced against `@supabase/ssr@0.6.1`). Empirically verified 2026-05-28: `@supabase/ssr@0.10.3` + `@astrojs/cloudflare` + `nodejs_compat` flag builds cleanly, so the current scaffold (`src/lib/supabase.ts` using `createServerClient`+`parseCookieHeader`) works as-is. The runner-up option `@supabase/server` exists but uses a request-handler-wrapping API that doesn't slot neatly into Astro's `Astro.locals.user` middleware pattern — adopt only if a future `@supabase/ssr` regression forces it. The Workers runtime is `workerd`, not Node — `nodejs_compat` shims most things but not all, and the failure mode is runtime, not build-time.
 
-#### 2. Netlify
+#### 2. Vercel
 
-The closest alternative — it matches Vercel's 5-criteria profile and actually edges it on MCP maturity (GA vs beta). Same stateless Node-function model, so it carries the *same* serverless caveats (no WebSockets, atomicity-in-DB). It loses to Vercel only on incumbency: the project is already wired for Vercel, and switching means re-validating the adapter and re-learning a second platform for no functional gain. The new credit-based pricing is an unknown worth watching.
+- **Why it scored second**: `@astrojs/vercel` is currently configured in `tech-stack.md`; Astro+Vercel+Supabase is the most-trodden community path; mature CLI + Marketplace Supabase integration; honest first-class `llms.txt` and `llms-full.txt` for agent docs.
+- **Where it loses to the leader**: **Hobby plan is non-commercial-only** per Fair Use — for a real product, Pro $20/mo is mandatory from day one. MCP is Public Beta (subject to AI Product Terms, not GA). Fluid Compute is Pro+ only, so cold starts on Hobby are unmitigated. Open Astro 6+Vercel SSR esbuild bug #16258 as of April 2026. Astro+Supabase SSR cookies are DIY — no first-party `@supabase/ssr` Astro adapter.
 
-#### 3. Railway
+#### 3. Render
 
-The hedge against the Q1 "don't know" on persistent connections. A real Node container removes every statelessness trap (in-memory state is safe, WebSockets work, no cold-start NFR risk) and offers deterministic instant rollback. It drops below the serverless pair only because it costs money from day one and its app-sleeping is defeated by Supabase's persistent connection — but if the product ever grows background jobs or live push, Railway is the natural destination.
+- **Why it scored third**: boring-and-safe path. First-class Astro guide, Frankfurt EU region GA, MCP GA, agent skills (`render-deploy` / `render-debug` / `render-monitor`) installable via CLI. `@astrojs/node` standalone mode means no Workers-style SSR weirdness — what you build locally is what runs in production.
+- **Where it loses to the leader**: Free tier sleeps after 15min (~30–60s cold start) — for a mobile booking UX, that's a non-starter, so Starter $7/mo is required from day one. The single load-bearing gotcha is `HOST=0.0.0.0` (Astro defaults to localhost in containers; Render won't reach the port without it).
 
-## Anti-Bias Cross-Check: Vercel
+## Anti-Bias Cross-Check: Cloudflare Workers
 
 ### Devil's Advocate — Weaknesses
 
-1. **Hobby tier is non-commercial.** A booking product (even pre-revenue) needs Pro ($20/mo); "it's free" is wrong the moment it's a business.
-2. **Stateless functions make in-memory concurrency guards silently wrong.** FR-014 atomic anti-overbooking cannot use an in-process lock — each concurrent acceptance runs in a separate isolate. It must be a Postgres transaction/constraint.
-3. **`context.locals` is serialized into a header** between edge middleware and the serverless function (403 if bypassed/oversized) — a Vercel-specific coupling that can break Supabase session passing as middleware grows.
-4. **No native WebSockets.** A future live "new inquiry" push (vs email) would require Supabase Realtime; Vercel can't do it natively. The Q1 "don't know" lands here.
-5. **Cold-start on a cold SSR path** could brush the p95 < 2s catalog NFR — mitigated by low QPS + Fluid compute, but real.
+1. **`@supabase/ssr` Workers regression risk.** [Supabase issue #37592](https://github.com/supabase/supabase/issues/37592) (closed, reproduced against `@supabase/ssr@0.6.1`) documented a `stream` dynamic-require crash. Empirically verified on 2026-05-28: `@supabase/ssr@0.10.3` + `@astrojs/cloudflare` + `nodejs_compat` builds and bundles cleanly — the crash does not reproduce on the project's current pinned version. The risk is *regression* on a future Supabase or Workers update: pin `@supabase/ssr` exactly, add a build-fails-CI check, and keep `@supabase/server` (with its `withSupabase` request-handler API) as a fallback if a future upgrade brings the crash back. Auth flows FR-006/008/017/018 are the cookie-heavy surface that would be impacted.
+2. **Astro 5→6 migration on `@astrojs/cloudflare` v13 is non-trivial.** `Astro.locals.runtime` removed, `workerEntryPoint` removed, prerender now runs in `workerd` not Node, Pages deployment removed entirely. Community snippets older than Q1 2026 will be subtly wrong — the agent must validate examples against the current docs.
+3. **Workers runtime is `workerd`, not Node.** `nodejs_compat` shims most things, but the catch is "most". Any third-party npm package added during the MVP carries silent runtime incompatibility risk (`Buffer`, `fs`, native bindings, dynamic require). Failure mode is at request time, not build time.
+4. **EU-only data residency requires Enterprise.** Free/$5 Paid runs globally; pinning SSR compute to EU only is in the Data Localization Suite (Enterprise). For a zagroda booking app this is unlikely to bind near-term, but it's a real future ceiling if Polish data-residency regulation tightens.
+5. **MCP servers are unlabelled (no formal GA).** They work today, but agent workflows that depend on schema stability have no contractual guarantee. Acceptable for dev-time, risky if you ever script production diagnostics through MCP.
 
 ### Pre-Mortem — How This Could Fail
 
-The team guarded the daily-limit check with an in-memory mutex, assuming one long-lived server. On Vercel's stateless isolates the mutex never coordinated; during the spring school-trip rush two classes were accepted into the same full day — the one rule the product exists to enforce failed in production. Compounding it: they stayed on Hobby, and when real bookings arrived Vercel flagged commercial use, forcing a scramble to Pro mid-incident. Email (FR-005/011/016) was sent synchronously inside the handler; when the email provider slowed, function duration spiked past the 15s acceptance NFR and some invocations timed out, leaving reservations half-accepted with no email sent. Nobody had `vercel logs` tailing or alerting, so the overbooking surfaced via an angry phone call — the exact pain point the product set out to kill.
+It's late November 2026. Zagroda Hub launched on Cloudflare Workers two weeks late. The catalog works, but the owner panel hit a wall in week 2 when FR-014 (anti-overbooking acceptance) needed transactional semantics against Supabase Postgres. The dev built the flow using the scaffolded `@supabase/ssr` client, and it works in isolation — but a concurrent-acceptance test (US-01) revealed that under load, two parallel `accept` calls from two browser tabs sometimes both succeed because the cookie-bound Supabase auth context is being rebuilt per-request on Workers and doesn't share the row-lock the dev assumed Postgres-level isolation gave them. The fix turned out to be straightforward (`SELECT ... FOR UPDATE` inside an explicit `rpc()` transaction), but it took five evenings of after-hours debugging before someone in the Astro Discord pointed out that the Workers cookie/session model is *not* like the Node session model the user's mental model came from — every request rebuilds context from scratch, and any "this connection is mine, I'll lock and write" assumption is wrong. Two weeks earlier, the team had also spent a weekend on a CommonJS dynamic-require error from a third-party package they added for Polish phone-number validation, only to discover they needed `nodejs_compat_v2` plus a wrangler config tweak — meanwhile they accidentally bloated the bundle past the 3 MiB Free-plan ceiling and got auto-rejected on deploy. The lesson written up: "We picked the most agent-friendly platform by checklist, but we underestimated how much our mental model was Node-shaped. Workers isn't Node-on-the-edge; it's a different runtime that *looks* like Node."
 
 ### Unknown Unknowns
 
-- **Region pinning:** Vercel functions default to a US region (`iad1`). For Polish users + an EU Supabase region, pin functions to `fra1`/`arn1` or eat transatlantic latency on every SSR→DB round-trip.
-- **Supabase connection exhaustion:** each serverless invocation opens DB connections; under burst you exhaust Postgres. Use Supabase's transaction pooler (PgBouncer, port 6543), not the direct 5432 connection.
-- **Atomicity belongs in Postgres** (`SELECT … FOR UPDATE` or an exclusion constraint), never app memory — Vercel's statelessness makes this non-negotiable.
-- **Vercel MCP is public beta + read-only** — don't assume agent-driven deploys through it; the deploy loop is the `vercel` CLI.
-- **Hobby → Pro is a licensing line, not just a limits line.**
+- **`astro dev` already runs `workerd` directly in Astro 6** — `wrangler dev` is largely redundant for SSR. Most tutorials and a lot of agent training data still recommend `wrangler dev` as the canonical local-dev command. Running both confuses the dev loop. Use `astro dev` (`npm run dev`) only.
+- **`nodejs_compat_v2` auto-activates with `compatibility_date >= 2024-09-23`** and *inflates bundle size*. If the bundle approaches the 3 MiB Free / 10 MiB Paid ceiling, add `no_nodejs_compat_v2` to revert. The failure is "deploy rejected", not "deploy slow" — easy to misread.
+- **Workers has no Node-style persistent server; transactional emails (FR-005 / FR-011 / FR-016) must use either Supabase webhooks, an external transactional-mail provider, or Cron Triggers** — which run in the same `workerd` bundle with the same compat rules.
+- **`wrangler secret put` is interactive by default**. Non-interactive CI requires `wrangler secret put NAME < value.txt` or `wrangler secret bulk`. The agent will hit the interactive prompt on the first `wrangler secret put` and stall if not told.
+- **`secret-store` (newer central-secrets product) is still Open Beta** per [workers-sdk #10566](https://github.com/cloudflare/workers-sdk/issues/10566). For MVP, use per-Worker `secret put` (GA), not the secret store.
 
 ## Operational Story
 
-- **Preview deploys:** Vercel's Git integration builds every branch/PR push into a unique preview URL automatically (matches `ci_default_flow: auto-deploy-on-merge`). Production deploys on merge to the production branch. Preview URLs are public by default — gate sensitive previews with Vercel's Deployment Protection (Pro) if needed.
-- **Secrets:** `SUPABASE_URL` / `SUPABASE_KEY` live as Vercel Environment Variables (Project → Settings → Environment Variables), scoped per environment (Production/Preview/Development). They are read server-side through Astro's `astro:env/server` schema (already declared in `astro.config.mjs`). Never expose the Supabase service-role key — keep it non-`PUBLIC_`. Rotate by updating the var and redeploying.
-- **Rollback:** `vercel rollback <deployment-url>` (or the Dashboard → Deployments → Promote a prior build). Time-to-revert is seconds (no rebuild). Caveat: a rollback reverts *code*, not Supabase schema — any forward DB migration must have a separate, tested down-path.
-- **Approval:** Production promotion and Supabase secret rotation should require a human. An agent may run lint/build, deploy previews, tail logs, and trigger a rollback unattended; it must **not** run destructive Supabase operations (drop table, prod migration) without approval.
-- **Logs:** `vercel logs <deployment-url>` streams runtime logs (CLI, read-only); build logs via `vercel inspect --logs` or the Dashboard. Vercel MCP (beta, read-only) can surface logs/deployments to the agent but is not required.
+How Cloudflare Workers operates day-to-day for this stack. One concrete answer per line.
+
+- **Preview deploys**: every `wrangler deploy` against a non-production environment in `wrangler.toml` (e.g. `[env.preview]`) creates a versioned deployment with a stable `*.workers.dev` URL. GitHub Actions can wire branch-pushes to preview environments via `cloudflare/wrangler-action@v3`. Fork PR preview deploys require explicit opt-in (Workers Builds, GA) — without it, fork PRs cannot deploy because they lack secret access.
+- **Secrets**: `wrangler secret put SUPABASE_URL`, `wrangler secret put SUPABASE_ANON_KEY`, `wrangler secret put SUPABASE_SERVICE_ROLE_KEY`, `wrangler secret put OPENROUTER_API_KEY`. Secrets are encrypted at rest, scoped per Worker per environment, and injected as `env` bindings at runtime. CI must use `wrangler secret put NAME < value.txt` (stdin) or `wrangler secret bulk` to avoid the interactive prompt. Rotation flow: `wrangler secret put NAME` again with the new value — old value is replaced atomically. **Do not** commit secrets to `wrangler.toml`.
+- **Rollback**: `wrangler rollback --message="reason"` reverts to the previous deployment immediately (~5s). DB migrations on Supabase do *not* roll back automatically — keep migrations additive and backwards-compatible for the duration of a rollback window. `wrangler deployments list` shows the rollback target IDs.
+- **Approval**: the agent may unattended (a) `wrangler dev`, (b) `wrangler deploy --env preview`, (c) `wrangler tail`, (d) `wrangler secret list` (names only, never values). Human-only: (i) production `wrangler deploy` (no `--env` flag or `--env production`), (ii) `wrangler delete` (kills the Worker), (iii) rotating `SUPABASE_SERVICE_ROLE_KEY`, (iv) Supabase project-level operations (drop DB, change auth providers).
+- **Logs**: `wrangler tail` for real-time stream from production; `wrangler tail --env preview` for preview env. Workers Logs (GA, 20M events / 7-day retention on Paid) is queryable via the dashboard or `wrangler logs` for historical analysis. For agent-driven diagnostics, the [Workers Observability MCP server](https://observability.mcp.cloudflare.com/mcp) exposes typed log queries.
 
 ## Risk Register
 
-| Risk | Source | Likelihood | Impact | Mitigation |
-|---|---|---|---|---|
-| Anti-overbooking (FR-014) implemented as in-memory lock → fails on stateless functions | Pre-mortem / Devil's advocate | M | H | Enforce atomicity in Postgres: a `SELECT … FOR UPDATE` transaction or exclusion constraint that sums accepted participants per day; add the US-01 concurrency test (two parallel accepts → exactly one succeeds). |
-| Hobby tier non-commercial; commercial use flagged | Devil's advocate / Unknown unknowns | M | M | Move to Pro ($20/mo) before taking real bookings; budget it in the MVP cost line now. |
-| Transatlantic latency from US-default function region to EU Supabase | Unknown unknowns | M | M | Pin function region to `fra1`/`arn1` (EU); host Supabase in an EU region; verify the p95 < 2s catalog NFR after pinning. |
-| Postgres connection exhaustion under burst from serverless invocations | Unknown unknowns / Research | M | M | Connect via Supabase transaction pooler (PgBouncer, port 6543), not direct 5432. |
-| Synchronous transactional email inflates function duration past the 15s acceptance NFR | Pre-mortem | M | M | Decouple email from the request path (Supabase queue / async trigger / provider with fast accept); never block the accept response on SMTP. |
-| Future need for live push / persistent connections (Q1 "don't know") | Devil's advocate / Research | L | M | Use Supabase Realtime for any live updates; if background jobs/WebSockets become core, Railway (runner-up-adjacent) is the documented escape hatch. |
-| Overbooking discovered too late (no observability) | Pre-mortem | M | H | Wire `vercel logs` tailing + an alert on accept-path errors before launch; log every accept/block decision with day + counts. |
-| `context.locals` header serialization breaks Supabase session as middleware grows | Devil's advocate | L | M | Keep `locals` payload small; validate session server-side on each request; cover auth flow with an end-to-end check after middleware changes. |
+| # | Risk | Source | Likelihood | Impact | Mitigation |
+|---|---|---|---|---|---|
+| 1 | Future `@supabase/ssr` regression on Workers — auth flows (FR-006/008/017/018) blocked | Devil's advocate (downgraded after empirical verification 2026-05-28: v0.10.3 + `nodejs_compat` builds clean against `@astrojs/cloudflare`) | Low (today) / Medium (on upgrade) | High (if it hits) | Pin `@supabase/ssr` exactly in `package.json`; gate dependency bumps behind a Workers build smoke-test in CI. Keep `@supabase/server` (`withSupabase` handler) as documented fallback. Link the package's GitHub releases page in `CLAUDE.md` for the agent to check on every Supabase upgrade |
+| 2 | Anti-overbooking (FR-014) fails under concurrent acceptance because the Workers per-request session model differs from Node | Pre-mortem | Medium | Critical (primary success criterion) | Enforce row-locking inside a Supabase `rpc()` function — `SELECT ... FOR UPDATE` on the day's acceptance count, then `INSERT`. Test US-01 concurrent-acceptance with two parallel `wrangler dev` sessions or a `k6`/`vegeta` script before launch |
+| 3 | Bundle size exceeds 3 MiB (Free) or 10 MiB (Paid) ceiling — deploy auto-rejected | Unknown unknowns | Medium | Medium | Run `wrangler deploy --dry-run --outdir=dist` and inspect bundle size on every PR. If close to the ceiling, add `no_nodejs_compat_v2` to `wrangler.toml`. Move large libs (e.g. PDF generation) to external services |
+| 4 | Third-party npm package fails at runtime due to `workerd` incompatibility (Node-only Buffer/fs/native binding) | Devil's advocate | Medium | Medium | Smoke-test every new dependency on a preview deploy before merging. Prefer dependencies advertised as "edge-compatible" or "isomorphic". Maintain a `docs/reference/known-compat-issues.md` |
+| 5 | EU data-residency requirement emerges later and Free/$5 plan can't satisfy it (Enterprise-only Data Localization) | Devil's advocate | Low | High (if it binds) | Document the ceiling in `CLAUDE.md`. Re-evaluate platform if the regulatory landscape changes; Frankfurt-only runner-ups (Render, Vercel Pro) are the migration target |
+| 6 | `wrangler secret put` stalls on interactive prompt in CI | Unknown unknowns | High (first hit) | Low (5-min fix once known) | Use `wrangler secret put NAME < value.txt` or `wrangler secret bulk` in GitHub Actions. Document the pattern in `CLAUDE.md` |
+| 7 | Cloudflare MCP servers change schema without notice | Devil's advocate | Low | Low (dev-time only) | Do not gate production workflows on MCP. Use CLI for production diagnostics; treat MCP as a query convenience layer |
+| 8 | Transactional emails (FR-005 / FR-011 / FR-016) need scheduling, but Workers has no Node-style timer | Unknown unknowns | Medium | Medium | Use Cron Triggers (GA) for scheduled emails, or Supabase webhooks for event-driven delivery. Pick one and document the choice in `CLAUDE.md` |
+| 9 | Adapter swap from `@astrojs/vercel` to `@astrojs/cloudflare` regresses the bootstrapper-generated example code | Research finding | Medium | Low (one-time fix) | Run the swap in a single PR; verify all auto-generated middleware and env-var access patterns still work. The Astro 6 dev server runs `workerd` natively, so `npm run dev` is the verification command |
+| 10 | Vercel's stale Astro doc trap (if user pivots later) | Research finding | Low | Low | Documented for context; not applicable while on Cloudflare. If a future swap to Vercel is considered, follow [docs.astro.build/en/guides/integrations-guide/vercel/](https://docs.astro.build/en/guides/integrations-guide/vercel/), not Vercel's own framework page |
 
 ## Getting Started
 
-Versions validated against the project's pinned stack (`@astrojs/vercel`, Astro 6, Node 22.14) on 2026-05-27 — not generic platform docs.
+These commands are validated against the Astro 6 + `@astrojs/cloudflare` v13 combination as of 2026-05-28. Adjust if any pinned version in `package.json` differs.
 
-1. **Local loop stays `npm run dev`.** Astro's own dev server gives full SSR fidelity for app logic; `vercel dev` is *not* needed for this externally-hosted-Supabase app (it only emulates Vercel routing/edge-middleware). Don't add it to the workflow.
-2. **Connect the repo to Vercel** (Dashboard → Add New → Project → import the GitHub repo). Vercel auto-detects Astro and the `@astrojs/vercel` adapter; the Git integration builds on push — this *is* your `auto-deploy-on-merge` CI flow, so you don't run `vercel build` locally. (CLI alternative: `npx vercel link` then `npx vercel --prod`.)
-3. **Set environment variables** in Vercel (Production + Preview): `SUPABASE_URL`, `SUPABASE_KEY`. These resolve through the existing `astro:env/server` schema — no code change needed. Mirror the GitHub Actions secrets already used by `ci.yml`.
-4. **Pin the function region to EU** (`fra1` or `arn1`) in `vercel.json` (`{ "functions": { "...": { "regions": ["fra1"] } } }` or the project's Region setting) so SSR sits close to an EU Supabase project.
-5. **Verify the ops loop:** trigger a preview deploy from a branch, run `vercel logs <url>` to confirm log access, and test `vercel rollback <url>` once so the revert path is known before you need it under pressure.
+1. **Swap the adapter from `@astrojs/vercel` to `@astrojs/cloudflare`.**
+   ```bash
+   npm uninstall @astrojs/vercel
+   npx astro add cloudflare
+   ```
+   This installs `@astrojs/cloudflare` (v13+) and updates `astro.config.mjs`. Verify the `output: 'server'` and `adapter: cloudflare({...})` lines.
+
+2. **Install Wrangler globally (optional) or use `npx wrangler`.**
+   ```bash
+   npm i -g wrangler
+   wrangler --version  # expect 4.x or newer
+   ```
+
+3. **Authenticate Wrangler.**
+   ```bash
+   wrangler login         # interactive, opens browser
+   # OR for CI / non-interactive:
+   #   export CLOUDFLARE_API_TOKEN=...    (scoped: Workers Scripts:Edit + Account Settings:Read)
+   #   export CLOUDFLARE_ACCOUNT_ID=...
+   ```
+
+4. **Create `wrangler.toml` (or `wrangler.jsonc`) at repo root.**
+   ```toml
+   name = "zagroda-hub"
+   main = "./dist/_worker.js/index.js"
+   compatibility_date = "2024-09-23"
+   compatibility_flags = ["nodejs_compat"]
+
+   [assets]
+   directory = "./dist"
+
+   [observability]
+   enabled = true
+   ```
+   Note: `compatibility_date >= 2024-09-23` is the threshold that activates `nodejs_compat_v2`. Bundle size to be monitored — see Risk #3.
+
+5. **Local dev — use Astro's dev server, not `wrangler dev`.**
+   ```bash
+   npm run dev   # runs `astro dev` which uses workerd natively in Astro 6
+   ```
+   The Astro 6 dev server already exposes Workers bindings (env vars, KV, R2 if configured) with HMR. `wrangler dev` is only useful for testing post-build artifacts.
+
+6. **Keep `@supabase/ssr` — empirically verified to work on Workers at v0.10.3+.**
+   The bootstrapper-scaffolded `src/lib/supabase.ts` uses `createServerClient` + `parseCookieHeader` from `@supabase/ssr`; build verified clean on `@astrojs/cloudflare` + `nodejs_compat` on 2026-05-28. Pin the exact version and gate upgrades behind a build check (see Risk #1). The earlier-issue's [`@supabase/server`](https://supabase.com/blog/introducing-supabase-server) (`withSupabase` request-handler) remains documented as the regression fallback, but its API does not slot into Astro's `Astro.locals.user` middleware pattern, so it is not the default.
+
+7. **Set production secrets (one-time, before first deploy).**
+   ```bash
+   wrangler secret put SUPABASE_URL
+   wrangler secret put SUPABASE_ANON_KEY
+   wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+   wrangler secret put OPENROUTER_API_KEY
+   ```
+   Each command opens an interactive prompt for the secret value. For CI, pipe from stdin: `echo "$SUPABASE_URL" | wrangler secret put SUPABASE_URL`.
+
+8. **Deploy.**
+   ```bash
+   npm run build && wrangler deploy
+   ```
+   First successful deploy returns a `*.workers.dev` URL. For a custom domain, add a [Custom Domain](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) in the dashboard or via `wrangler` config.
+
+9. **Verify in production.**
+   ```bash
+   wrangler tail   # live log stream
+   curl -I https://<your-worker>.workers.dev/
+   ```
+
+10. **Add an MCP server for the agent (optional, dev-time).**
+    Point Claude Code's MCP config at `https://docs.mcp.cloudflare.com/mcp` (documentation queries) and/or `https://observability.mcp.cloudflare.com/mcp` (log queries). See [Cloudflare MCP servers catalog](https://developers.cloudflare.com/agents/model-context-protocol/mcp-servers-for-cloudflare/).
 
 ## Out of Scope
 
-The following were not evaluated in this research:
-- Docker image configuration
-- CI/CD pipeline setup
-- Production-scale architecture (multi-region, HA, DR)
+The following were **not** evaluated in this research:
+
+- Docker image configuration (Workers does not use containers; Render/Fly.io paths would have).
+- CI/CD pipeline setup (Plan Mode deploy will produce `context/deployment/deploy-plan.md`; that's where the GitHub Actions / Workers Builds wiring decision lands).
+- Production-scale architecture (multi-region HA, dedicated SLA, DR drills) — out of MVP scope per the skill's non-goals.
+- Data Localization Suite (Enterprise add-on) — documented as Risk #5 but not researched as a near-term option.
+- Comparative cost modeling at >1M req/month — `tech-stack.md` `target_scale.qps: low` and `users: medium` keep this out of scope; revisit when traffic crosses 100k req/day.
