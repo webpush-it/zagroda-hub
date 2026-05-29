@@ -147,12 +147,12 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: `npm run build` produkuje znane artefakty pod znanymi ścieżkami; bundle mieści się w limicie Free.
 
-- [ ] **3.1** `rm -rf dist .wrangler` — twardy reset stanów lokalnych przed pierwszym deployem (eliminuje stare artefakty po commicie `vercel -> cloudflare`)
-- [ ] **3.2** `npm run build` — oczekujemy zero błędów; output kończy się na `Astro [@astrojs/cloudflare]`
-- [ ] **3.3** Zweryfikuj że istnieje **`./dist/server/entry.mjs`** (~170 B shim) i katalog **`./dist/client/`**
-- [ ] **3.4** Otwórz `./dist/server/wrangler.json` — sanity check: `compatibility_date` zgadza się z root configiem (lub jest nowszy)
-- [ ] **3.5** `npx wrangler deploy --dry-run --outdir=.wrangler/dry-run` (nie `--outdir=dist` — koliduje z Astro buildem). Raportuj rozmiar bundla — czerwone światło przy ≥ 3 MiB (Free)
-- [ ] **3.6** **NIE** `wrangler dev` — Astro 6 `npm run dev` odpala `workerd` natywnie. Jeśli chcesz przetestować lokalnie, użyj `npm run dev` z lokalnym `.env`
+- [x] **3.1** `rm -rf dist .wrangler` — twardy reset stanów lokalnych przed pierwszym deployem (eliminuje stare artefakty po commicie `vercel -> cloudflare`). ✅ oba usunięte
+- [x] **3.2** `npm run build` — oczekujemy zero błędów; output kończy się na `Astro [@astrojs/cloudflare]`. ✅ green (IMAGES+SESSION enabled; nieblokujący WARN o sitemap `site`)
+- [x] **3.3** Zweryfikuj że istnieje **`./dist/server/entry.mjs`** (~170 B shim) i katalog **`./dist/client/`**. ✅ `entry.mjs` 170 B, `dist/client/` 9 plików
+- [x] **3.4** Otwórz `./dist/server/wrangler.json` — sanity check: `compatibility_date` zgadza się z root configiem (lub jest nowszy). ✅ `2026-04-15`, `name: zagroda-hub`, bindingi SESSION/IMAGES/ASSETS, `compatibility_flags: []`
+- [x] **3.5** `npx wrangler deploy --dry-run --outdir=.wrangler/dry-run` (nie `--outdir=dist` — koliduje z Astro buildem). Raportuj rozmiar bundla — czerwone światło przy ≥ 3 MiB (Free). ✅ **gzip 391.92 KiB** (raw 1917.78 KiB) — dobrze pod limitem; redirected config działa, bindingi obecne
+- [x] **3.6** **NIE** `wrangler dev` — Astro 6 `npm run dev` odpala `workerd` natywnie. Jeśli chcesz przetestować lokalnie, użyj `npm run dev` z lokalnym `.env`. ✅ pominięte zgodnie z planem
 
 ---
 
@@ -160,9 +160,9 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: produkcja zna `SUPABASE_URL` i `SUPABASE_KEY`, **agent nigdy nie widzi wartości**.
 
-- [ ] **4.1** **HUMAN GATE**: `npx wrangler secret put SUPABASE_URL` — wklejasz wartość w interaktywny prompt
-- [ ] **4.2** **HUMAN GATE**: `npx wrangler secret put SUPABASE_KEY` — wklejasz `anon public` key
-- [ ] **4.3** Weryfikacja: `npx wrangler secret list` → dwa wpisy (`SUPABASE_URL`, `SUPABASE_KEY`), tylko nazwy
+- [x] **4.1** **HUMAN GATE**: `npx wrangler secret put SUPABASE_URL` — wklejasz wartość w interaktywny prompt. ✅ wgrany w poprzednim podejściu (wartość niewidoczna dla agenta)
+- [x] **4.2** **HUMAN GATE**: `npx wrangler secret put SUPABASE_KEY` — wklejasz `anon public` key. ✅ wgrany w poprzednim podejściu (wartość niewidoczna dla agenta)
+- [x] **4.3** Weryfikacja: `npx wrangler secret list` → dwa wpisy (`SUPABASE_URL`, `SUPABASE_KEY`), tylko nazwy. ✅ oba obecne jako `secret_text`
 
 > **Decyzja nazewnictwa**: trzymamy `SUPABASE_KEY` (zgodnie z `src/lib/supabase.ts:3` i `astro.config.mjs:20`). Rename do `SUPABASE_ANON_KEY` (jak sugeruje `infrastructure.md:158`) to osobny chirurgiczny refactor — **nie robimy go w deployu**.
 
