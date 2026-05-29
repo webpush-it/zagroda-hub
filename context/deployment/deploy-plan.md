@@ -88,11 +88,11 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: zatrzymać deploy jeśli lokalne środowisko nie jest gotowe, ZANIM zaczniemy mutować.
 
-- [ ] **0.6.1** `node --version` — wymagane ≥ 20.10 (Astro 6 + adapter v13). Repo nie ma `.nvmrc` — flaguję to jako drobny gap w `CLAUDE.md.scaffold`
-- [ ] **0.6.2** `npm --version` — sanity check (≥ 10)
-- [ ] **0.6.3** `git status --porcelain` — musi być pusty. Brudny tree przed deployem = anty-wzorzec
-- [ ] **0.6.4** `npm ci` jeśli `node_modules/` jest nieaktualny względem `package-lock.json`
-- [ ] **0.6.5** `npx wrangler --version` — wrangler ≥ 4.x tranzytywnie z `@astrojs/cloudflare`. Brak = STOP
+- [x] **0.6.1** `node --version` — wymagane ≥ 20.10 (Astro 6 + adapter v13). Repo nie ma `.nvmrc` — flaguję to jako drobny gap w `CLAUDE.md.scaffold`. ✅ `v22.14.0`
+- [x] **0.6.2** `npm --version` — sanity check (≥ 10). ✅ `10.9.2`
+- [x] **0.6.3** `git status --porcelain` — musi być pusty. Brudny tree przed deployem = anty-wzorzec. ✅ pusty, branch `master`
+- [x] **0.6.4** `npm ci` jeśli `node_modules/` jest nieaktualny względem `package-lock.json`. ✅ pominięte — `node_modules` obecny i spójny (brak UNMET/missing/invalid)
+- [x] **0.6.5** `npx wrangler --version` — wrangler ≥ 4.x tranzytywnie z `@astrojs/cloudflare`. Brak = STOP. ✅ `4.95.0`
 
 ---
 
@@ -100,10 +100,10 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: `npx wrangler whoami` zwraca konto **i** subdomena `*.workers.dev` jest zarezerwowana.
 
-- [ ] **1.1** **HUMAN GATE**: `npx wrangler login` — otwiera przeglądarkę, autoryzujesz dostęp
-- [ ] **1.2** Weryfikacja: `npx wrangler whoami` zwraca Twój account name i Account ID
-- [ ] **1.3** **HUMAN GATE**: zaloguj się do <https://dash.cloudflare.com> → **Workers & Pages**. Pierwsze konto musi wybrać **`workers.dev` subdomain** (np. `konrad-beska`). Bez tego `wrangler deploy` zwróci błąd `you need to register a workers.dev subdomain`
-- [ ] **1.4** Zanotuj wybraną subdomenę — finalny URL będzie `zagroda-hub.<subdomain>.workers.dev`
+- [x] **1.1** **HUMAN GATE**: `npx wrangler login` — otwiera przeglądarkę, autoryzujesz dostęp. ✅ już zalogowany (OAuth token)
+- [x] **1.2** Weryfikacja: `npx wrangler whoami` zwraca Twój account name i Account ID. ✅ `WebPushIT` / `778c2104b8d44989f3c5d914288e3d66` (email `beska.konrad@gmail.com`)
+- [x] **1.3** **HUMAN GATE**: zaloguj się do <https://dash.cloudflare.com> → **Workers & Pages**. Pierwsze konto musi wybrać **`workers.dev` subdomain** (np. `konrad-beska`). Bez tego `wrangler deploy` zwróci błąd `you need to register a workers.dev subdomain`. ✅ zarejestrowana: `webpushit` (potwierdzone API)
+- [x] **1.4** Zanotuj wybraną subdomenę — finalny URL będzie `zagroda-hub.<subdomain>.workers.dev`. ✅ **`https://zagroda-hub.webpushit.workers.dev`**
 
 > **Dlaczego claim subdomain to osobny krok**: bez tego `wrangler deploy` faila na pierwszym uruchomieniu komunikatem, który łatwo zinterpretować jako bug w configu. Wolimy zatrzymać się tu, niż debugować pod presją.
 
