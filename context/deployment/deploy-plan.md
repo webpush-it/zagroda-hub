@@ -88,7 +88,7 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: zatrzymać deploy jeśli lokalne środowisko nie jest gotowe, ZANIM zaczniemy mutować.
 
-- [x] **0.6.1** `node --version` — wymagane ≥ 20.10 (Astro 6 + adapter v13). Repo nie ma `.nvmrc` — flaguję to jako drobny gap w `CLAUDE.md.scaffold`. ✅ `v22.14.0`
+- [x] **0.6.1** `node --version` — wymagane ≥ 20.10 (Astro 6 + adapter v13). ✅ `v22.14.0`. (Korekta: założenie planu „repo nie ma `.nvmrc`" jest **nieaktualne** — `.nvmrc` istnieje, a scaffold poprawnie do niego referuje; brak gapu)
 - [x] **0.6.2** `npm --version` — sanity check (≥ 10). ✅ `10.9.2`
 - [x] **0.6.3** `git status --porcelain` — musi być pusty. Brudny tree przed deployem = anty-wzorzec. ✅ pusty, branch `master`
 - [x] **0.6.4** `npm ci` jeśli `node_modules/` jest nieaktualny względem `package-lock.json`. ✅ pominięte — `node_modules` obecny i spójny (brak UNMET/missing/invalid)
@@ -206,14 +206,15 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: docs odzwierciedlają rzeczywistość. **Bez commit'a wrangler.jsonc** (już zrobione w Faza 5).
 
-- [ ] **7.1** `.env.example`: dodaj komentarz na górze że produkcja używa `wrangler secret put`, nie tego pliku. Plik pokazuje **lokalny** dev set
-- [ ] **7.2** Sprawdź `CLAUDE.md.scaffold` — czy nadal mówi o Vercel? Jeśli tak, krótka aktualizacja jednej linii o Cloudflare Workers + adapter
-- [ ] **7.3** Drugi commit (tylko docs):
+- [x] **7.1** `.env.example`: dodaj komentarz na górze że produkcja używa `wrangler secret put`, nie tego pliku. Plik pokazuje **lokalny** dev set. ✅ dodany 4-liniowy komentarz prod
+- [x] **7.2** Sprawdź `CLAUDE.md.scaffold` — czy nadal mówi o Vercel? Jeśli tak, krótka aktualizacja jednej linii o Cloudflare Workers + adapter. ✅ zaktualizowano 3 wzmianki (Commands/Architecture/Environment) Vercel → Cloudflare Workers; `.nvmrc` zostawiony (istnieje, referencja poprawna)
+- [x] **7.3** Drugi commit (tylko docs):
   ```
   git add .env.example CLAUDE.md.scaffold
   git commit -m "docs: align env example and scaffold notes with Cloudflare Workers deploy"
   ```
-- [ ] **7.4** **NIE** commitujemy: `.env`, `.wrangler/`, Deployment ID, sekretów
+  ✅ commit `39f5ec9` (2 pliki, +8/-4)
+- [x] **7.4** **NIE** commitujemy: `.env`, `.wrangler/`, Deployment ID, sekretów. ✅ zweryfikowane — commit zawiera tylko `.env.example` + `CLAUDE.md.scaffold`
 
 > **Rename `SUPABASE_KEY` → `SUPABASE_ANON_KEY`**: **wyrzucone z tego planu**. To osobny chirurgiczny refactor (3 pliki: kod, config schema, .env.example), godny własnego PR.
 
