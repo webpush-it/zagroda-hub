@@ -1,5 +1,7 @@
-# Plan: Pierwsze wdrożenie zagroda-hub na Cloudflare Workers (v2 — po lokalnej weryfikacji)
+# Plan: Pierwsze wdrożenie zagroda-hub na Cloudflare Workers (v3 — po wykonaniu Faz 2–3)
 
+> **Co się zmieniło względem v2**: wykonanie Fazy 2–3 ujawniło, że root `wrangler.jsonc` jest czytany przez `@cloudflare/vite-plugin` **już podczas `npm run build`**, nie dopiero przy `wrangler deploy`. Minimalny config z v2 (z polami `main` + `assets`) **wywalał build** (walidacja `main` względem skasowanego `dist/` — chicken-and-egg) i — gdyby przeszedł — **nadpisałby** generowany config, gubiąc bindingi `SESSION` (KV) i `IMAGES`, które adapter auto-dodaje. v3: root config zawiera **wyłącznie nadpisania, których jesteśmy źródłem** (`name`, `compatibility_date`, `observability`); `main`/`assets`/bindingi dokłada adapter. Deploy z roota działa przez **redirected configuration** (`.wrangler/deploy/config.json` → `dist/server/wrangler.json`).
+>
 > **Co się zmieniło względem v1**: lokalna weryfikacja wykazała że adapter `@astrojs/cloudflare` v13.6.0 sam generuje `dist/server/wrangler.json` z aktualnym `compatibility_date = "2026-04-15"` i poprawnymi ścieżkami. Plan v1 proponował **ręczny `wrangler.toml`** ze **stale datą `2024-09-23`** i **błędną ścieżką `dist/_worker.js/index.js`**, której adapter w ogóle nie generuje. Nowy plan polega na adapter-generated configu i dokłada brakujące pre-flight checks (Node, workers.dev subdomain, Supabase Site URL).
 
 ## Context
