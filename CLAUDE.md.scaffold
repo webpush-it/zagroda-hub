@@ -4,7 +4,7 @@ This file provides guidance to AI Agent when working with code in this repositor
 
 ## Commands
 
-Scripts live in `@package.json`. Non-obvious notes: `dev` is the Vite/Node dev server (not workerd); `build` SSRs through the `@astrojs/vercel` adapter; `lint` runs type-checked ESLint rules.
+Scripts live in `@package.json`. Non-obvious notes: `dev` is the Astro dev server (runs workerd natively via the Cloudflare Vite plugin); `build` SSRs through the `@astrojs/cloudflare` adapter; `lint` runs type-checked ESLint rules.
 
 No test runner is configured yet.
 
@@ -12,7 +12,7 @@ Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` 
 
 ## Architecture
 
-**Astro 6 SSR app** with React 19 islands, Tailwind 4, Supabase auth, and shadcn/ui components. Deployed to Vercel via the `@astrojs/vercel` adapter.
+**Astro 6 SSR app** with React 19 islands, Tailwind 4, Supabase auth, and shadcn/ui components. Deployed to Cloudflare Workers via the `@astrojs/cloudflare` adapter.
 
 ### Rendering mode
 
@@ -47,7 +47,7 @@ Full server-side rendering (`output: "server"` in astro.config.mjs). All pages a
 - Node.js v22.14.0 (see `.nvmrc`)
 - Env vars: `SUPABASE_URL`, `SUPABASE_KEY` — copy `.env.example` to `.env` (both optional; auth is disabled if unset)
 - Local Supabase: `npx supabase start` (requires Docker). Local Studio at `http://localhost:54323`.
-- Deploy: handled by Vercel. Set `SUPABASE_URL`/`SUPABASE_KEY` as project environment variables in the Vercel dashboard.
+- Deploy: `npx wrangler deploy` to Cloudflare Workers (config in root `wrangler.jsonc`; adapter generates `dist/server/wrangler.json`). Set `SUPABASE_URL`/`SUPABASE_KEY` with `npx wrangler secret put <NAME>` (interactive; never committed). Live at `https://zagroda-hub.webpushit.workers.dev`.
 
 ## CI
 
