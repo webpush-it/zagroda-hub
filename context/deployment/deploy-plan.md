@@ -172,16 +172,18 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: stan na masterze zawiera config deployu; aplikacja żyje pod `*.workers.dev`.
 
-- [ ] **5.1** Commit infrastruktury **przed deployem** (nie po — commit timing v1 był za późno):
+- [x] **5.1** Commit infrastruktury **przed deployem** (nie po — commit timing v1 był za późno):
   ```
   git add wrangler.jsonc .gitignore
   git commit -m "chore(deploy): wire root wrangler.jsonc for first Cloudflare Workers deploy"
   ```
   > Dlaczego teraz, nie po smoke teście: Faza 6 może się rozciągnąć w czasie (przerwy, debug). `wrangler.jsonc` jest już zweryfikowany w Faza 3 — commit go zabezpiecza.
 
-- [ ] **5.2** Przegląd końcowy stanu: wrangler.jsonc istnieje i jest scommitowany, build green, sekrety zarejestrowane, subdomena zaclaimed. Agent raportuje i prosi o zgodę
-- [ ] **5.3** **HUMAN GATE — wymaga Twojej zgody**: agent uruchamia `npx wrangler deploy` **z korzenia repo** (build już istnieje). Wrangler wykrywa **redirected configuration**: build zapisał `.wrangler/deploy/config.json`, które przekierowuje z root `wrangler.jsonc` (`Original user's configuration`) na pełny `dist/server/wrangler.json` (`Configuration being used`). Dzięki temu deploy z roota działa mimo że root config nie ma `main` — adapter dostarcza entry + bindingi. Zweryfikowane przez `--dry-run` w Fazie 3.5 (bundle 392 KiB gzip, bindingi SESSION/IMAGES/ASSETS obecne)
-- [ ] **5.4** Zanotuj zwrócony URL (`https://zagroda-hub.<subdomain>.workers.dev`) i **Deployment ID**
+  ✅ **5.1 done** — `wrangler.jsonc` + `.gitignore` już w `cfc7642`; working tree czysty, nic nowego do commita.
+
+- [x] **5.2** Przegląd końcowy stanu: wrangler.jsonc istnieje i jest scommitowany, build green, sekrety zarejestrowane, subdomena zaclaimed. Agent raportuje i prosi o zgodę. ✅ wszystkie warunki spełnione (patrz raport)
+- [x] **5.3** **HUMAN GATE — wymaga Twojej zgody**: agent uruchamia `npx wrangler deploy` **z korzenia repo** (build już istnieje). Wrangler wykrywa **redirected configuration**: build zapisał `.wrangler/deploy/config.json`, które przekierowuje z root `wrangler.jsonc` (`Original user's configuration`) na pełny `dist/server/wrangler.json` (`Configuration being used`). Dzięki temu deploy z roota działa mimo że root config nie ma `main` — adapter dostarcza entry + bindingi. Zweryfikowane przez `--dry-run` w Fazie 3.5 (bundle 392 KiB gzip, bindingi SESSION/IMAGES/ASSETS obecne). ✅ deploy OK przez redirected config; SESSION KV auto-provisioned (`81d3654d4e6b406196f69302a0dbb77f`); 2 nieblokujące WARN (`workers_dev`/`preview_urls` domyślnie włączone — pożądane dla MVP)
+- [x] **5.4** Zanotuj zwrócony URL (`https://zagroda-hub.<subdomain>.workers.dev`) i **Deployment ID**. ✅ URL: `https://zagroda-hub.webpushit.workers.dev` | Version ID: `0985164b-86a1-400a-bc1c-f0f80c444671`
 
 ---
 
