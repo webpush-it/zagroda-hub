@@ -113,7 +113,7 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: jedno źródło prawdy w korzeniu repo z nazwą Workera `zagroda-hub`, spójną z `infrastructure.md` i bez konieczności ruszania `package.json.name`.
 
-- [ ] **2.1** Utwórz `wrangler.jsonc` w **korzeniu repo** — **tylko nadpisania, bez `main`/`assets`** (patrz korekta v3 poniżej):
+- [x] **2.1** Utwórz `wrangler.jsonc` w **korzeniu repo** — **tylko nadpisania, bez `main`/`assets`** (patrz korekta v3 poniżej): ✅ istnieje, zgodny 1:1 z v3 (`name`/`compatibility_date`/`observability`, bez `main`/`assets`)
 
   ```jsonc
   {
@@ -126,8 +126,8 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
   }
   ```
 
-- [ ] **2.2** Dodaj `.wrangler/` do `.gitignore` jeśli brakuje (lokalny cache wranglera + redirect config)
-- [ ] **2.3** **Nie commitujemy jeszcze** — najpierw build i weryfikacja w Fazie 3
+- [x] **2.2** Dodaj `.wrangler/` do `.gitignore` jeśli brakuje (lokalny cache wranglera + redirect config). ✅ już obecny (`.gitignore:5`)
+- [x] **2.3** **Nie commitujemy jeszcze** — najpierw build i weryfikacja w Fazie 3. ✅ N/A — plik został już zacommitowany w poprzednim podejściu (`cfc7642 fazy 2–3`), co z góry domyka też commit z Fazy 5.1
 
 > **⚠️ KOREKTA v3 — żadnego `main`/`assets` w root configu**: `@cloudflare/vite-plugin` czyta root `wrangler.jsonc` podczas `npm run build` i waliduje, że `main` wskazuje na **istniejący** plik. Faza 3.1 kasuje `dist/`, więc `main: "./dist/server/entry.mjs"` → build error `main field doesn't point to an existing file`. Ponadto root config **scala się** z adapter-generated (nie nadpisuje go w całości), więc ręczne `assets`/`main` tylko duplikują (i potrafią zepsuć ścieżki względne `../client`) to, co adapter ustawia sam. Root config trzyma wyłącznie `name` (override), `compatibility_date` (pin) i `observability`.
 >
