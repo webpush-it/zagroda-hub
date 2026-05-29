@@ -24,26 +24,73 @@ Wdrażamy aplikację Zagroda Hub (Astro 6 SSR + React 19 + Supabase) po raz pier
 
 ## Wymagania wstępne (human-only, poza zakresem agenta)
 
-- [ ] **0.1** Załóż konto Cloudflare: <https://dash.cloudflare.com/sign-up> (free tier)
-- [ ] **0.2** Załóż projekt Supabase: <https://supabase.com/dashboard>. **Region — wybierz najbliższy z dropdown'a** (najpewniej Frankfurt EU lub Warsaw EU). Nie hardcoduję slug'a — Supabase miewa rozjazdy nazewnictwa
-- [ ] **0.3** W Supabase Dashboard → **Settings → API** skopiuj:
-  - `Project URL` → wartość `SUPABASE_URL`
-  - `anon public` key → wartość `SUPABASE_KEY` (nazwa zgodna z `src/lib/supabase.ts:3`)
-- [ ] **0.4** Daj agentowi sygnał `gotowe`
+Te kroki musisz wykonać Ty zanim agent ruszy z Fazą 0.5. Każdy `0.x` to **hard gate** — agent nie może go obejść (interaktywny signup, dashboard click-through, prywatne wartości).
 
-> **Świadomie odpuszczone**: `SUPABASE_SERVICE_ROLE_KEY`, `OPENROUTER_API_KEY` (kod ich nie używa). Migracje SQL (folder `supabase/migrations/` nie istnieje; deploy na pustą DB jest OK dla pierwszego razu).
+### 0.1 — Konto Cloudflare
+
+- [ ] **0.1.1** Otwórz <https://dash.cloudflare.com/sign-up> i załóż konto na adres email, do którego masz stały dostęp (potrzebny do **2FA** i recovery)
+- [ ] **0.1.2** Potwierdź adres email (link z inboxa) — bez tego część funkcji jest zablokowana
+- [ ] **0.1.3** **Włącz 2FA** w **My Profile → Authentication** (TOTP lub klucz sprzętowy). To konto trzyma klucze do produkcji — 2FA jest minimum
+- [ ] **0.1.4** Nie podajesz karty kredytowej — **Free plan** wystarczy do MVP (100k req/dzień, 10ms CPU per invocation, 1MB worker size limit). Karta będzie potrzebna dopiero przy upgrade do **Workers Paid ($5/mc)**, którego MVP nie wymaga
+- [ ] **0.1.5** Zachowaj: **Account Name** (widoczny w prawym górnym rogu dashboardu) i **Account ID** (Workers & Pages → prawa kolumna). Account ID przyda się przy konfiguracji CI w kolejnej lekcji
+
+> **Workers.dev subdomain** wybierasz osobno w Fazie 1.3 (nie tutaj) — wrangler login musi być najpierw.
+
+### 0.2 — Projekt Supabase
+
+- [ ] **0.2.1** Otwórz <https://supabase.com/dashboard> i zaloguj się (GitHub OAuth lub email)
+- [ ] **0.2.2** **New project** w organization (twoja personal org wystarczy). Nazwa projektu: `zagroda-hub` (lub dowolna spójna)
+- [ ] **0.2.3** **Region** — wybierz z dropdown'a **najbliższy geograficznie** (Frankfurt EU lub London EU dla użytkowników z Polski). **Decyzja jednorazowa** — Supabase nie pozwala zmienić regionu po utworzeniu projektu (musiałbyś migrować dane)
+- [ ] **0.2.4** **Database password** — wygenerowany losowy ciąg. **Zapisz w menedżerze haseł** zaraz po wygenerowaniu. Bez niego nie podłączysz się do DB przez `psql` ani Supabase CLI; reset wymaga supportu
+- [ ] **0.2.5** **Plan**: Free (500MB DB, 1GB Storage, 50k MAU, no card required) — wystarczy do MVP
+- [ ] **0.2.6** Poczekaj 1–3 minuty na provisioning (UI pokaże "Setting up project...")
+- [ ] **0.2.7** Zachowaj: nazwę projektu, region, **Project Ref** (część URL'a po utworzeniu, format `<xxxxxxxxxxxx>` w `https://<ref>.supabase.co`)
+
+### 0.3 — Credentiale z Supabase API panel
+
+- [ ] **0.3.1** W Supabase Dashboard wybierz świeżo utworzony projekt → **Settings (lewy dolny róg) → API**
+- [ ] **0.3.2** Z sekcji **Project URL** skopiuj wartość pola `URL` (format: `https://<project-ref>.supabase.co`). To pójdzie do sekretu **`SUPABASE_URL`**
+- [ ] **0.3.3** Z sekcji **Project API keys** skopiuj **`anon` `public`** (NIE `service_role`!). To pójdzie do sekretu **`SUPABASE_KEY`** (nazwa zgodna z `src/lib/supabase.ts:3` — w MVP używamy nazwy `SUPABASE_KEY`, nie `SUPABASE_ANON_KEY`)
+- [ ] **0.3.4** Wklej obie wartości tymczasowo do menedżera haseł lub bezpiecznej notatki — wkleisz je w Faza 4 w interaktywne prompty `wrangler secret put` (agent nigdy ich nie zobaczy)
+
+> **CRITICAL — różnica `anon` vs `service_role`**: `anon public` to klucz przeznaczony do publicznego użytku (klient w przeglądarce / SSR), respektuje **Row Level Security (RLS)**. `service_role` to **admin key** bypassujący RLS — **NIGDY** w klientcie, **NIGDY** w MVP. Używanie service_role w SSR byłoby krytycznym lukiem bezpieczeństwa. W tym deployu używamy wyłącznie `anon public`.
+
+### 0.4 — Sanity-check checklist przed sygnałem "gotowe"
+
+Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy zapisane w bezpiecznym miejscu (menedżer haseł / prywatna notatka):
+
+- [ ] **0.4.1** Cloudflare: email konta + hasło + dostęp do 2FA
+- [ ] **0.4.2** Cloudflare: Account Name + Account ID
+- [ ] **0.4.3** Supabase: email/GitHub konto użytkownika + dostęp
+- [ ] **0.4.4** Supabase: Database password projektu `zagroda-hub`
+- [ ] **0.4.5** Supabase: Project URL (`https://<ref>.supabase.co`) — wartość dla `SUPABASE_URL`
+- [ ] **0.4.6** Supabase: `anon public` key — wartość dla `SUPABASE_KEY`
+- [ ] **0.4.7** Plik repo lokalnie z brancha `master`, z czystym working tree (zostanie zweryfikowane w Faza 0.5)
+- [ ] **0.4.8** Lokalne `.env` (jeśli istnieje) dla `npm run dev` ma te same wartości co planowane sekrety — sanity-check że dev działa lokalnie ZANIM ruszamy na prod
+
+### 0.5 — Sygnał "gotowe"
+
+- [ ] **0.5.1** Daj agentowi sygnał `gotowe` (lub `kontynuuj`) w tej konwersacji — wtedy agent uruchamia **Fazę 0.6 — Pre-flight check** (lokalne narzędzia: Node, npm, wrangler, git status)
+
+> **Świadomie odpuszczone na tym etapie**:
+> - `SUPABASE_SERVICE_ROLE_KEY` — kod MVP go nie używa (`astro.config.mjs:17-22` deklaruje schemat tylko dla `SUPABASE_URL` + `SUPABASE_KEY`)
+> - `OPENROUTER_API_KEY` — żadna ścieżka w kodzie obecnie tego nie czyta
+> - Migracje SQL — folder `supabase/migrations/` jest pusty; aplikacja przy pierwszym deployu odpali na pustej DB. Schema dodamy później osobnym krokiem (`supabase migration new ...` przez CLI, który już jest w devDependencies)
+> - Custom domain — celowo zostajemy na `*.workers.dev` na pierwszy deploy
+> - GitHub Personal Access Token / CF API Token — nie potrzebne dla manualnego deployu; pojawią się dopiero przy konfiguracji CI w kolejnej lekcji
+> - Konfiguracja Supabase Auth providers (Google, Facebook OAuth z FR-017/018) — wymaga osobnej konfiguracji w Supabase Dashboard; nie blokuje pierwszego deployu, bo testujemy tylko renderowanie strony głównej
 
 ---
 
-## Faza 0.5 — Pre-flight check (read-only, agent)
+## Faza 0.6 — Pre-flight check (read-only, agent)
 
-**Cel**: zatrzymać deploy jeśli środowisko nie jest gotowe, ZANIM zaczniemy mutować.
+**Cel**: zatrzymać deploy jeśli lokalne środowisko nie jest gotowe, ZANIM zaczniemy mutować.
 
-- [ ] **0.5.1** `node --version` — wymagane ≥ 20.10 (Astro 6 + adapter v13). Repo nie ma `.nvmrc` — flaguję to jako drobny gap w `CLAUDE.md.scaffold`
-- [ ] **0.5.2** `npm --version` — sanity check (≥ 10)
-- [ ] **0.5.3** `git status --porcelain` — musi być pusty. Brudny tree przed deployem = anty-wzorzec
-- [ ] **0.5.4** `npm ci` jeśli `node_modules/` jest nieaktualny względem `package-lock.json`
-- [ ] **0.5.5** `npx wrangler --version` — wrangler ≥ 4.x tranzytywnie z `@astrojs/cloudflare`. Brak = STOP
+- [ ] **0.6.1** `node --version` — wymagane ≥ 20.10 (Astro 6 + adapter v13). Repo nie ma `.nvmrc` — flaguję to jako drobny gap w `CLAUDE.md.scaffold`
+- [ ] **0.6.2** `npm --version` — sanity check (≥ 10)
+- [ ] **0.6.3** `git status --porcelain` — musi być pusty. Brudny tree przed deployem = anty-wzorzec
+- [ ] **0.6.4** `npm ci` jeśli `node_modules/` jest nieaktualny względem `package-lock.json`
+- [ ] **0.6.5** `npx wrangler --version` — wrangler ≥ 4.x tranzytywnie z `@astrojs/cloudflare`. Brak = STOP
 
 ---
 
