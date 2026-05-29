@@ -1,0 +1,13 @@
+{
+  // Only the overrides we own live here. The @astrojs/cloudflare adapter
+  // auto-fills `main`, `assets`, and the SESSION (KV) / IMAGES bindings into
+  // the resolved dist/server/wrangler.json at build time. Do NOT add `main`
+  // here: the Cloudflare Vite plugin validates it at build time against a
+  // not-yet-built dist/, which breaks `npm run build`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "zagroda-hub",
+  "compatibility_date": "2026-04-15",
+  "observability": {
+    "enabled": true
+  }
+}
