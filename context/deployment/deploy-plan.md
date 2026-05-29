@@ -113,38 +113,33 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: jedno źródło prawdy w korzeniu repo z nazwą Workera `zagroda-hub`, spójną z `infrastructure.md` i bez konieczności ruszania `package.json.name`.
 
-- [ ] **2.1** Utwórz `wrangler.jsonc` w **korzeniu repo**:
+- [ ] **2.1** Utwórz `wrangler.jsonc` w **korzeniu repo** — **tylko nadpisania, bez `main`/`assets`** (patrz korekta v3 poniżej):
 
   ```jsonc
   {
     "$schema": "node_modules/wrangler/config-schema.json",
     "name": "zagroda-hub",
-    "main": "./dist/server/entry.mjs",
     "compatibility_date": "2026-04-15",
-    "assets": {
-      "directory": "./dist/client",
-      "binding": "ASSETS"
-    },
     "observability": {
       "enabled": true
     }
   }
   ```
 
-- [ ] **2.2** Dodaj `.wrangler/` do `.gitignore` jeśli brakuje (lokalny cache wranglera)
+- [ ] **2.2** Dodaj `.wrangler/` do `.gitignore` jeśli brakuje (lokalny cache wranglera + redirect config)
 - [ ] **2.3** **Nie commitujemy jeszcze** — najpierw build i weryfikacja w Fazie 3
 
+> **⚠️ KOREKTA v3 — żadnego `main`/`assets` w root configu**: `@cloudflare/vite-plugin` czyta root `wrangler.jsonc` podczas `npm run build` i waliduje, że `main` wskazuje na **istniejący** plik. Faza 3.1 kasuje `dist/`, więc `main: "./dist/server/entry.mjs"` → build error `main field doesn't point to an existing file`. Ponadto root config **scala się** z adapter-generated (nie nadpisuje go w całości), więc ręczne `assets`/`main` tylko duplikują (i potrafią zepsuć ścieżki względne `../client`) to, co adapter ustawia sam. Root config trzyma wyłącznie `name` (override), `compatibility_date` (pin) i `observability`.
+>
 > **Dlaczego `wrangler.jsonc` a nie `wrangler.toml`**: docs Astro i adapter używają JSON; mieszanie formatów daje two-source-of-truth.
 >
-> **Dlaczego `main = "./dist/server/entry.mjs"` a nie `./dist/_worker.js/...`**: Astro 6 + `@astrojs/cloudflare` v13.6.0 emituje SSR entry pod `dist/server/entry.mjs`. Pierwotny plan miał błędną ścieżkę z Pages-era.
->
-> **Dlaczego `directory: "./dist/client"`**: `./dist/` zawiera **też** `dist/server/` z bundlem — wystawienie całego `./dist/` jako static expose'owałoby kod serwera publicznie. Adapter sam celuje w `../client` z perspektywy `dist/server/`.
+> **Bindingi SESSION + IMAGES**: adapter v13.6 auto-dodaje binding `SESSION` (KV, sessions) i `IMAGES` (Cloudflare Images) do `dist/server/wrangler.json`. Zweryfikowane w Fazie 3: po buildzie generowany config ma `name: "zagroda-hub"` (z root override) **oraz** `kv_namespaces: [{binding: "SESSION"}]`, `images: {binding: "IMAGES"}`, `assets: {binding: "ASSETS", directory: "../client"}`, `main: "entry.mjs"`.
 >
 > **Dlaczego `compatibility_date: "2026-04-15"`**: to data którą wybrał adapter w `dist/server/wrangler.json` (zweryfikowane lokalnie). Wcześniejsza data (np. 2024-09-23) cofa funkcje runtime'u, których adapter v13.6 oczekuje.
 >
-> **Dlaczego BEZ `nodejs_compat`**: adapter-generated config nie ustawia tego flag'a, a Supabase działa empirycznie. Jeśli Faza 3 ujawni runtime error (`stream is not defined`, `dynamic require`), wracamy i dodajemy `"compatibility_flags": ["nodejs_compat"]`.
+> **Dlaczego BEZ `nodejs_compat`**: adapter-generated config nie ustawia tego flag'a, a Supabase działa empirycznie. Jeśli Faza 3/6 ujawni runtime error (`stream is not defined`, `dynamic require`), wracamy i dodajemy `"compatibility_flags": ["nodejs_compat"]`.
 >
-> **Worker name override**: root `wrangler.jsonc` ma precedencję nad adapter-generated `dist/server/wrangler.json`. Worker będzie nazwany `zagroda-hub`, nie `10x-astro-starter` (nazwa z `package.json:2`). Nie ruszamy `package.json.name` — to zmiana publiczna pakietu, ortogonalna do deployu.
+> **Worker name override**: root `wrangler.jsonc` ma precedencję nad adapter-generated `dist/server/wrangler.json` (wartość `name` wygrywa). Worker będzie nazwany `zagroda-hub`, nie `10x-astro-starter` (nazwa z `package.json:2`). Nie ruszamy `package.json.name` — to zmiana publiczna pakietu, ortogonalna do deployu.
 
 ---
 
@@ -185,7 +180,7 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
   > Dlaczego teraz, nie po smoke teście: Faza 6 może się rozciągnąć w czasie (przerwy, debug). `wrangler.jsonc` jest już zweryfikowany w Faza 3 — commit go zabezpiecza.
 
 - [ ] **5.2** Przegląd końcowy stanu: wrangler.jsonc istnieje i jest scommitowany, build green, sekrety zarejestrowane, subdomena zaclaimed. Agent raportuje i prosi o zgodę
-- [ ] **5.3** **HUMAN GATE — wymaga Twojej zgody**: agent uruchamia `npx wrangler deploy`. Wrangler resolvuje root `wrangler.jsonc`, build już istnieje
+- [ ] **5.3** **HUMAN GATE — wymaga Twojej zgody**: agent uruchamia `npx wrangler deploy` **z korzenia repo** (build już istnieje). Wrangler wykrywa **redirected configuration**: build zapisał `.wrangler/deploy/config.json`, które przekierowuje z root `wrangler.jsonc` (`Original user's configuration`) na pełny `dist/server/wrangler.json` (`Configuration being used`). Dzięki temu deploy z roota działa mimo że root config nie ma `main` — adapter dostarcza entry + bindingi. Zweryfikowane przez `--dry-run` w Fazie 3.5 (bundle 392 KiB gzip, bindingi SESSION/IMAGES/ASSETS obecne)
 - [ ] **5.4** Zanotuj zwrócony URL (`https://zagroda-hub.<subdomain>.workers.dev`) i **Deployment ID**
 
 ---
@@ -272,6 +267,16 @@ Workers ma overwrite-in-place — usuwanie nie jest potrzebne dla "bad deploy". 
 - Billing notification / hard cap (Free tier — degradacja przy 100k req/day, ale to nie blokuje MVP)
 
 ---
+
+## Notatki z wykonania Faz 2–3 (audit trail v2 → v3)
+
+| Defekt v2 | Co było źle | Co teraz (v3) |
+|-----------|-------------|---------------|
+| Root config z `main: "./dist/server/entry.mjs"` | `@cloudflare/vite-plugin` waliduje `main` podczas `npm run build`; Faza 3.1 kasuje `dist/` → build error `main field doesn't point to an existing file` (chicken-and-egg) | Root config **bez `main`** — adapter ustawia `main: "entry.mjs"` sam w `dist/server/wrangler.json` |
+| Root config z `assets.directory: "./dist/client"` | Root config **scala się** z adapter-generated, nie nadpisuje go w całości; ręczne `assets` duplikuje/psuje ścieżkę względną `../client` adaptera | Root config **bez `assets`** — adapter ustawia `assets: {binding: "ASSETS", directory: "../client"}` |
+| Założenie: root config czytany dopiero przy `wrangler deploy` | Plugin czyta go też przy `astro build` | Root config trzyma wyłącznie `name`/`compatibility_date`/`observability` (nadpisania, nie pełna definicja) |
+| Brak świadomości bindingów SESSION/IMAGES | Minimalny root config nadpisujący całość zgubiłby auto-bindingi adaptera (KV sessions, Cloudflare Images) | Bindingi zachowane — zweryfikowane w generowanym configu po buildzie |
+| Faza 5.3: „wrangler resolvuje root `wrangler.jsonc`" | Niepełne — deploy działa przez **redirected configuration** (`.wrangler/deploy/config.json` → `dist/server/wrangler.json`), nie przez sam root config | Mechanizm opisany w 5.3; zweryfikowany dry-runem (3.5) |
 
 ## Notatki z lokalnej weryfikacji (audit trail v1 → v2)
 
