@@ -191,12 +191,12 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 
 **Cel**: udowodnić że SSR faktycznie renderuje stronę, a nie zwraca pustą skorupę / 200 od redirectu.
 
-- [ ] **6.1** Status code: `curl -I https://<deployed-url>/` → `HTTP/2 200`
-- [ ] **6.2** **Treść SSR** (kluczowy nowy krok względem v1): `curl -sS https://<deployed-url>/ | grep -i "<znany-marker>"` — gdzie marker to znany tag/tekst ze strony głównej (np. fragment `<title>`, nazwa aplikacji, znana sekcja nawigacji). Bez tego 200 może być od pustej skorupy
-- [ ] **6.3** Otwórz URL w przeglądarce — strona ładuje się, brak błędów w DevTools Console
-- [ ] **6.4** `npx wrangler tail` w drugim terminalu. Odśwież stronę → logi pokazują requesty SSR bez `Failed to fetch` / `dynamic require` / `stream is not defined`
-- [ ] **6.5** **Supabase Site URL** (nawet jeśli auth dziś nie używamy): Supabase Dashboard → **Authentication → URL Configuration** → ustaw **Site URL** na `https://<deployed-url>`. Bez tego pierwszy auth flow w przyszłości breaknie z `redirect_to mismatch`
-- [ ] **6.6** Jeśli widoczny Supabase error w `wrangler tail` (`dynamic require not supported`) — STOP. Dodaj `"compatibility_flags": ["nodejs_compat"]` do `wrangler.jsonc`, commit, redeploy. Patrz `infrastructure.md` Risk #1
+- [x] **6.1** Status code: `curl -I https://<deployed-url>/` → `HTTP/2 200`. ✅ HTTP 200, `text/html`, 4704 B
+- [x] **6.2** **Treść SSR** (kluczowy nowy krok względem v1): `curl -sS https://<deployed-url>/ | grep -i "<znany-marker>"` — gdzie marker to znany tag/tekst ze strony głównej (np. fragment `<title>`, nazwa aplikacji, znana sekcja nawigacji). Bez tego 200 może być od pustej skorupy. ✅ marker `10x Astro Starter` znaleziony; pełna treść SSR (nawigacja, hero, karty feature) wyrenderowana
+- [x] **6.3** Otwórz URL w przeglądarce — strona ładuje się, brak błędów w DevTools Console. ✅ potwierdzone przez użytkownika
+- [x] **6.4** `npx wrangler tail` w drugim terminalu. Odśwież stronę → logi pokazują requesty SSR bez `Failed to fetch` / `dynamic require` / `stream is not defined`. ✅ 3 requesty, wszystkie `outcome: ok`, `exceptions: []`, `logs: []`, status 200, edge WAW
+- [x] **6.5** **Supabase Site URL** (nawet jeśli auth dziś nie używamy): Supabase Dashboard → **Authentication → URL Configuration** → ustaw **Site URL** na `https://<deployed-url>`. Bez tego pierwszy auth flow w przyszłości breaknie z `redirect_to mismatch`. ✅ ustawione na `https://zagroda-hub.webpushit.workers.dev` (potwierdzone przez użytkownika)
+- [x] **6.6** Jeśli widoczny Supabase error w `wrangler tail` (`dynamic require not supported`) — STOP. Dodaj `"compatibility_flags": ["nodejs_compat"]` do `wrangler.jsonc`, commit, redeploy. Patrz `infrastructure.md` Risk #1. ✅ N/A — brak błędów Supabase w logach, fallback niepotrzebny
 
 > **Czego nie testujemy w pierwszym deployu**: FR-014 (anti-overbooking) — wymaga concurrent test scenario (`infrastructure.md` Risk #2). Pełne auth flows — wymagają user accounts. Maile transakcyjne — wymagają decyzji Cron Triggers vs webhooki.
 
