@@ -180,17 +180,17 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                              | Suggested issue title                                          | Ready for `/10x-plan` | Notes |
-| ---------- | -------------------------------------- | -------------------------------------------------------------- | --------------------- | ----- |
-| F-01       | booking-schema-and-overbooking-guard   | Schemat domeny + atomowa reguła anty-overbooking + test współbieżności | yes           | Najwyższy fan-out; redukuje główne ryzyko (Risk #2) |
-| F-02       | transactional-email-channel            | Kanał e-maili transakcyjnych na Workers (<5 min)               | yes                   | Można równolegle z F-01; rozstrzygnij mechanizm (Risk #8) |
-| S-01       | owner-publishes-zagroda                | Właściciel publikuje profil zagrody (z bramką weryfikacji e-mail) | no                 | Czeka na F-01 |
-| S-02       | catalog-browse-and-zagroda-page        | Katalog publiczny + filtry + strona zagrody                    | no                    | Czeka na F-01, S-01 |
-| S-03       | guest-booking-request                  | Formularz zapytania + mail potwierdzenia + link anulowania     | no                    | Czeka na F-01, F-02, S-02 |
-| S-04       | gated-acceptance-with-overbooking-guard | Panel akceptacji z blokadą overbookingu (gwiazda)             | no                    | Czeka na F-01, F-02, S-01, S-03 |
-| S-05       | owner-undo-acceptance                  | Cofnięcie akceptacji + mail do nauczyciela                     | no                    | Czeka na F-02, S-04 |
-| S-06       | owner-oauth-and-password-reset         | OAuth Google/Facebook + reset hasła                            | no                    | Czeka na S-01; external: credentiale OAuth |
-| S-07       | oauth-account-merge-guard              | Bezpieczny auto-merge kont OAuth↔e-mail                        | no                    | Zablokowany Open Roadmap Question #1 |
+| Roadmap ID | Change ID                              | Suggested issue title                                          | Issue | Ready for `/10x-plan` | Notes |
+| ---------- | -------------------------------------- | -------------------------------------------------------------- | ----- | --------------------- | ----- |
+| F-01       | booking-schema-and-overbooking-guard   | Schemat domeny + atomowa reguła anty-overbooking + test współbieżności | [#1](https://github.com/webpush-it/zagroda-hub/issues/1) | yes           | Najwyższy fan-out; redukuje główne ryzyko (Risk #2) |
+| F-02       | transactional-email-channel            | Kanał e-maili transakcyjnych na Workers (<5 min)               | [#2](https://github.com/webpush-it/zagroda-hub/issues/2) | yes                   | Można równolegle z F-01; rozstrzygnij mechanizm (Risk #8) |
+| S-01       | owner-publishes-zagroda                | Właściciel publikuje profil zagrody (z bramką weryfikacji e-mail) | [#3](https://github.com/webpush-it/zagroda-hub/issues/3) | no                 | Czeka na F-01 |
+| S-02       | catalog-browse-and-zagroda-page        | Katalog publiczny + filtry + strona zagrody                    | [#4](https://github.com/webpush-it/zagroda-hub/issues/4) | no                    | Czeka na F-01, S-01 |
+| S-03       | guest-booking-request                  | Formularz zapytania + mail potwierdzenia + link anulowania     | [#5](https://github.com/webpush-it/zagroda-hub/issues/5) | no                    | Czeka na F-01, F-02, S-02 |
+| S-04       | gated-acceptance-with-overbooking-guard | Panel akceptacji z blokadą overbookingu (gwiazda)             | [#6](https://github.com/webpush-it/zagroda-hub/issues/6) | no                    | Czeka na F-01, F-02, S-01, S-03 |
+| S-05       | owner-undo-acceptance                  | Cofnięcie akceptacji + mail do nauczyciela                     | [#7](https://github.com/webpush-it/zagroda-hub/issues/7) | no                    | Czeka na F-02, S-04 |
+| S-06       | owner-oauth-and-password-reset         | OAuth Google/Facebook + reset hasła                            | [#8](https://github.com/webpush-it/zagroda-hub/issues/8) | no                    | Czeka na S-01; external: credentiale OAuth |
+| S-07       | oauth-account-merge-guard              | Bezpieczny auto-merge kont OAuth↔e-mail                        | [#9](https://github.com/webpush-it/zagroda-hub/issues/9) | no                    | Zablokowany Open Roadmap Question #1 |
 
 ## Open Roadmap Questions
 
