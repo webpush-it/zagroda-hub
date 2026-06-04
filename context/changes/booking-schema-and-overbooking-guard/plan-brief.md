@@ -21,7 +21,7 @@ Projekt ma działający starter (Astro 6 SSR + Supabase auth + Workers na produk
 | Mechanizm atomowości | `SELECT … FOR UPDATE` na wierszu zagrody w funkcji SQL | Trywialnie poprawna serializacja per zagroda; przy niskim QPS koszt zerowy | Roadmap / Plan |
 | Zakres schematu | Tylko kolumny nośne (bez pól katalogowych, bez tokena anulowania) | S-01/S-03 dołożą swoje kolumny; F-01 niesie tylko regułę i prywatność | Plan |
 | Ekspozycja prymitywy | Wyłącznie RPC (bez endpointu API) | Atomowość żyje w bazie, więc test `rpc()` dowodzi własności; endpoint buduje S-04 | Plan |
-| Środowisko testowe | Lokalny Supabase (Docker), w CI przez `supabase/setup-cli` | Hermetyczne, powtarzalne, zero cloudowych sekretów w jobie testowym | Plan |
+| Środowisko testowe | Lokalny Supabase (Docker), w CI przez `npx supabase` z devDeps (bez setup-cli) | Hermetyczne, powtarzalne, jedna pinowana wersja CLI, zero cloudowych sekretów w jobie testowym | Plan |
 | Postura RLS | RLS-first: anon INSERT `pending`, SELECT tylko właściciel, zmiany stanu tylko przez SECURITY DEFINER | Kontakt nauczyciela chroniony na poziomie bazy niezależnie od błędów w API | Plan |
 | Zakres testów | Wyścig (≥20 iteracji) + pełna macierz sekwencyjna + testy RLS | Kryterium sukcesu #1 to nie tylko race condition — także poprawność SUM i zwalnianie miejsc | Plan |
 | CI | Job testowy od razu w F-01 | Każdy późniejszy slice dotykający schematu przechodzi przez test reguły | Plan |

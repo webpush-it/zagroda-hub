@@ -170,7 +170,7 @@ SELECT COALESCE(SUM(participants_count), 0) INTO v_occupied
 #### Automated Verification:
 
 - Migracje aplikują się czysto od zera: `npx supabase db reset`
-- Funkcja istnieje i ma poprawne uprawnienia: zapytanie psql o `pg_proc` / `has_function_privilege` (smoke w ramach db reset)
+- Anon nie ma uprawnień do funkcji: `psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -tAc "select has_function_privilege('anon','public.accept_booking_request(uuid)','execute')"` → `f` (standardowe creds lokalnego stacka, port z `config.toml`)
 - Typy zawierają funkcję: `npm run db:types` + `npm run lint` + `npm run build`
 
 #### Manual Verification:
@@ -227,7 +227,7 @@ Vitest od zera, helpery łączące się z lokalnym stackiem, pełna macierz test
 
 **Intent**: Dowód prywatności kontaktu nauczyciela i postury RLS-first.
 
-**Contract**: przypadki — (a) anon może INSERT zapytanie `pending`; (b) anon NIE może INSERT ze statusem ≠ `pending`; (c) anon nie widzi żadnych `booking_requests` (SELECT zwraca 0 wierszy); (d) właściciel widzi zapytania swojej zagrody z kontaktem; (e) inny właściciel nie widzi cudzych zapytań; (f) anon nie może wykonać `accept_booking_request` (brak uprawnień); (g) anon/cudzy właściciel nie może UPDATE zapytania.
+**Contract**: przypadki — (a) anon może INSERT zapytanie `pending`; (b) anon NIE może INSERT ze statusem ≠ `pending`; (c) anon nie widzi żadnych `booking_requests` (SELECT zwraca 0 wierszy); (d) właściciel widzi zapytania swojej zagrody z kontaktem; (e) inny właściciel nie widzi cudzych zapytań; (f) anon nie może wykonać `accept_booking_request` (brak uprawnień); (g) anon/cudzy właściciel nie może UPDATE zapytania. Uwaga: anon wstawia gołym `.insert()` bez `.select()` — brak polityki SELECT dla anon sprawia, że `return=representation` padnie nawet przy udanym insercie; chainowanie `.select()` w teście (a) dałoby fałszywy fail polityki.
 
 #### 6. ESLint dla testów
 
@@ -268,7 +268,7 @@ Nowy job testowy w istniejącym workflow — lokalny stack Supabase w GitHub Act
 
 **Intent**: Test reguły domenowej jako bramka na każdy push/PR do `master` — ochrona regresyjna od pierwszego dnia.
 
-**Contract**: nowy job `test` (równolegle z istniejącym `ci`): checkout → setup-node (22, cache npm) → `npm ci` → `supabase/setup-cli@v1` → `npx supabase start` (ubuntu-latest ma Dockera; migracje aplikują się przy starcie świeżego stacka) → eksport kluczy stacka do env (`supabase status -o env`) → `npm test`. Job nie wymaga cloudowych sekretów `SUPABASE_URL`/`SUPABASE_KEY`.
+**Contract**: nowy job `test` (równolegle z istniejącym `ci`): checkout → setup-node (22, cache npm) → `npm ci` → `npx supabase start -x studio,realtime,storage-api,imgproxy,edge-runtime,mailpit` → `npm test`. CLI wyłącznie z devDependencies (`npx` — bez `supabase/setup-cli`): jedna pinowana wersja lokalnie i w CI. Ubuntu-latest ma Dockera; migracje aplikują się przy starcie świeżego stacka; flaga `-x` wycina serwisy niepotrzebne testom (db + auth + PostgREST wystarczą). Żadnego eksportu kluczy do env — globalSetup vitest sam pobiera je przez `supabase status -o json`, identycznie lokalnie i w CI. Job nie wymaga cloudowych sekretów `SUPABASE_URL`/`SUPABASE_KEY`.
 
 ### Success Criteria:
 
@@ -341,7 +341,7 @@ Baza produkcyjna jest pusta (zero tabel domenowych) — obie migracje są czysto
 #### Automated
 
 - [ ] 2.1 Migracje aplikują się czysto od zera: `npx supabase db reset`
-- [ ] 2.2 Funkcja istnieje z poprawnymi uprawnieniami (smoke psql)
+- [ ] 2.2 Anon bez uprawnień do funkcji: psql `has_function_privilege` → `f`
 - [ ] 2.3 Typy zawierają funkcję; lint + build zielone
 
 #### Manual
