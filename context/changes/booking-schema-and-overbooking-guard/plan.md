@@ -352,14 +352,14 @@ Baza produkcyjna jest pusta (zero tabel domenowych) — obie migracje są czysto
 
 #### Automated
 
-- [ ] 3.1 Wszystkie testy przechodzą: `npm test`
-- [ ] 3.2 Test współbieżności stabilny w kilku przebiegach pod rząd
-- [ ] 3.3 Lint przechodzi: `npm run lint`
-- [ ] 3.4 Build nietknięty: `npm run build`
+- [x] 3.1 Wszystkie testy przechodzą: `npm test`
+- [x] 3.2 Test współbieżności stabilny w kilku przebiegach pod rząd
+- [x] 3.3 Lint przechodzi: `npm run lint`
+- [x] 3.4 Build nietknięty: `npm run build`
 
 #### Manual
 
-- [ ] 3.5 Przegląd outputu testu współbieżności (iteracje faktycznie kolidują)
+- [x] 3.5 Przegląd outputu testu współbieżności (iteracje faktycznie kolidują)
 
 ### Phase 4: Job CI
 
