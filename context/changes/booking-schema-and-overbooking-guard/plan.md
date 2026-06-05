@@ -366,7 +366,7 @@ Baza produkcyjna jest pusta (zero tabel domenowych) — obie migracje są czysto
 #### Automated
 
 - [ ] 4.1 Push gałęzi: oba joby (`ci` + `test`) zielone
-- [ ] 4.2 Lint lokalnie: `npm run lint`
+- [x] 4.2 Lint lokalnie: `npm run lint`
 
 #### Manual
 
