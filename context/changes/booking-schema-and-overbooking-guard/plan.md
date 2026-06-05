@@ -340,13 +340,13 @@ Baza produkcyjna jest pusta (zero tabel domenowych) — obie migracje są czysto
 
 #### Automated
 
-- [x] 2.1 Migracje aplikują się czysto od zera: `npx supabase db reset`
-- [x] 2.2 Anon bez uprawnień do funkcji: psql `has_function_privilege` → `f`
-- [x] 2.3 Typy zawierają funkcję; lint + build zielone
+- [x] 2.1 Migracje aplikują się czysto od zera: `npx supabase db reset` — 3c860f0
+- [x] 2.2 Anon bez uprawnień do funkcji: psql `has_function_privilege` → `f` — 3c860f0
+- [x] 2.3 Typy zawierają funkcję; lint + build zielone — 3c860f0
 
 #### Manual
 
-- [x] 2.4 Smoke w SQL editor: akceptacja w limicie + blokada ponad limit
+- [x] 2.4 Smoke w SQL editor: akceptacja w limicie + blokada ponad limit — 3c860f0
 
 ### Phase 3: Infrastruktura testowa + testy reguły
 
