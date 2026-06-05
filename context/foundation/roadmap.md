@@ -3,7 +3,7 @@ project: "Zagroda Hub"
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-05
 prd_version: 2
 main_goal: quality
 top_blocker: time
@@ -29,7 +29,7 @@ Właściciel zagrody edukacyjnej pracuje w terenie (przy zwierzętach, z dziećm
 
 | ID   | Change ID                               | Outcome (user can …)                                                          | Prerequisites          | PRD refs                                                  | Status   |
 | ---- | --------------------------------------- | ----------------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------- | -------- |
-| F-01 | booking-schema-and-overbooking-guard    | (foundation) schemat domeny + atomowa reguła anty-overbooking z testem        | —                      | FR-014, US-01, NFR (concurrency, privacy, historia 12 mc) | ready    |
+| F-01 | booking-schema-and-overbooking-guard    | (foundation) schemat domeny + atomowa reguła anty-overbooking z testem        | —                      | FR-014, US-01, NFR (concurrency, privacy, historia 12 mc) | done     |
 | F-02 | transactional-email-channel             | (foundation) wpięty kanał e-maili transakcyjnych na Workers (<5 min)          | —                      | FR-005, FR-011, FR-016, NFR (e-mail <5 min)               | ready    |
 | S-01 | owner-publishes-zagroda                 | właściciel weryfikuje e-mail, tworzy i publikuje profil zagrody w katalogu    | F-01                   | FR-006, FR-007, FR-009, FR-010                            | proposed |
 | S-02 | catalog-browse-and-zagroda-page         | nauczyciel przegląda i filtruje katalog oraz otwiera stronę zagrody           | F-01, S-01             | FR-001, FR-002, FR-003, US-02                             | proposed |
@@ -74,7 +74,7 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **Unknowns:**
   - Czy per-request model sesji na workerd nie podważa założeń o transakcji DB? (`infrastructure.md` Risk #2) — Owner: dev. Block: no (mechanizm znany: Supabase `rpc()` + `SELECT … FOR UPDATE`; wymaga potwierdzenia testem).
 - **Risk:** Minimalny enabler — ustanawia kontrakt schematu + jedną ryzykowną prymitywę (atomowa akceptacja), nie buduje CRUD katalogu/profilu (to robią slice'y, które ten schemat rozszerzają przez funkcje użytkownika). Sekwencjonowany pierwszy, bo to nośnik kryterium sukcesu #1 i największego ryzyka technicznego; błąd tutaj kompromituje cały produkt.
-- **Status:** ready
+- **Status:** done
 
 ### F-02: Kanał e-maili transakcyjnych
 
@@ -210,3 +210,5 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 ## Done
 
 (Pusta przy pierwszej generacji. `/10x-archive` dopisuje wpis tutaj — i przełącza `Status` elementu na `done` — gdy zmiana o pasującym `Change ID` zostaje zarchiwizowana. NIE wypełniać ręcznie.)
+
+- **F-01: (foundation) minimalny schemat domeny (zagroda z dziennym limitem + turnusy, zapytanie z datą / liczbą uczestników / stanem workflow, powiązanie właściciel↔zagroda, polityka RLS chroniąca kontakt nauczyciela) oraz atomowa operacja akceptacji z blokadą wierszową na poziomie bazy, plus test współbieżności dowodzący „dokładnie jeden sukces".** — Archived 2026-06-05 → `context/archive/2026-06-05-booking-schema-and-overbooking-guard/`. Lesson: —.
