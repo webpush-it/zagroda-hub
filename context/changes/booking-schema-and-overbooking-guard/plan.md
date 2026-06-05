@@ -365,10 +365,10 @@ Baza produkcyjna jest pusta (zero tabel domenowych) — obie migracje są czysto
 
 #### Automated
 
-- [ ] 4.1 Push gałęzi: oba joby (`ci` + `test`) zielone
-- [x] 4.2 Lint lokalnie: `npm run lint`
+- [x] 4.1 Push gałęzi: oba joby (`ci` + `test`) zielone — 0078739
+- [x] 4.2 Lint lokalnie: `npm run lint` — 0078739
 
 #### Manual
 
-- [ ] 4.3 Przegląd czasu joba `test` w Actions
-- [ ] 4.4 (Opcjonalnie) sanity check: job failuje przy zepsutej asercji
+- [x] 4.3 Przegląd czasu joba `test` w Actions — 0078739
+- [x] 4.4 (Opcjonalnie) sanity check: job failuje przy zepsutej asercji — 0078739
