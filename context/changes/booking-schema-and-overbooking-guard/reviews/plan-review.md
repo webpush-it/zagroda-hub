@@ -1,4 +1,5 @@
 ﻿<!-- PLAN-REVIEW-REPORT -->
+
 # Plan Review: Booking Schema & Overbooking Guard (F-01)
 
 - **Plan**: context/changes/booking-schema-and-overbooking-guard/plan.md
@@ -9,13 +10,13 @@
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| End-State Alignment | PASS |
-| Lean Execution | WARNING |
-| Architectural Fitness | PASS |
-| Blind Spots | PASS |
-| Plan Completeness | WARNING |
+| Dimension             | Verdict |
+| --------------------- | ------- |
+| End-State Alignment   | PASS    |
+| Lean Execution        | WARNING |
+| Architectural Fitness | PASS    |
+| Blind Spots           | PASS    |
+| Plan Completeness     | WARNING |
 
 ## Grounding
 

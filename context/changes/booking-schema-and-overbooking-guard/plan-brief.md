@@ -16,16 +16,16 @@ Projekt ma działający starter (Astro 6 SSR + Supabase auth + Workers na produk
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| Mechanizm atomowości | `SELECT … FOR UPDATE` na wierszu zagrody w funkcji SQL | Trywialnie poprawna serializacja per zagroda; przy niskim QPS koszt zerowy | Roadmap / Plan |
-| Zakres schematu | Tylko kolumny nośne (bez pól katalogowych, bez tokena anulowania) | S-01/S-03 dołożą swoje kolumny; F-01 niesie tylko regułę i prywatność | Plan |
-| Ekspozycja prymitywy | Wyłącznie RPC (bez endpointu API) | Atomowość żyje w bazie, więc test `rpc()` dowodzi własności; endpoint buduje S-04 | Plan |
-| Środowisko testowe | Lokalny Supabase (Docker), w CI przez `npx supabase` z devDeps (bez setup-cli) | Hermetyczne, powtarzalne, jedna pinowana wersja CLI, zero cloudowych sekretów w jobie testowym | Plan |
-| Postura RLS | RLS-first: anon INSERT `pending`, SELECT tylko właściciel, zmiany stanu tylko przez SECURITY DEFINER | Kontakt nauczyciela chroniony na poziomie bazy niezależnie od błędów w API | Plan |
-| Zakres testów | Wyścig (≥20 iteracji) + pełna macierz sekwencyjna + testy RLS | Kryterium sukcesu #1 to nie tylko race condition — także poprawność SUM i zwalnianie miejsc | Plan |
-| CI | Job testowy od razu w F-01 | Każdy późniejszy slice dotykający schematu przechodzi przez test reguły | Plan |
-| Obniżenie limitu poniżej sumy | Grandfathering — dozwolone; nowe akceptacje blokowane aż suma spadnie | Reguła zostaje jednym warunkiem w jednym miejscu; UI w S-04 musi stan pokazać | Plan |
+| Decision                      | Choice                                                                                               | Why (1 sentence)                                                                               | Source         |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | -------------- |
+| Mechanizm atomowości          | `SELECT … FOR UPDATE` na wierszu zagrody w funkcji SQL                                               | Trywialnie poprawna serializacja per zagroda; przy niskim QPS koszt zerowy                     | Roadmap / Plan |
+| Zakres schematu               | Tylko kolumny nośne (bez pól katalogowych, bez tokena anulowania)                                    | S-01/S-03 dołożą swoje kolumny; F-01 niesie tylko regułę i prywatność                          | Plan           |
+| Ekspozycja prymitywy          | Wyłącznie RPC (bez endpointu API)                                                                    | Atomowość żyje w bazie, więc test `rpc()` dowodzi własności; endpoint buduje S-04              | Plan           |
+| Środowisko testowe            | Lokalny Supabase (Docker), w CI przez `npx supabase` z devDeps (bez setup-cli)                       | Hermetyczne, powtarzalne, jedna pinowana wersja CLI, zero cloudowych sekretów w jobie testowym | Plan           |
+| Postura RLS                   | RLS-first: anon INSERT `pending`, SELECT tylko właściciel, zmiany stanu tylko przez SECURITY DEFINER | Kontakt nauczyciela chroniony na poziomie bazy niezależnie od błędów w API                     | Plan           |
+| Zakres testów                 | Wyścig (≥20 iteracji) + pełna macierz sekwencyjna + testy RLS                                        | Kryterium sukcesu #1 to nie tylko race condition — także poprawność SUM i zwalnianie miejsc    | Plan           |
+| CI                            | Job testowy od razu w F-01                                                                           | Każdy późniejszy slice dotykający schematu przechodzi przez test reguły                        | Plan           |
+| Obniżenie limitu poniżej sumy | Grandfathering — dozwolone; nowe akceptacje blokowane aż suma spadnie                                | Reguła zostaje jednym warunkiem w jednym miejscu; UI w S-04 musi stan pokazać                  | Plan           |
 
 ## Scope
 
@@ -39,12 +39,12 @@ Dwie addytywne migracje SQL: (1) `zagrody` (owner_id UNIQUE, daily_limit) + `tur
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| --- | --- | --- |
+| Phase                   | What it delivers                                          | Key risk                                                    |
+| ----------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
 | 1. Schemat + RLS + typy | Migracja tabel/enum/polityk, generowane typy, skrypty npm | Źle zaprojektowany kontrakt = churn we wszystkich slice'ach |
-| 2. Prymitywa akceptacji | Funkcja SQL z lockiem i wynikiem strukturalnym | Search-path / uprawnienia / kolejność locków |
-| 3. Testy | Vitest + wyścig + macierz reguły + RLS | Flaky test współbieżności; klucze lokalnego stacka |
-| 4. Job CI | Stack Supabase w Actions + `npm test` na każdym PR | Czas joba (~3–5 min), Docker w runnerze |
+| 2. Prymitywa akceptacji | Funkcja SQL z lockiem i wynikiem strukturalnym            | Search-path / uprawnienia / kolejność locków                |
+| 3. Testy                | Vitest + wyścig + macierz reguły + RLS                    | Flaky test współbieżności; klucze lokalnego stacka          |
+| 4. Job CI               | Stack Supabase w Actions + `npm test` na każdym PR        | Czas joba (~3–5 min), Docker w runnerze                     |
 
 **Prerequisites:** Docker lokalnie (~7 GB RAM dla `supabase start`); brak zależności od innych zmian (F-01 nie ma prerekwizytów).
 **Estimated effort:** ~2–3 sesje po godzinach; fazy 1–2 to głównie SQL, faza 3 jest największa.

@@ -327,14 +327,14 @@ Baza produkcyjna jest pusta (zero tabel domenowych) — obie migracje są czysto
 
 #### Automated
 
-- [ ] 1.1 Migracja aplikuje się czysto: `npx supabase db reset`
-- [ ] 1.2 Typy generują się i kompilują: `npm run db:types` + `npx astro check`
-- [ ] 1.3 Lint przechodzi: `npm run lint`
-- [ ] 1.4 Build przechodzi: `npm run build`
+- [x] 1.1 Migracja aplikuje się czysto: `npx supabase db reset`
+- [x] 1.2 Typy generują się i kompilują: `npm run db:types` + `npx astro check`
+- [x] 1.3 Lint przechodzi: `npm run lint`
+- [x] 1.4 Build przechodzi: `npm run build`
 
 #### Manual
 
-- [ ] 1.5 Przegląd schematu w Supabase Studio (tabele, enum, RLS, polityki)
+- [x] 1.5 Przegląd schematu w Supabase Studio (tabele, enum, RLS, polityki)
 
 ### Phase 2: Atomowa prymitywa akceptacji
 
