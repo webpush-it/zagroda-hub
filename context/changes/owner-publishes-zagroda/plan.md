@@ -347,27 +347,27 @@ Negligible at MVP scale. The new SELECT policies add an `is_published` predicate
 
 #### Automated
 
-- [x] 1.1 Migrations apply cleanly: `npx supabase db reset`
-- [x] 1.2 Regenerated types committed, no drift: `npm run db:types` + `git diff --exit-code src/db/database.types.ts`
-- [x] 1.3 All DB suites green (new + F-01 regression): `npm test`
-- [x] 1.4 Lint passes: `npm run lint`
+- [x] 1.1 Migrations apply cleanly: `npx supabase db reset` — 2c323ff
+- [x] 1.2 Regenerated types committed, no drift: `npm run db:types` + `git diff --exit-code src/db/database.types.ts` — 2c323ff
+- [x] 1.3 All DB suites green (new + F-01 regression): `npm test` — 2c323ff
+- [x] 1.4 Lint passes: `npm run lint` — 2c323ff
 
 #### Manual
 
-- [x] 1.5 Bucket + policies spot-checked in local Studio/psql
+- [x] 1.5 Bucket + policies spot-checked in local Studio/psql — 2c323ff
 
 ### Phase 2: E-mail Verification Loop
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Build passes: `npm run build`
-- [ ] 2.3 Test suites unaffected: `npm test`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Build passes: `npm run build`
+- [x] 2.3 Test suites unaffected: `npm test`
 
 #### Manual
 
-- [ ] 2.4 Local signup → Mailpit link → logged-in on `/dashboard`
-- [ ] 2.5 Unverified signin routes to confirm-email page; resend delivers
+- [x] 2.4 Local signup → Mailpit link → logged-in on `/dashboard`
+- [x] 2.5 Unverified signin routes to confirm-email page; resend delivers
 - [ ] 2.6 Production Supabase dashboard configured (ops checklist)
 
 ### Phase 3: Owner Profile Panel UI

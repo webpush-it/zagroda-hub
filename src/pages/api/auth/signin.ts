@@ -13,8 +13,12 @@ export const POST: APIRoute = async (context) => {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    // Unverified user — route to the resend hub instead of a raw error string.
+    if (error.code === "email_not_confirmed") {
+      return context.redirect(`/auth/confirm-email?email=${encodeURIComponent(email)}`);
+    }
     return context.redirect(`/auth/signin?error=${encodeURIComponent(error.message)}`);
   }
 
-  return context.redirect("/");
+  return context.redirect("/dashboard");
 };
