@@ -32,5 +32,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx supabase start -x studio,realtime,storage-api,imgproxy,edge-runtime,mailpit
+      # storage-api must run: the S-01 migration creates the zagroda-photos
+      # bucket + storage.objects policies. imgproxy stays excluded (no image
+      # transformation — originals only).
+      - run: npx supabase start -x studio,realtime,imgproxy,edge-runtime,mailpit
       - run: npm test

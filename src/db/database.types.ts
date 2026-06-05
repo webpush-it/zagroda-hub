@@ -76,7 +76,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "booking_requests_turnus_id_zagroda_id_fkey"
+            foreignKeyName: "booking_requests_turnus_fkey"
             columns: ["turnus_id", "zagroda_id"]
             isOneToOne: false
             referencedRelation: "turnusy"
@@ -121,25 +121,40 @@ export type Database = {
       }
       zagrody: {
         Row: {
+          city: string | null
           created_at: string
           daily_limit: number
+          description: string | null
           id: string
+          is_published: boolean
           name: string
           owner_id: string
+          photo_path: string | null
+          voivodeship: Database["public"]["Enums"]["voivodeship"] | null
         }
         Insert: {
+          city?: string | null
           created_at?: string
           daily_limit: number
+          description?: string | null
           id?: string
+          is_published?: boolean
           name: string
           owner_id: string
+          photo_path?: string | null
+          voivodeship?: Database["public"]["Enums"]["voivodeship"] | null
         }
         Update: {
+          city?: string | null
           created_at?: string
           daily_limit?: number
+          description?: string | null
           id?: string
+          is_published?: boolean
           name?: string
           owner_id?: string
+          photo_path?: string | null
+          voivodeship?: Database["public"]["Enums"]["voivodeship"] | null
         }
         Relationships: []
       }
@@ -157,6 +172,11 @@ export type Database = {
           requested: number
         }[]
       }
+      email_verified: { Args: never; Returns: boolean }
+      set_zagroda_published: {
+        Args: { publish: boolean; target_zagroda_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       request_status:
@@ -165,6 +185,23 @@ export type Database = {
         | "rejected"
         | "cancelled_by_guest"
         | "withdrawn_by_owner"
+      voivodeship:
+        | "dolnośląskie"
+        | "kujawsko-pomorskie"
+        | "lubelskie"
+        | "lubuskie"
+        | "łódzkie"
+        | "małopolskie"
+        | "mazowieckie"
+        | "opolskie"
+        | "podkarpackie"
+        | "podlaskie"
+        | "pomorskie"
+        | "śląskie"
+        | "świętokrzyskie"
+        | "warmińsko-mazurskie"
+        | "wielkopolskie"
+        | "zachodniopomorskie"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -301,6 +338,24 @@ export const Constants = {
         "rejected",
         "cancelled_by_guest",
         "withdrawn_by_owner",
+      ],
+      voivodeship: [
+        "dolnośląskie",
+        "kujawsko-pomorskie",
+        "lubelskie",
+        "lubuskie",
+        "łódzkie",
+        "małopolskie",
+        "mazowieckie",
+        "opolskie",
+        "podkarpackie",
+        "podlaskie",
+        "pomorskie",
+        "śląskie",
+        "świętokrzyskie",
+        "warmińsko-mazurskie",
+        "wielkopolskie",
+        "zachodniopomorskie",
       ],
     },
   },

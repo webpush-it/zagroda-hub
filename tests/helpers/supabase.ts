@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { Client as PgClient } from "pg";
 import { inject } from "vitest";
 import type { Database } from "../../src/db/database.types";
 
@@ -42,6 +43,30 @@ export async function createOwnerClient(
   return { client, userId: data.user.id };
 }
 
+/**
+ * Creates a signed-in owner whose e-mail is NOT verified.
+ *
+ * Mechanism: create confirmed -> sign in -> clear email_confirmed_at via
+ * direct SQL. The session stays valid (the FR-006 gate reads auth.users,
+ * not the JWT), and the fixture keeps working after S-01 phase 2 flips
+ * `enable_confirmations = true` (unconfirmed users can no longer sign in,
+ * so `email_confirm: false` + signIn would break).
+ */
+export async function createUnverifiedOwnerClient(
+  email: string,
+  password: string,
+): Promise<{ client: TypedClient; userId: string }> {
+  const { client, userId } = await createOwnerClient(email, password);
+  const pg = new PgClient({ connectionString: inject("supabaseDbUrl") });
+  await pg.connect();
+  try {
+    await pg.query("update auth.users set email_confirmed_at = null where id = $1", [userId]);
+  } finally {
+    await pg.end();
+  }
+  return { client, userId };
+}
+
 export function uniqueEmail(prefix = "owner"): string {
   return `${prefix}-${randomUUID()}@test.local`;
 }
@@ -50,8 +75,17 @@ export interface SeedZagrodaOptions {
   ownerId: string;
   dailyLimit: number;
   name?: string;
-  /** Number of turnusy to create (sequential one-hour slots from 08:00). Default 1. */
+  /** Number of turnusy to create (sequential one-hour slots from 08:00). Default 1 (0 allowed). */
   turnusCount?: number;
+  /** Profile fields (S-01). Defaults produce a publish-complete profile. */
+  description?: string | null;
+  voivodeship?: Database["public"]["Enums"]["voivodeship"] | null;
+  city?: string | null;
+  /**
+   * Seed as already published (service_role bypasses RLS and passes the
+   * is_published trigger guard by design). Default false (draft).
+   */
+  published?: boolean;
 }
 
 export interface SeededZagroda {
@@ -63,12 +97,22 @@ export interface SeededZagroda {
 export async function seedZagroda(admin: TypedClient, opts: SeedZagrodaOptions): Promise<SeededZagroda> {
   const { data: zagroda, error: zagrodaError } = await admin
     .from("zagrody")
-    .insert({ owner_id: opts.ownerId, name: opts.name ?? "Testowa Zagroda", daily_limit: opts.dailyLimit })
+    .insert({
+      owner_id: opts.ownerId,
+      name: opts.name ?? "Testowa Zagroda",
+      daily_limit: opts.dailyLimit,
+      description: opts.description === undefined ? "Zagroda testowa z programem edukacyjnym." : opts.description,
+      voivodeship: opts.voivodeship === undefined ? "mazowieckie" : opts.voivodeship,
+      city: opts.city === undefined ? "Płock" : opts.city,
+      is_published: opts.published ?? false,
+    })
     .select("id")
     .single();
   if (zagrodaError) throw new Error(`seedZagroda: zagroda insert failed: ${zagrodaError.message}`);
 
   const turnusCount = opts.turnusCount ?? 1;
+  if (turnusCount === 0) return { zagrodaId: zagroda.id, turnusIds: [] };
+
   const rows = Array.from({ length: turnusCount }, (_, i) => ({
     zagroda_id: zagroda.id,
     label: `Turnus ${i + 1}`,

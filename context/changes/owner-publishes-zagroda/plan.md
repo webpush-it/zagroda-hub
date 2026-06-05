@@ -347,14 +347,14 @@ Negligible at MVP scale. The new SELECT policies add an `is_published` predicate
 
 #### Automated
 
-- [ ] 1.1 Migrations apply cleanly: `npx supabase db reset`
-- [ ] 1.2 Regenerated types committed, no drift: `npm run db:types` + `git diff --exit-code src/db/database.types.ts`
-- [ ] 1.3 All DB suites green (new + F-01 regression): `npm test`
-- [ ] 1.4 Lint passes: `npm run lint`
+- [x] 1.1 Migrations apply cleanly: `npx supabase db reset`
+- [x] 1.2 Regenerated types committed, no drift: `npm run db:types` + `git diff --exit-code src/db/database.types.ts`
+- [x] 1.3 All DB suites green (new + F-01 regression): `npm test`
+- [x] 1.4 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 1.5 Bucket + policies spot-checked in local Studio/psql
+- [x] 1.5 Bucket + policies spot-checked in local Studio/psql
 
 ### Phase 2: E-mail Verification Loop
 
