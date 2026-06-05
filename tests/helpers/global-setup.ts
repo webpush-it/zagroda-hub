@@ -31,7 +31,12 @@ function fromSupabaseStatus(): StackKeys | null {
   const start = stdout.indexOf("{");
   const end = stdout.lastIndexOf("}");
   if (start === -1 || end === -1) return null;
-  const status = JSON.parse(stdout.slice(start, end + 1)) as Record<string, string | undefined>;
+  let status: Record<string, string | undefined>;
+  try {
+    status = JSON.parse(stdout.slice(start, end + 1)) as Record<string, string | undefined>;
+  } catch {
+    return null;
+  }
   if (!status.API_URL || !status.ANON_KEY || !status.SERVICE_ROLE_KEY) return null;
   return { url: status.API_URL, anonKey: status.ANON_KEY, serviceRoleKey: status.SERVICE_ROLE_KEY };
 }
