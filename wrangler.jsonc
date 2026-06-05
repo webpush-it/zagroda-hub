@@ -8,6 +8,6 @@
   "name": "zagroda-hub",
   "compatibility_date": "2026-04-15",
   "observability": {
-    "enabled": true
-  }
+    "enabled": true,
+  },
 }

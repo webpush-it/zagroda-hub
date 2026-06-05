@@ -9,6 +9,7 @@
 Wdrażamy aplikację Zagroda Hub (Astro 6 SSR + React 19 + Supabase) po raz pierwszy na produkcję, zgodnie z decyzją z `context/foundation/infrastructure.md`: **Cloudflare Workers** (GA, 5/5 agent-friendly criteria, runtime `workerd`). Adapter `@astrojs/cloudflare` v13.6.0 jest już wpięty w `astro.config.mjs:7,16` (commit `15a9344 vercel -> cloudflare`). Astro 6 dev server (`astro dev`) odpala `workerd` natywnie przez Cloudflare Vite plugin — `wrangler dev` jest zbędny.
 
 **Co już mamy**:
+
 - Adapter `@astrojs/cloudflare` v13.6.0 wpięty (`astro.config.mjs:7,16`)
 - Klient Supabase w `src/lib/supabase.ts` czyta `SUPABASE_URL` + `SUPABASE_KEY` (uwaga: nazwa, nie `SUPABASE_ANON_KEY`)
 - `package.json` deklaruje `name: "10x-astro-starter"` (← będzie dziedziczone przez Worker, patrz Faza 2)
@@ -75,6 +76,7 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 - [ ] **0.5.1** Daj agentowi sygnał `gotowe` (lub `kontynuuj`) w tej konwersacji — wtedy agent uruchamia **Fazę 0.6 — Pre-flight check** (lokalne narzędzia: Node, npm, wrangler, git status)
 
 > **Świadomie odpuszczone na tym etapie**:
+>
 > - `SUPABASE_SERVICE_ROLE_KEY` — kod MVP go nie używa (`astro.config.mjs:17-22` deklaruje schemat tylko dla `SUPABASE_URL` + `SUPABASE_KEY`)
 > - `OPENROUTER_API_KEY` — żadna ścieżka w kodzie obecnie tego nie czyta
 > - Migracje SQL — folder `supabase/migrations/` jest pusty; aplikacja przy pierwszym deployu odpali na pustej DB. Schema dodamy później osobnym krokiem (`supabase migration new ...` przez CLI, który już jest w devDependencies)
@@ -121,8 +123,8 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
     "name": "zagroda-hub",
     "compatibility_date": "2026-04-15",
     "observability": {
-      "enabled": true
-    }
+      "enabled": true,
+    },
   }
   ```
 
@@ -173,10 +175,12 @@ Zanim dasz agentowi sygnał, sprawdź że masz **wszystko** z poniższej listy z
 **Cel**: stan na masterze zawiera config deployu; aplikacja żyje pod `*.workers.dev`.
 
 - [x] **5.1** Commit infrastruktury **przed deployem** (nie po — commit timing v1 był za późno):
+
   ```
   git add wrangler.jsonc .gitignore
   git commit -m "chore(deploy): wire root wrangler.jsonc for first Cloudflare Workers deploy"
   ```
+
   > Dlaczego teraz, nie po smoke teście: Faza 6 może się rozciągnąć w czasie (przerwy, debug). `wrangler.jsonc` jest już zweryfikowany w Faza 3 — commit go zabezpiecza.
 
   ✅ **5.1 done** — `wrangler.jsonc` + `.gitignore` już w `cfc7642`; working tree czysty, nic nowego do commita.
@@ -245,12 +249,12 @@ Workers ma overwrite-in-place — usuwanie nie jest potrzebne dla "bad deploy". 
 
 ## Pliki tworzone / edytowane
 
-| Plik | Akcja | Faza |
-|------|-------|------|
-| `wrangler.jsonc` | **Nowy** (zamiast `wrangler.toml`) | 2 |
-| `.gitignore` | Edycja — dodać `.wrangler/` jeśli brakuje | 2 |
-| `.env.example` | Edycja — komentarz o `wrangler secret put` | 7 |
-| `CLAUDE.md.scaffold` | Drobna edycja — Vercel → Cloudflare jeśli nieaktualne | 7 |
+| Plik                 | Akcja                                                 | Faza |
+| -------------------- | ----------------------------------------------------- | ---- |
+| `wrangler.jsonc`     | **Nowy** (zamiast `wrangler.toml`)                    | 2    |
+| `.gitignore`         | Edycja — dodać `.wrangler/` jeśli brakuje             | 2    |
+| `.env.example`       | Edycja — komentarz o `wrangler secret put`            | 7    |
+| `CLAUDE.md.scaffold` | Drobna edycja — Vercel → Cloudflare jeśli nieaktualne | 7    |
 
 **Read-only**: `astro.config.mjs`, `src/lib/supabase.ts`, `package.json`, `dist/server/wrangler.json` (generowany), `context/foundation/infrastructure.md`, `context/foundation/tech-stack.md`.
 
@@ -273,29 +277,29 @@ Workers ma overwrite-in-place — usuwanie nie jest potrzebne dla "bad deploy". 
 
 ## Notatki z wykonania Faz 2–3 (audit trail v2 → v3)
 
-| Defekt v2 | Co było źle | Co teraz (v3) |
-|-----------|-------------|---------------|
-| Root config z `main: "./dist/server/entry.mjs"` | `@cloudflare/vite-plugin` waliduje `main` podczas `npm run build`; Faza 3.1 kasuje `dist/` → build error `main field doesn't point to an existing file` (chicken-and-egg) | Root config **bez `main`** — adapter ustawia `main: "entry.mjs"` sam w `dist/server/wrangler.json` |
-| Root config z `assets.directory: "./dist/client"` | Root config **scala się** z adapter-generated, nie nadpisuje go w całości; ręczne `assets` duplikuje/psuje ścieżkę względną `../client` adaptera | Root config **bez `assets`** — adapter ustawia `assets: {binding: "ASSETS", directory: "../client"}` |
-| Założenie: root config czytany dopiero przy `wrangler deploy` | Plugin czyta go też przy `astro build` | Root config trzyma wyłącznie `name`/`compatibility_date`/`observability` (nadpisania, nie pełna definicja) |
-| Brak świadomości bindingów SESSION/IMAGES | Minimalny root config nadpisujący całość zgubiłby auto-bindingi adaptera (KV sessions, Cloudflare Images) | Bindingi zachowane — zweryfikowane w generowanym configu po buildzie |
-| Faza 5.3: „wrangler resolvuje root `wrangler.jsonc`" | Niepełne — deploy działa przez **redirected configuration** (`.wrangler/deploy/config.json` → `dist/server/wrangler.json`), nie przez sam root config | Mechanizm opisany w 5.3; zweryfikowany dry-runem (3.5) |
+| Defekt v2                                                     | Co było źle                                                                                                                                                               | Co teraz (v3)                                                                                              |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Root config z `main: "./dist/server/entry.mjs"`               | `@cloudflare/vite-plugin` waliduje `main` podczas `npm run build`; Faza 3.1 kasuje `dist/` → build error `main field doesn't point to an existing file` (chicken-and-egg) | Root config **bez `main`** — adapter ustawia `main: "entry.mjs"` sam w `dist/server/wrangler.json`         |
+| Root config z `assets.directory: "./dist/client"`             | Root config **scala się** z adapter-generated, nie nadpisuje go w całości; ręczne `assets` duplikuje/psuje ścieżkę względną `../client` adaptera                          | Root config **bez `assets`** — adapter ustawia `assets: {binding: "ASSETS", directory: "../client"}`       |
+| Założenie: root config czytany dopiero przy `wrangler deploy` | Plugin czyta go też przy `astro build`                                                                                                                                    | Root config trzyma wyłącznie `name`/`compatibility_date`/`observability` (nadpisania, nie pełna definicja) |
+| Brak świadomości bindingów SESSION/IMAGES                     | Minimalny root config nadpisujący całość zgubiłby auto-bindingi adaptera (KV sessions, Cloudflare Images)                                                                 | Bindingi zachowane — zweryfikowane w generowanym configu po buildzie                                       |
+| Faza 5.3: „wrangler resolvuje root `wrangler.jsonc`"          | Niepełne — deploy działa przez **redirected configuration** (`.wrangler/deploy/config.json` → `dist/server/wrangler.json`), nie przez sam root config                     | Mechanizm opisany w 5.3; zweryfikowany dry-runem (3.5)                                                     |
 
 ## Notatki z lokalnej weryfikacji (audit trail v1 → v2)
 
-| Defekt v1 | Co było źle | Co teraz |
-|-----------|-------------|----------|
-| `main = "./dist/_worker.js/index.js"` | Adapter v13.6 nie generuje tego pliku w SSR mode | `main = "./dist/server/entry.mjs"` (adapter-emitted) |
-| `[assets] directory = "./dist"` | Wystawiłoby `dist/server/*` z bundlem jako public static | `assets.directory = "./dist/client"` |
-| `compatibility_date = "2024-09-23"` | 19 miesięcy stale; adapter sam wybiera `2026-04-15` | `compatibility_date = "2026-04-15"` |
-| `compatibility_flags = ["nodejs_compat"]` | Adapter v13.6 nie wymaga go w tej dacie; Supabase działa bez | Bez flag'a; fallback w Faza 6.6 jeśli runtime fail |
-| `wrangler.toml` format | Adapter używa JSON, mieszanie → two-source-of-truth | `wrangler.jsonc` |
-| Brak Node version check | Astro 6 + adapter v13 wymaga Node ≥ 20.10 | Faza 0.5 preflight |
-| Brak claim workers.dev subdomain | Pierwszy deploy fail z błędem `register a workers.dev subdomain` | Faza 1.3 explicit human gate |
-| `--dry-run --outdir=dist` | Koliduje z Astro buildem | `--outdir=.wrangler/dry-run` |
-| Hardcoded Supabase region `eu-central-1` | Slug niespójny między dokumentacją a UI | "wybierz z dropdown'a" |
-| Smoke test tylko `curl -I` | 200 może być od pustej skorupy / redirectu | `curl ... \| grep "<marker>"` w 6.2 |
-| Brak Supabase Site URL | Przyszłe auth flows breakną z `redirect_to mismatch` | Faza 6.5 |
-| Rollback R.2 = "usuń Workera" | Overreach — redeploy nadpisuje | R.2 = redeploy; delete tylko jako teardown |
-| Commit wrangler.jsonc w Fazie 7 | Za późno — godziny niezapisanego stanu | Commit w Fazie 5 (po build green) |
-| Faza 7.1 wspomina rename `SUPABASE_KEY` | Zaciemnia zakres deployu | Rename wyrzucony — osobny PR |
+| Defekt v1                                 | Co było źle                                                      | Co teraz                                             |
+| ----------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------- |
+| `main = "./dist/_worker.js/index.js"`     | Adapter v13.6 nie generuje tego pliku w SSR mode                 | `main = "./dist/server/entry.mjs"` (adapter-emitted) |
+| `[assets] directory = "./dist"`           | Wystawiłoby `dist/server/*` z bundlem jako public static         | `assets.directory = "./dist/client"`                 |
+| `compatibility_date = "2024-09-23"`       | 19 miesięcy stale; adapter sam wybiera `2026-04-15`              | `compatibility_date = "2026-04-15"`                  |
+| `compatibility_flags = ["nodejs_compat"]` | Adapter v13.6 nie wymaga go w tej dacie; Supabase działa bez     | Bez flag'a; fallback w Faza 6.6 jeśli runtime fail   |
+| `wrangler.toml` format                    | Adapter używa JSON, mieszanie → two-source-of-truth              | `wrangler.jsonc`                                     |
+| Brak Node version check                   | Astro 6 + adapter v13 wymaga Node ≥ 20.10                        | Faza 0.5 preflight                                   |
+| Brak claim workers.dev subdomain          | Pierwszy deploy fail z błędem `register a workers.dev subdomain` | Faza 1.3 explicit human gate                         |
+| `--dry-run --outdir=dist`                 | Koliduje z Astro buildem                                         | `--outdir=.wrangler/dry-run`                         |
+| Hardcoded Supabase region `eu-central-1`  | Slug niespójny między dokumentacją a UI                          | "wybierz z dropdown'a"                               |
+| Smoke test tylko `curl -I`                | 200 może być od pustej skorupy / redirectu                       | `curl ... \| grep "<marker>"` w 6.2                  |
+| Brak Supabase Site URL                    | Przyszłe auth flows breakną z `redirect_to mismatch`             | Faza 6.5                                             |
+| Rollback R.2 = "usuń Workera"             | Overreach — redeploy nadpisuje                                   | R.2 = redeploy; delete tylko jako teardown           |
+| Commit wrangler.jsonc w Fazie 7           | Za późno — godziny niezapisanego stanu                           | Commit w Fazie 5 (po build green)                    |
+| Faza 7.1 wspomina rename `SUPABASE_KEY`   | Zaciemnia zakres deployu                                         | Rename wyrzucony — osobny PR                         |

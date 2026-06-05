@@ -42,21 +42,22 @@ a starter with PostgreSQL on day one. Auth is the second weight: FR-006/008
 (email+password + verification + reset) plus FR-017/018 (Google + Facebook OAuth
 with verified-email merge guard) is three auth flows the starter must already
 handle. The 10x Astro Starter clears both by shipping Supabase (Postgres + Auth
-+ Storage) wired into Astro + React + TypeScript + Tailwind 4. The mobile-first
-NFR (portrait, one-handed, Chrome Android + Safari iOS) is well-served by
-Astro's island architecture. All four agent-friendly gates pass, so a coding
-agent can reason about the stack without extra scaffolding. Deployment target
-is Vercel rather than the card's Cloudflare default — Astro on Vercel is
-first-class, so the bootstrapper swaps `@astrojs/cloudflare` for
-`@astrojs/vercel`. CI on GitHub Actions with auto-deploy-on-merge matches the
-solo profile.
+
+- Storage) wired into Astro + React + TypeScript + Tailwind 4. The mobile-first
+  NFR (portrait, one-handed, Chrome Android + Safari iOS) is well-served by
+  Astro's island architecture. All four agent-friendly gates pass, so a coding
+  agent can reason about the stack without extra scaffolding. Deployment target
+  is Vercel rather than the card's Cloudflare default — Astro on Vercel is
+  first-class, so the bootstrapper swaps `@astrojs/cloudflare` for
+  `@astrojs/vercel`. CI on GitHub Actions with auto-deploy-on-merge matches the
+  solo profile.
 
 ## Pre-scaffold verification
 
-| Signal       | Value                                                                  | Severity | Notes                                                                                 |
-| ------------ | ---------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------- |
-| npm package  | not run                                                                | n/a      | cmd_template starts with `git clone`; no `create-*` CLI to query                      |
-| GitHub repo  | przeprogramowani/10x-astro-starter last pushed 2026-05-17 (9 days ago) | fresh    | from card.docs_url; default_branch=master, archived=false, stargazers=84              |
+| Signal      | Value                                                                  | Severity | Notes                                                                    |
+| ----------- | ---------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------ |
+| npm package | not run                                                                | n/a      | cmd_template starts with `git clone`; no `create-*` CLI to query         |
+| GitHub repo | przeprogramowani/10x-astro-starter last pushed 2026-05-17 (9 days ago) | fresh    | from card.docs_url; default_branch=master, archived=false, stargazers=84 |
 
 ## Scaffold log
 
@@ -78,12 +79,15 @@ solo profile.
 ### File-by-file move log
 
 Moved (no conflict):
+
 - `.env.example`, `.github/`, `.gitignore`, `.husky/`, `.nvmrc`, `.prettierrc.json`, `.vscode/`, `README.md`, `astro.config.mjs`, `components.json`, `eslint.config.js`, `node_modules/`, `package-lock.json`, `package.json`, `public/`, `src/`, `supabase/`, `tsconfig.json`, `wrangler.jsonc`
 
 Conflicts (existing wins; scaffold lands as `.scaffold` sibling):
+
 - `CLAUDE.md` ← scaffold copy renamed to `CLAUDE.md.scaffold` (existing CLAUDE.md is the user's 10xDevs course instructions, 12050 bytes; scaffold's was 3218 bytes)
 
 Dropped (context/ is canonical in cwd):
+
 - (none — scaffold does not ship a `context/` tree)
 
 ## Post-scaffold audit
@@ -122,23 +126,24 @@ The clustering pattern: most findings cascade from the Cloudflare Workers toolin
 
 ## Hints recorded but not acted on
 
-| Hint                     | Value                  |
-| ------------------------ | ---------------------- |
-| bootstrapper_confidence  | first-class            |
-| quality_override         | false                  |
-| path_taken               | standard               |
-| self_check_answers       | null                   |
-| team_size                | solo                   |
-| deployment_target        | vercel                 |
-| ci_provider              | github-actions         |
-| ci_default_flow          | auto-deploy-on-merge   |
-| has_auth                 | true                   |
-| has_payments             | false                  |
-| has_realtime             | false                  |
-| has_ai                   | false                  |
-| has_background_jobs      | false                  |
+| Hint                    | Value                |
+| ----------------------- | -------------------- |
+| bootstrapper_confidence | first-class          |
+| quality_override        | false                |
+| path_taken              | standard             |
+| self_check_answers      | null                 |
+| team_size               | solo                 |
+| deployment_target       | vercel               |
+| ci_provider             | github-actions       |
+| ci_default_flow         | auto-deploy-on-merge |
+| has_auth                | true                 |
+| has_payments            | false                |
+| has_realtime            | false                |
+| has_ai                  | false                |
+| has_background_jobs     | false                |
 
 Notable surface (v1 surfaces but does not compensate):
+
 - `deployment_target: vercel` while the starter ships Cloudflare adapter + `wrangler.jsonc`. **RESOLVED post-bootstrap (2026-05-26):** swapped `@astrojs/cloudflare` → `@astrojs/vercel` in `astro.config.mjs`, uninstalled `@astrojs/cloudflare` + `wrangler`, removed `wrangler.jsonc`, and updated `.gitignore` (Cloudflare → `.vercel/`). `npm run build` passes with `adapter: @astrojs/vercel`.
 - `ci_provider: github-actions` + `ci_default_flow: auto-deploy-on-merge` — `.github/` from the starter is present but the workflow files were not generated by this run. A future M1L4 skill ships CI scaffolding.
 
@@ -149,6 +154,7 @@ Notable surface (v1 surfaces but does not compensate):
 Next: a future skill will set up agent context (CLAUDE.md, AGENTS.md). For now, your project is scaffolded and verified — happy hacking.
 
 Useful manual steps in the meantime:
+
 - `git init` (if you have not already) to start your own repo history.
 - Review the `CLAUDE.md.scaffold` sibling and decide whether to fold any of its content into your existing `CLAUDE.md`.
 - ~~Bump local Node to 22.14 (the starter's `.nvmrc` pins it) before running `npm run dev`.~~ **DONE (2026-05-26):** installed Node 22.14.0 via nvm and switched to it (`node --version` → v22.14.0).

@@ -27,11 +27,12 @@ a starter with PostgreSQL on day one. Auth is the second weight: FR-006/008
 (email+password + verification + reset) plus FR-017/018 (Google + Facebook OAuth
 with verified-email merge guard) is three auth flows the starter must already
 handle. The 10x Astro Starter clears both by shipping Supabase (Postgres + Auth
-+ Storage) wired into Astro + React + TypeScript + Tailwind 4. The mobile-first
-NFR (portrait, one-handed, Chrome Android + Safari iOS) is well-served by
-Astro's island architecture. All four agent-friendly gates pass, so a coding
-agent can reason about the stack without extra scaffolding. Deployment target
-is Vercel rather than the card's Cloudflare default — Astro on Vercel is
-first-class, so the bootstrapper swaps `@astrojs/cloudflare` for
-`@astrojs/vercel`. CI on GitHub Actions with auto-deploy-on-merge matches the
-solo profile.
+
+- Storage) wired into Astro + React + TypeScript + Tailwind 4. The mobile-first
+  NFR (portrait, one-handed, Chrome Android + Safari iOS) is well-served by
+  Astro's island architecture. All four agent-friendly gates pass, so a coding
+  agent can reason about the stack without extra scaffolding. Deployment target
+  is Vercel rather than the card's Cloudflare default — Astro on Vercel is
+  first-class, so the bootstrapper swaps `@astrojs/cloudflare` for
+  `@astrojs/vercel`. CI on GitHub Actions with auto-deploy-on-merge matches the
+  solo profile.

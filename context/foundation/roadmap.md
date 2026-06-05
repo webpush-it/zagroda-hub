@@ -23,31 +23,31 @@ Właściciel zagrody edukacyjnej pracuje w terenie (przy zwierzętach, z dziećm
 
 **S-04: Właściciel akceptuje/odrzuca zapytanie z atomową blokadą overbookingu** — to milestone walidacyjny, bo kryterium sukcesu #1 ("100% poprawnie blokuje overbooking") wisi właśnie na nim; wszystko inne ma znaczenie tylko jeśli ten przepływ działa.
 
-> *Gwiazda przewodnia* = najmniejszy kompletny (od zapytania gościa do decyzji właściciela) przepływ, którego udane dostarczenie udowadnia rdzenną hipotezę produktu — umieszczony tak wcześnie, jak pozwalają prerekwizyty, bo reszta produktu obudowuje tylko ten rdzeń.
+> _Gwiazda przewodnia_ = najmniejszy kompletny (od zapytania gościa do decyzji właściciela) przepływ, którego udane dostarczenie udowadnia rdzenną hipotezę produktu — umieszczony tak wcześnie, jak pozwalają prerekwizyty, bo reszta produktu obudowuje tylko ten rdzeń.
 
 ## At a glance
 
-| ID    | Change ID                              | Outcome (user can …)                                                        | Prerequisites        | PRD refs                       | Status   |
-| ----- | -------------------------------------- | --------------------------------------------------------------------------- | -------------------- | ------------------------------ | -------- |
-| F-01  | booking-schema-and-overbooking-guard   | (foundation) schemat domeny + atomowa reguła anty-overbooking z testem      | —                    | FR-014, US-01, NFR (concurrency, privacy, historia 12 mc) | ready    |
-| F-02  | transactional-email-channel            | (foundation) wpięty kanał e-maili transakcyjnych na Workers (<5 min)        | —                    | FR-005, FR-011, FR-016, NFR (e-mail <5 min) | ready    |
-| S-01  | owner-publishes-zagroda                | właściciel weryfikuje e-mail, tworzy i publikuje profil zagrody w katalogu  | F-01                 | FR-006, FR-007, FR-009, FR-010 | proposed |
-| S-02  | catalog-browse-and-zagroda-page        | nauczyciel przegląda i filtruje katalog oraz otwiera stronę zagrody         | F-01, S-01           | FR-001, FR-002, FR-003, US-02  | proposed |
-| S-03  | guest-booking-request                  | nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować | F-01, F-02, S-02   | FR-004, FR-011, FR-015, US-02  | proposed |
-| S-04  | gated-acceptance-with-overbooking-guard | właściciel widzi listę/szczegóły i akceptuje/odrzuca z blokadą overbookingu | F-01, F-02, S-01, S-03 | FR-005, FR-012, FR-013, FR-014, US-01 | proposed |
-| S-05  | owner-undo-acceptance                  | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem  | F-02, S-04           | FR-016                         | proposed |
-| S-06  | owner-oauth-and-password-reset         | właściciel loguje się przez Google/Facebook OAuth oraz resetuje hasło       | S-01                 | FR-007, FR-008, FR-017         | proposed |
-| S-07  | oauth-account-merge-guard              | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge | S-06                 | FR-018                         | blocked  |
+| ID   | Change ID                               | Outcome (user can …)                                                          | Prerequisites          | PRD refs                                                  | Status   |
+| ---- | --------------------------------------- | ----------------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------- | -------- |
+| F-01 | booking-schema-and-overbooking-guard    | (foundation) schemat domeny + atomowa reguła anty-overbooking z testem        | —                      | FR-014, US-01, NFR (concurrency, privacy, historia 12 mc) | ready    |
+| F-02 | transactional-email-channel             | (foundation) wpięty kanał e-maili transakcyjnych na Workers (<5 min)          | —                      | FR-005, FR-011, FR-016, NFR (e-mail <5 min)               | ready    |
+| S-01 | owner-publishes-zagroda                 | właściciel weryfikuje e-mail, tworzy i publikuje profil zagrody w katalogu    | F-01                   | FR-006, FR-007, FR-009, FR-010                            | proposed |
+| S-02 | catalog-browse-and-zagroda-page         | nauczyciel przegląda i filtruje katalog oraz otwiera stronę zagrody           | F-01, S-01             | FR-001, FR-002, FR-003, US-02                             | proposed |
+| S-03 | guest-booking-request                   | nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować | F-01, F-02, S-02       | FR-004, FR-011, FR-015, US-02                             | proposed |
+| S-04 | gated-acceptance-with-overbooking-guard | właściciel widzi listę/szczegóły i akceptuje/odrzuca z blokadą overbookingu   | F-01, F-02, S-01, S-03 | FR-005, FR-012, FR-013, FR-014, US-01                     | proposed |
+| S-05 | owner-undo-acceptance                   | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem   | F-02, S-04             | FR-016                                                    | proposed |
+| S-06 | owner-oauth-and-password-reset          | właściciel loguje się przez Google/Facebook OAuth oraz resetuje hasło         | S-01                   | FR-007, FR-008, FR-017                                    | proposed |
+| S-07 | oauth-account-merge-guard               | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge   | S-06                   | FR-018                                                    | blocked  |
 
 ## Streams
 
 Pomoc nawigacyjna — grupuje elementy dzielące łańcuch prerekwizytów. Kanoniczna kolejność wciąż żyje w grafie zależności poniżej; ta tabela to proponowana kolejność czytania w równoległych torach.
 
-| Stream | Theme                       | Chain                                                  | Note                                                                       |
-| ------ | --------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------- |
-| A      | Reguła rezerwacji (rdzeń)   | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` → `S-05`    | Ścieżka krytyczna do gwiazdy `S-04`; sekwencjonowana eagerly zgodnie z celem `quality`. |
-| B      | Powiadomienia e-mail        | `F-02`                                                 | Równoległy enabler; dołącza do Stream A przy `S-03` (i zasila `S-04`/`S-05`). |
-| C      | Pełne logowanie właściciela | `S-06` → `S-07`                                         | Odgałęzia się od Stream A przy `S-01`; zakres-ryzyko-czasu, po gwieździe; `S-07` zablokowany Otwartym pytaniem #1. |
+| Stream | Theme                       | Chain                                               | Note                                                                                                               |
+| ------ | --------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| A      | Reguła rezerwacji (rdzeń)   | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` → `S-05` | Ścieżka krytyczna do gwiazdy `S-04`; sekwencjonowana eagerly zgodnie z celem `quality`.                            |
+| B      | Powiadomienia e-mail        | `F-02`                                              | Równoległy enabler; dołącza do Stream A przy `S-03` (i zasila `S-04`/`S-05`).                                      |
+| C      | Pełne logowanie właściciela | `S-06` → `S-07`                                     | Odgałęzia się od Stream A przy `S-01`; zakres-ryzyko-czasu, po gwieździe; `S-07` zablokowany Otwartym pytaniem #1. |
 
 ## Baseline
 
@@ -180,17 +180,17 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                              | Suggested issue title                                          | Issue | Ready for `/10x-plan` | Notes |
-| ---------- | -------------------------------------- | -------------------------------------------------------------- | ----- | --------------------- | ----- |
-| F-01       | booking-schema-and-overbooking-guard   | Schemat domeny + atomowa reguła anty-overbooking + test współbieżności | [#1](https://github.com/webpush-it/zagroda-hub/issues/1) | yes           | Najwyższy fan-out; redukuje główne ryzyko (Risk #2) |
-| F-02       | transactional-email-channel            | Kanał e-maili transakcyjnych na Workers (<5 min)               | [#2](https://github.com/webpush-it/zagroda-hub/issues/2) | yes                   | Można równolegle z F-01; rozstrzygnij mechanizm (Risk #8) |
-| S-01       | owner-publishes-zagroda                | Właściciel publikuje profil zagrody (z bramką weryfikacji e-mail) | [#3](https://github.com/webpush-it/zagroda-hub/issues/3) | no                 | Czeka na F-01 |
-| S-02       | catalog-browse-and-zagroda-page        | Katalog publiczny + filtry + strona zagrody                    | [#4](https://github.com/webpush-it/zagroda-hub/issues/4) | no                    | Czeka na F-01, S-01 |
-| S-03       | guest-booking-request                  | Formularz zapytania + mail potwierdzenia + link anulowania     | [#5](https://github.com/webpush-it/zagroda-hub/issues/5) | no                    | Czeka na F-01, F-02, S-02 |
-| S-04       | gated-acceptance-with-overbooking-guard | Panel akceptacji z blokadą overbookingu (gwiazda)             | [#6](https://github.com/webpush-it/zagroda-hub/issues/6) | no                    | Czeka na F-01, F-02, S-01, S-03 |
-| S-05       | owner-undo-acceptance                  | Cofnięcie akceptacji + mail do nauczyciela                     | [#7](https://github.com/webpush-it/zagroda-hub/issues/7) | no                    | Czeka na F-02, S-04 |
-| S-06       | owner-oauth-and-password-reset         | OAuth Google/Facebook + reset hasła                            | [#8](https://github.com/webpush-it/zagroda-hub/issues/8) | no                    | Czeka na S-01; external: credentiale OAuth |
-| S-07       | oauth-account-merge-guard              | Bezpieczny auto-merge kont OAuth↔e-mail                        | [#9](https://github.com/webpush-it/zagroda-hub/issues/9) | no                    | Zablokowany Open Roadmap Question #1 |
+| Roadmap ID | Change ID                               | Suggested issue title                                                  | Issue                                                    | Ready for `/10x-plan` | Notes                                                     |
+| ---------- | --------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------- | --------------------- | --------------------------------------------------------- |
+| F-01       | booking-schema-and-overbooking-guard    | Schemat domeny + atomowa reguła anty-overbooking + test współbieżności | [#1](https://github.com/webpush-it/zagroda-hub/issues/1) | yes                   | Najwyższy fan-out; redukuje główne ryzyko (Risk #2)       |
+| F-02       | transactional-email-channel             | Kanał e-maili transakcyjnych na Workers (<5 min)                       | [#2](https://github.com/webpush-it/zagroda-hub/issues/2) | yes                   | Można równolegle z F-01; rozstrzygnij mechanizm (Risk #8) |
+| S-01       | owner-publishes-zagroda                 | Właściciel publikuje profil zagrody (z bramką weryfikacji e-mail)      | [#3](https://github.com/webpush-it/zagroda-hub/issues/3) | no                    | Czeka na F-01                                             |
+| S-02       | catalog-browse-and-zagroda-page         | Katalog publiczny + filtry + strona zagrody                            | [#4](https://github.com/webpush-it/zagroda-hub/issues/4) | no                    | Czeka na F-01, S-01                                       |
+| S-03       | guest-booking-request                   | Formularz zapytania + mail potwierdzenia + link anulowania             | [#5](https://github.com/webpush-it/zagroda-hub/issues/5) | no                    | Czeka na F-01, F-02, S-02                                 |
+| S-04       | gated-acceptance-with-overbooking-guard | Panel akceptacji z blokadą overbookingu (gwiazda)                      | [#6](https://github.com/webpush-it/zagroda-hub/issues/6) | no                    | Czeka na F-01, F-02, S-01, S-03                           |
+| S-05       | owner-undo-acceptance                   | Cofnięcie akceptacji + mail do nauczyciela                             | [#7](https://github.com/webpush-it/zagroda-hub/issues/7) | no                    | Czeka na F-02, S-04                                       |
+| S-06       | owner-oauth-and-password-reset          | OAuth Google/Facebook + reset hasła                                    | [#8](https://github.com/webpush-it/zagroda-hub/issues/8) | no                    | Czeka na S-01; external: credentiale OAuth                |
+| S-07       | oauth-account-merge-guard               | Bezpieczny auto-merge kont OAuth↔e-mail                                | [#9](https://github.com/webpush-it/zagroda-hub/issues/9) | no                    | Zablokowany Open Roadmap Question #1                      |
 
 ## Open Roadmap Questions
 
