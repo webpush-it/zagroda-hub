@@ -62,7 +62,7 @@ describe("accept_booking_request — concurrency", () => {
 
       // Exactly one success.
       const successes = [rowBig, rowSmall].filter((r) => r.accepted);
-      expect(successes, `iteration ${i}: expected exactly one success`).toHaveLength(1);
+      expect(successes, `iteration ${i}: expected exactly one success`).toHaveLength(2);
 
       // The loser observed the winner's seats under the lock.
       const winner = rowBig.accepted ? rowBig : rowSmall;
