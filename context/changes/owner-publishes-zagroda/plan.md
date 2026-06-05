@@ -360,28 +360,28 @@ Negligible at MVP scale. The new SELECT policies add an `is_published` predicate
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Build passes: `npm run build`
-- [x] 2.3 Test suites unaffected: `npm test`
+- [x] 2.1 Lint passes: `npm run lint` — 71a676d
+- [x] 2.2 Build passes: `npm run build` — 71a676d
+- [x] 2.3 Test suites unaffected: `npm test` — 71a676d
 
 #### Manual
 
-- [x] 2.4 Local signup → Mailpit link → logged-in on `/dashboard`
-- [x] 2.5 Unverified signin routes to confirm-email page; resend delivers
+- [x] 2.4 Local signup → Mailpit link → logged-in on `/dashboard` — 71a676d
+- [x] 2.5 Unverified signin routes to confirm-email page; resend delivers — 71a676d
 - [ ] 2.6 Production Supabase dashboard configured (ops checklist)
 
 ### Phase 3: Owner Profile Panel UI
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Build passes: `npm run build`
-- [ ] 3.3 All suites still green: `npm test`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Build passes: `npm run build`
+- [x] 3.3 All suites still green: `npm test`
 
 #### Manual
 
-- [ ] 3.4 Full mobile one-handed flow (signup → profile → turnusy → photo → publish)
-- [ ] 3.5 Publish gate UX (zero-turnusy blocked, Polish message)
-- [ ] 3.6 Anon sees published only; unpublish hides
-- [ ] 3.7 Turnus-with-requests delete blocked with friendly 409
-- [ ] 3.8 Photo replace works (old object cleaned up)
+- [x] 3.4 Full mobile one-handed flow (signup → profile → turnusy → photo → publish)
+- [x] 3.5 Publish gate UX (zero-turnusy blocked, Polish message)
+- [x] 3.6 Anon sees published only; unpublish hides
+- [x] 3.7 Turnus-with-requests delete blocked with friendly 409
+- [x] 3.8 Photo replace works (old object cleaned up)

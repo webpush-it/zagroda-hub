@@ -1,27 +1,58 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
+import ZagrodaProfileForm, { type ZagrodaInitialData } from "@/components/zagroda/ZagrodaProfileForm";
+import { createClient } from "@/lib/supabase";
 
 const { user } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let initialData: ZagrodaInitialData | null = null;
+let photoUrl: string | null = null;
+
+if (supabase && user) {
+  const { data: zagroda } = await supabase
+    .from("zagrody")
+    .select(
+      "name, description, voivodeship, city, daily_limit, is_published, photo_path, turnusy(id, label, start_time, end_time)",
+    )
+    .eq("owner_id", user.id)
+    .maybeSingle();
+
+  if (zagroda) {
+    initialData = {
+      name: zagroda.name,
+      description: zagroda.description ?? "",
+      voivodeship: zagroda.voivodeship,
+      city: zagroda.city ?? "",
+      daily_limit: zagroda.daily_limit,
+      is_published: zagroda.is_published,
+      turnusy: zagroda.turnusy
+        .map((t) => ({
+          id: t.id,
+          label: t.label,
+          start_time: t.start_time.slice(0, 5),
+          end_time: t.end_time.slice(0, 5),
+        }))
+        .sort((a, b) => a.start_time.localeCompare(b.start_time)),
+    };
+    if (zagroda.photo_path) {
+      photoUrl = supabase.storage.from("zagroda-photos").getPublicUrl(zagroda.photo_path).data.publicUrl;
+    }
+  }
+}
 ---
 
-<Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Dashboard
-      </h1>
-      <p class="text-blue-100/80">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
-      </p>
-      <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
-        >
-          Sign out
-        </button>
-      </form>
+<Layout title="Panel zagrody">
+  <div class="bg-cosmic min-h-screen p-4">
+    <div class="mx-auto w-full max-w-md">
+      <Topbar />
+      <main class="rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl">
+        <h1 class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+          Panel zagrody
+        </h1>
+        <ZagrodaProfileForm client:load initialData={initialData} photoUrl={photoUrl} />
+      </main>
     </div>
   </div>
 </Layout>
