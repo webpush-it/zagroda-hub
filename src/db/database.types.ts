@@ -148,7 +148,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      accept_booking_request: {
+        Args: { request_id: string }
+        Returns: {
+          accepted: boolean
+          daily_limit: number
+          occupied: number
+          requested: number
+        }[]
+      }
     }
     Enums: {
       request_status:
