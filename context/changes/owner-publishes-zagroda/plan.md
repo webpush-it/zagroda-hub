@@ -330,6 +330,7 @@ Negligible at MVP scale. The new SELECT policies add an `is_published` predicate
 - All schema changes are additive except the FK `CASCADE → RESTRICT` swap; no rows reference turnusy in production yet, so the swap is risk-free now and load-bearing later.
 - Existing production users were created with confirmations disabled → `email_confirmed_at` already set → unaffected by the gate.
 - Prod Supabase dashboard changes (confirmations ON, Site URL, e-mail template) must land in the same window as the Phase 2 deploy — see Phase 2 change #6.
+- **Addendum (post-implementation)**: `20260606010000_zagroda_photos_select_policy.sql` added during Phase 3 verification — photo replace silently orphaned old Storage objects because `remove()` SELECTs under caller RLS first; without an owner SELECT policy it no-ops.
 
 ## References
 

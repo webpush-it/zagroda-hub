@@ -13,7 +13,9 @@
     "test": "vitest run",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
-    "db:types": "supabase gen types typescript --local > src/db/database.types.ts"
+    "db:types": "supabase gen types typescript --local > src/db/database.types.ts",
+    "db:push": "supabase db push",
+    "deploy": "npm run build && npm run db:push && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

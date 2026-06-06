@@ -32,7 +32,7 @@ Review positives: 0 DRIFT / 0 MISSING across all planned changes; lessons.md loc
 - **Location**: supabase/migrations/20260606010000_zagroda_photos_select_policy.sql
 - **Detail**: Added during Phase 3 verification (photo replace silently orphaned old objects — Storage's remove() SELECTs under caller RLS first; with no SELECT policy it no-ops). The migration header and the p3 commit message document the why, but plan.md (Changes Required / Migration Notes) says nothing. Future readers diffing plan vs. migrations see an unexplained file.
 - **Fix**: Add a one-line addendum to the plan's "Migration Notes" section referencing the migration and the verification finding that motivated it.
-- **Decision**: PENDING
+- **Decision**: FIXED — addendum added to plan.md Migration Notes
 
 ### F2 — Turnusy reconcile is non-atomic (no transaction)
 
@@ -51,7 +51,7 @@ Review positives: 0 DRIFT / 0 MISSING across all planned changes; lessons.md loc
   - Tradeoff: New migration + function + test coverage right after the change closed; expands S-01 scope post-implementation.
   - Confidence: MED — pattern exists (accept_booking_request), but untested scope growth after sign-off.
   - Blind spot: Interaction with S-03's planned guard design — might get reworked twice.
-- **Decision**: PENDING
+- **Decision**: FIXED via Fix A — non-atomicity comment + TODO(S-03) added at src/pages/api/zagroda/index.ts:74
 
 ### F3 — Prod DB had no migration path (process gap)
 
@@ -61,7 +61,7 @@ Review positives: 0 DRIFT / 0 MISSING across all planned changes; lessons.md loc
 - **Location**: N/A (deploy pipeline)
 - **Detail**: Deploy = wrangler only. Neither the plan, CI, nor any runbook pushed migrations to the hosted DB — F-01 and S-01 schemas lived only locally until the production smoke failed. Fixed ad-hoc this session (6 migrations applied via Management API, bookkeeping recorded in supabase_migrations.schema_migrations), but the class of failure will recur on every future slice unless captured.
 - **Fix**: Record as a recurring rule via /10x-lesson (deploy checklist: schema changes require `supabase db push` / CI step before or with the worker deploy).
-- **Decision**: PENDING
+- **Decision**: FIXED + ACCEPTED-AS-RULE: "Deploy: schema changes ship with the worker, never behind it" — npm `deploy`/`db:push` scripts added, CI deploy job (auto on master, migrations before worker) added to ci.yml, infrastructure.md approval line updated, lesson appended to lessons.md. New GitHub secrets required: SUPABASE_ACCESS_TOKEN, SUPABASE_DB_PASSWORD, CLOUDFLARE_API_TOKEN.
 
 ### F4 — signin/signup: unvalidated casts + raw error reflection
 
@@ -71,7 +71,7 @@ Review positives: 0 DRIFT / 0 MISSING across all planned changes; lessons.md loc
 - **Location**: src/pages/api/auth/signin.ts:6,20 / signup.ts:6
 - **Detail**: `form.get("email") as string` without zod (pre-existing starter pattern; plan only scoped error-mapping here). Non-mapped errors reflect Supabase's raw message into the redirect query. resend.ts now sets the better precedent (zod + fixed Polish strings).
 - **Fix**: Align signin/signup with the resend.ts pattern when next touching auth (S-06 password reset is the natural moment).
-- **Decision**: PENDING
+- **Decision**: FIXED — signin/signup rewritten to resend.ts pattern (zod schemas, fixed Polish strings, invalid_credentials/weak_password mapped, no raw Supabase message reflection); lint + 34/34 tests green
 
 ### F5 — Select-then-insert upsert races owner_id UNIQUE
 
@@ -81,4 +81,4 @@ Review positives: 0 DRIFT / 0 MISSING across all planned changes; lessons.md loc
 - **Location**: src/pages/api/zagroda/index.ts:46-72
 - **Detail**: Two concurrent first-saves could both miss `existing` and one insert dies on the UNIQUE constraint as a generic 500. Practically unreachable (one owner, one session, button disabled while saving); DB integrity holds either way.
 - **Fix**: Switch to `.upsert(..., { onConflict: "owner_id" })` if ever hardening this path.
-- **Decision**: PENDING
+- **Decision**: FIXED — select-then-insert replaced with `.upsert(..., { onConflict: "owner_id" })`; is_published absent from payload so DO UPDATE never touches it; lint + 34/34 tests green

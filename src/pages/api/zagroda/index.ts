@@ -43,35 +43,25 @@ export const PUT: APIRoute = async (context) => {
 
   // Upsert the caller's zagroda (owner_id UNIQUE — one zagroda per owner). RLS
   // enforces ownership on both paths; the INSERT policy also forces is_published = false.
-  const { data: existing, error: selectError } = await supabase
+  // onConflict: "owner_id" — concurrent first-saves converge on one row instead of
+  // the loser dying on the UNIQUE constraint as a generic 500. is_published is not
+  // in the payload, so DO UPDATE never touches it (published stays published).
+  const { data: upserted, error: upsertError } = await supabase
     .from("zagrody")
+    .upsert({ ...profile, owner_id: user.id }, { onConflict: "owner_id" })
     .select("id")
-    .eq("owner_id", user.id)
-    .maybeSingle();
-  if (selectError) {
-    return json({ error: "Nie udało się odczytać profilu" }, 500);
+    .single();
+  if (upsertError) {
+    return json({ error: "Nie udało się zapisać profilu" }, 500);
   }
-
-  let zagrodaId: string;
-  if (existing) {
-    const { error } = await supabase.from("zagrody").update(profile).eq("id", existing.id);
-    if (error) {
-      return json({ error: "Nie udało się zapisać profilu" }, 500);
-    }
-    zagrodaId = existing.id;
-  } else {
-    const { data: inserted, error } = await supabase
-      .from("zagrody")
-      .insert({ ...profile, owner_id: user.id })
-      .select("id")
-      .single();
-    if (error) {
-      return json({ error: "Nie udało się utworzyć profilu" }, 500);
-    }
-    zagrodaId = inserted.id;
-  }
+  const zagrodaId = upserted.id;
 
   // Reconcile turnusy: update rows with id, insert rows without, delete missing ones.
+  // NON-ATOMIC: each step is an independent REST call — a mid-loop failure (e.g. 23503
+  // on delete) leaves a partially reconciled state behind a 409/500. Retry converges:
+  // reconcile is keyed by id and deletes-missing, so a second save self-heals.
+  // TODO(S-03): move into a SECURITY DEFINER function (single transaction) when the
+  // booking/turnusy write paths get the turnus-edit guard.
   const { data: current, error: turnusyError } = await supabase
     .from("turnusy")
     .select("id")
