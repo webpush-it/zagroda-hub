@@ -81,4 +81,4 @@ Review positives: 0 DRIFT / 0 MISSING across all planned changes; lessons.md loc
 - **Location**: src/pages/api/zagroda/index.ts:46-72
 - **Detail**: Two concurrent first-saves could both miss `existing` and one insert dies on the UNIQUE constraint as a generic 500. Practically unreachable (one owner, one session, button disabled while saving); DB integrity holds either way.
 - **Fix**: Switch to `.upsert(..., { onConflict: "owner_id" })` if ever hardening this path.
-- **Decision**: FIXED — select-then-insert replaced with `.upsert(..., { onConflict: "owner_id" })`; is_published absent from payload so DO UPDATE never touches it; lint + 34/34 tests green
+- **Decision**: FIXED — select-then-insert replaced with `.upsert(..., { onConflict: "owner_id" })`; is_published absent from payload so DO UPDATE never touches it; lint + 34/34 tests green. Prod smoke 2026-06-06: fresh account, PUT #1 (insert) + PUT #2 (conflict → DO UPDATE under RLS) both ok on the same row, is_published untouched, turnus reconciled; test data cleaned up.
