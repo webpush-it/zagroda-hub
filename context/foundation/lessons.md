@@ -15,3 +15,10 @@
 - **Problem**: Neither the plan, CI, nor any runbook pushed migrations to the hosted DB. Fixed ad-hoc (6 migrations via Management API + bookkeeping in supabase_migrations.schema_migrations), but the class of failure recurs on every slice that touches schema unless the deploy path carries migrations.
 - **Rule**: Every production deploy goes through a path that runs `supabase db push` BEFORE `wrangler deploy` — locally `npm run deploy`, in CI the `deploy` job on master. Bare `npx wrangler deploy` after a schema-touching change is a process violation. Migrations stay additive/backwards-compatible so the old worker survives the window (and `wrangler rollback` stays safe).
 - **Applies to**: Every future slice with a migration (S-02+); plan "Migration Notes" sections; any change to ci.yml's deploy job.
+
+## Set wrangler secrets from a newline-free source on Windows
+
+- **Context**: Any phase that sets Cloudflare Worker secrets via `npx wrangler secret put NAME` from a Windows/PowerShell shell — esp. `/10x-implement` prod-smoke and deploy steps reading keys/tokens (service-role JWTs, API keys).
+- **Problem**: Piping with PowerShell `"value" | npx wrangler secret put NAME` appends a trailing newline to the stored value. The secret is non-empty (so `wrangler secret list` shows it and null-guards pass), but the value is corrupted. Discovered in F-02 prod smoke: `SUPABASE_SERVICE_ROLE_KEY` with `\n` made the admin-client JWT invalid → enqueue 401 (silent `enqueued:false`); `BREVO_API_KEY` with `\n` → Brevo 401 "Key not found". Hours lost because the failure looked like a code/no-op-mode bug, not a corrupted secret.
+- **Rule**: On Windows, never set wrangler secrets with PowerShell `"value" | npx wrangler secret put`. Pipe from a newline-free source — `printf '%s' 'value' | npx wrangler secret put NAME` (bash) — and verify the runtime actually reads the value, not just that `wrangler secret list` names it.
+- **Applies to**: implement, impl-review
