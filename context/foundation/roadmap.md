@@ -3,7 +3,7 @@ project: "Zagroda Hub"
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-06
+updated: 2026-06-07
 prd_version: 2
 main_goal: quality
 top_blocker: time
@@ -32,7 +32,7 @@ Właściciel zagrody edukacyjnej pracuje w terenie (przy zwierzętach, z dziećm
 | F-01 | booking-schema-and-overbooking-guard    | (foundation) schemat domeny + atomowa reguła anty-overbooking z testem        | —                      | FR-014, US-01, NFR (concurrency, privacy, historia 12 mc) | done     |
 | F-02 | transactional-email-channel             | (foundation) wpięty kanał e-maili transakcyjnych na Workers (<5 min)          | —                      | FR-005, FR-011, FR-016, NFR (e-mail <5 min)               | ready    |
 | S-01 | owner-publishes-zagroda                 | właściciel weryfikuje e-mail, tworzy i publikuje profil zagrody w katalogu    | F-01                   | FR-006, FR-007, FR-009, FR-010                            | done     |
-| S-02 | catalog-browse-and-zagroda-page         | nauczyciel przegląda i filtruje katalog oraz otwiera stronę zagrody           | F-01, S-01             | FR-001, FR-002, FR-003, US-02                             | proposed |
+| S-02 | catalog-browse-and-zagroda-page         | nauczyciel przegląda i filtruje katalog oraz otwiera stronę zagrody           | F-01, S-01             | FR-001, FR-002, FR-003, US-02                             | done     |
 | S-03 | guest-booking-request                   | nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować | F-01, F-02, S-02       | FR-004, FR-011, FR-015, US-02                             | proposed |
 | S-04 | gated-acceptance-with-overbooking-guard | właściciel widzi listę/szczegóły i akceptuje/odrzuca z blokadą overbookingu   | F-01, F-02, S-01, S-03 | FR-005, FR-012, FR-013, FR-014, US-01                     | proposed |
 | S-05 | owner-undo-acceptance                   | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem   | F-02, S-04             | FR-016                                                    | proposed |
@@ -114,7 +114,7 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **Unknowns:**
   - Filtr dostępności (FR-002) czyta sumę zaakceptowanych miejsc na dany dzień — czy to ten sam odczyt co reguła F-01? — Owner: dev. Block: no.
 - **Risk:** Konsumuje opublikowane zagrody z S-01, więc po nim w kolejności; sam katalog jest niskiego ryzyka domenowego (publiczny listing), ale filtr dostępności dotyka danych rezerwacji z F-01.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Nauczyciel wysyła zapytanie o rezerwację
 
@@ -213,3 +213,4 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 
 - **F-01: (foundation) minimalny schemat domeny (zagroda z dziennym limitem + turnusy, zapytanie z datą / liczbą uczestników / stanem workflow, powiązanie właściciel↔zagroda, polityka RLS chroniąca kontakt nauczyciela) oraz atomowa operacja akceptacji z blokadą wierszową na poziomie bazy, plus test współbieżności dowodzący „dokładnie jeden sukces".** — Archived 2026-06-05 → `context/archive/2026-06-05-booking-schema-and-overbooking-guard/`. Lesson: —.
 - **S-01: właściciel z zweryfikowanym e-mailem tworzy i edytuje profil zagrody (nazwa, opis, lokalizacja, zdjęcie, dzienny limit, turnusy z zakresem HH:MM-HH:MM), który natychmiast pojawia się w katalogu publicznym.** — Archived 2026-06-06 → `context/archive/2026-06-05-owner-publishes-zagroda/`. Lesson: —.
+- **S-02: nauczyciel przegląda publiczny katalog, filtruje po województwie i mieście (AND) oraz opcjonalnie po dacie i liczbie uczestników (zagrody bez wolnych miejsc znikają/oznaczone), i otwiera stronę pojedynczej zagrody.** — Archived 2026-06-07 → `context/archive/2026-06-07-catalog-browse-and-zagroda-page/`. Lesson: —.

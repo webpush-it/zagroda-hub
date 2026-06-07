@@ -1,10 +1,10 @@
 ---
 change_id: catalog-browse-and-zagroda-page
 title: Catalog browse and zagroda page
-status: impl_reviewed
+status: archived
 created: 2026-06-07
 updated: 2026-06-07
-archived_at: null
+archived_at: 2026-06-07T20:52:10Z
 ---
 
 ## Notes
