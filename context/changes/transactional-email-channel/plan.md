@@ -341,6 +341,6 @@ One additive migration (`email_outbox` + `claim_due_emails`). No existing tables
 #### Manual
 
 - [x] 3.5 Brevo sender verified; four secrets visible in `npx wrangler secret list` — 96be4f9
-- [ ] 3.6 Prod smoke: test email delivered with timestamped < 5 min evidence recorded
+- [x] 3.6 Prod smoke: test email delivered with timestamped < 5 min evidence recorded
 - [x] 3.7 Retry path observed (row stays pending, later drain picks it up) — 96be4f9
-- [ ] 3.8 Unauthenticated test-endpoint call returns 401 on prod
+- [x] 3.8 Unauthenticated test-endpoint call returns 401 on prod

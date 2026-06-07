@@ -1,7 +1,7 @@
 ---
 change_id: transactional-email-channel
 title: Transactional email channel
-status: implementing
+status: implemented
 created: 2026-06-07
 updated: 2026-06-07
 archived_at: null
@@ -38,10 +38,17 @@ Brevo sender verified (user-confirmed delivery), all four production secrets set
 
 `email_outbox` migration is NOT yet on prod (REST 404 confirmed). Per deploy-lesson, migrations ship before the worker — the prod `email_outbox` migration + worker will deploy through the **CI `deploy` job on master** (which runs `supabase link` → `supabase db push` → `wrangler deploy` with its own secrets). Local `npm run deploy` was not run (no prod DB password locally). Phase 3 code is committed now; prod smoke happens post-merge.
 
-### Open after merge/deploy (prod smoke)
+### Prod smoke — DONE (2026-06-07, post-merge)
 
-- **3.6** Prod smoke: after CI deploy, create a throwaway confirmed user via prod admin API (`beska.konrad+f02smoke@gmail.com` Gmail alias), sign in on the deployed app, `POST /api/dev/test-email`, confirm inbox arrival, record send→inbox timestamps (<5 min) + `provider_message_id`, then delete the throwaway user.
-  - Send timestamp: _pending deploy_
-  - Inbox arrival timestamp: _pending deploy_
-  - `provider_message_id`: _pending deploy_
-- **3.8** Unauthenticated `POST /api/dev/test-email` on prod → 401: _pending deploy_
+PR #12 merged to master 21:38 UTC; CI `deploy` job (ci+test+deploy all green) pushed the `email_outbox` migration to prod then `wrangler deploy`. Verified `email_outbox` exists on prod (REST 200) and cron `*/5 * * * *` is live (`wrangler deploy` output: `schedule: */5 * * * *`).
+
+**Gotcha fixed:** the four secrets first set via PowerShell `"value" | wrangler secret put` carried a trailing newline → `SUPABASE_SERVICE_ROLE_KEY` made the admin client's JWT invalid (enqueue 401) and `BREVO_API_KEY` made Brevo return 401 "Key not found". Re-set all four via `printf '%s'` (no trailing newline) → resolved. **Lesson candidate:** on Windows, always pipe wrangler secrets with `printf '%s'` / a newline-free source, never PowerShell `"x" |`.
+
+- **3.6 PASSED.** Throwaway confirmed user `beska.konrad+f02smoke@gmail.com` created via prod admin API, signed in on the deployed app, `POST /api/dev/test-email` → `{enqueued:true, claimed:1, sent:1, failed:0}`.
+  - Row `94de5b42-d9dc-4154-8cbc-f50bcba182e5`: `status=sent`
+  - created_at `2026-06-07T21:51:34.391Z` → sent_at `2026-06-07T21:51:34.566Z` (**~175 ms enqueue→provider-accept, far under the 5 min NFR**)
+  - `provider_message_id` `<202606072151.96302265790@smtp-relay.mailin.fr>`
+  - Inbox arrival: Brevo accepted (messageId issued); same inbox confirmed reachable by the earlier verify mail. **User to glance at `beska.konrad@gmail.com` to confirm landing.**
+- **3.7 also observed on PROD.** First smoke attempt (before the Brevo key was fixed) left the row `pending`, `attempts=1`, `last_error="Brevo responded 401: Key not found"` — real-runtime retry-safety, not just local.
+- **3.8 PASSED.** Unauthenticated `POST /api/dev/test-email` on prod → **401**.
+- **Cleanup:** both prod test rows deleted, throwaway user deleted (admin API 404 confirms). Prod `email_outbox` row count back to 0.
