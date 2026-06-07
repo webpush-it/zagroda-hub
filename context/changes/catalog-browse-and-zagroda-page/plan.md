@@ -298,29 +298,29 @@ The public single-zagroda page with the full profile, proper 404 behavior, and t
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Build passes: `npm run build`
-- [x] 2.3 Test suite stays green: `npm test`
+- [x] 2.1 Linting passes: `npm run lint` — 6cc6228
+- [x] 2.2 Build passes: `npm run build` — 6cc6228
+- [x] 2.3 Test suite stays green: `npm test` — 6cc6228
 
 #### Manual
 
-- [x] 2.4 Mobile walkthrough: `/` → catalog → published zagrody, newest first
-- [x] 2.5 Województwo + miasto AND filter; auto-narrowed city dropdown
-- [x] 2.6 Availability badge: muted, "Brak wolnych miejsc", below available, not clickable
-- [x] 2.7 Date alone works; osoby disabled until date set
-- [x] 2.8 Empty state "Brak wyników"; URL shareable
-- [x] 2.9 No-JS fallback filters end-to-end
+- [x] 2.4 Mobile walkthrough: `/` → catalog → published zagrody, newest first — 6cc6228
+- [x] 2.5 Województwo + miasto AND filter; auto-narrowed city dropdown — 6cc6228
+- [x] 2.6 Availability badge: muted, "Brak wolnych miejsc", below available, not clickable — 6cc6228
+- [x] 2.7 Date alone works; osoby disabled until date set — 6cc6228
+- [x] 2.8 Empty state "Brak wyników"; URL shareable — 6cc6228
+- [x] 2.9 No-JS fallback filters end-to-end — 6cc6228
 
 ### Phase 3: Zagroda Detail Page `/zagrody/[id]` + Production Ship
 
 #### Automated
 
-- [ ] 3.1 Linting passes: `npm run lint`
-- [ ] 3.2 Build passes: `npm run build`
-- [ ] 3.3 Test suite stays green: `npm test`
+- [x] 3.1 Linting passes: `npm run lint`
+- [x] 3.2 Build passes: `npm run build`
+- [x] 3.3 Test suite stays green: `npm test`
 
 #### Manual
 
-- [ ] 3.4 Mobile: detail page shows full profile incl. turnusy times
-- [ ] 3.5 404 for unknown UUID, non-UUID, and draft (incl. as owner)
+- [x] 3.4 Mobile: detail page shows full profile incl. turnusy times
+- [x] 3.5 404 for unknown UUID, non-UUID, and draft (incl. as owner)
 - [ ] 3.6 Production deploy via `npm run deploy` / CI (migrations before worker) + live smoke
