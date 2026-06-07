@@ -1,7 +1,7 @@
 ---
 change_id: catalog-browse-and-zagroda-page
 title: Catalog browse and zagroda page
-status: plan_reviewed
+status: implementing
 created: 2026-06-07
 updated: 2026-06-07
 archived_at: null

@@ -284,15 +284,15 @@ The public single-zagroda page with the full profile, proper 404 behavior, and t
 
 #### Automated
 
-- [ ] 1.1 Migration applies cleanly: `npx supabase db reset`
-- [ ] 1.2 Types regenerated and committed: `npm run db:types` produces no further diff
-- [ ] 1.3 All tests pass (new catalog suite + regressions): `npm test`
-- [ ] 1.4 Linting passes: `npm run lint`
-- [ ] 1.5 Build passes: `npm run build`
+- [x] 1.1 Migration applies cleanly: `npx supabase db reset`
+- [x] 1.2 Types regenerated and committed: `npm run db:types` produces no further diff
+- [x] 1.3 All tests pass (new catalog suite + regressions): `npm test`
+- [x] 1.4 Linting passes: `npm run lint`
+- [x] 1.5 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 1.6 Studio spot-check: function exists, grants anon/authenticated only, search_path pinned
+- [x] 1.6 Studio spot-check: function exists, grants anon/authenticated only, search_path pinned
 
 ### Phase 2: Catalog Page `/katalog`
 
