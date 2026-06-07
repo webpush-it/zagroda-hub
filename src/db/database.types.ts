@@ -84,6 +84,51 @@ export type Database = {
           },
         ]
       }
+      email_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          html: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string
+          provider_message_id: string | null
+          reply_to: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          to_email: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          html: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          provider_message_id?: string | null
+          reply_to?: string | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          to_email: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          html?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          provider_message_id?: string | null
+          reply_to?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          to_email?: string
+        }
+        Relationships: []
+      }
       turnusy: {
         Row: {
           created_at: string
@@ -190,6 +235,29 @@ export type Database = {
           photo_path: string
           voivodeship: Database["public"]["Enums"]["voivodeship"]
         }[]
+      }
+      claim_due_emails: {
+        Args: { p_id?: string; p_limit?: number }
+        Returns: {
+          attempts: number
+          created_at: string
+          html: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string
+          provider_message_id: string | null
+          reply_to: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          to_email: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "email_outbox"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       email_verified: { Args: never; Returns: boolean }
       set_zagroda_published: {

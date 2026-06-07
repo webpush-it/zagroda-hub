@@ -1,12 +1,19 @@
 {
   // Only the overrides we own live here. The @astrojs/cloudflare adapter
-  // auto-fills `main`, `assets`, and the SESSION (KV) / IMAGES bindings into
-  // the resolved dist/server/wrangler.json at build time. Do NOT add `main`
-  // here: the Cloudflare Vite plugin validates it at build time against a
-  // not-yet-built dist/, which breaks `npm run build`.
+  // auto-fills `assets` and the SESSION (KV) / IMAGES bindings into the
+  // resolved dist/server/wrangler.json at build time.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "zagroda-hub",
   "compatibility_date": "2026-04-15",
+  // Custom Worker entry: composes the adapter's fetch handler with a
+  // `scheduled` handler (email outbox cron sweep). The adapter honors a
+  // root-config `main` (its customizer does `config.main ?? "@astrojs/cloudflare/entrypoints/server"`).
+  "main": "./src/worker.ts",
+  // Sweeps email_outbox stragglers; the immediate waitUntil attempt carries
+  // the <5 min NFR — the cron is retry-only.
+  "triggers": {
+    "crons": ["*/5 * * * *"],
+  },
   "observability": {
     "enabled": true,
   },
