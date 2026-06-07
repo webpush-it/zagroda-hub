@@ -217,6 +217,25 @@ export type Database = {
           requested: number
         }[]
       }
+      catalog_zagrody: {
+        Args: {
+          p_city?: string
+          p_participants?: number
+          p_trip_date?: string
+          p_voivodeship?: Database["public"]["Enums"]["voivodeship"]
+        }
+        Returns: {
+          city: string
+          created_at: string
+          daily_limit: number
+          description: string
+          id: string
+          is_available: boolean
+          name: string
+          photo_path: string
+          voivodeship: Database["public"]["Enums"]["voivodeship"]
+        }[]
+      }
       claim_due_emails: {
         Args: { p_id?: string; p_limit?: number }
         Returns: {

@@ -1,0 +1,220 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
+import ZagrodaCard from "@/components/katalog/ZagrodaCard.astro";
+import { createClient } from "@/lib/supabase";
+import { VOIVODESHIPS, type Voivodeship } from "@/lib/zagroda";
+import type { Database } from "@/db/database.types";
+
+// --- URL param parsing — invalid values are dropped silently, never an error
+// page; the form re-renders with whatever validated. ---
+
+const params = Astro.url.searchParams;
+const today = new Date().toISOString().slice(0, 10);
+
+const rawWojewodztwo = params.get("wojewodztwo");
+const wojewodztwo =
+  rawWojewodztwo && (VOIVODESHIPS as readonly string[]).includes(rawWojewodztwo)
+    ? (rawWojewodztwo as Voivodeship)
+    : null;
+
+// Real YYYY-MM-DD not earlier than today — the input's `min` is client-side
+// only, so the server re-checks independently.
+function parseDateParam(raw: string | null): string | null {
+  if (!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+  const parsed = new Date(`${raw}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== raw) return null;
+  return raw >= today ? raw : null;
+}
+const data = parseDateParam(params.get("data"));
+
+// `osoby` without `data` is ignored; out-of-range or non-integer values drop
+// to the default (1) applied at the RPC call below.
+function parseOsobyParam(raw: string | null): number | null {
+  if (!raw) return null;
+  const n = Number(raw);
+  return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : null;
+}
+const osoby = data ? parseOsobyParam(params.get("osoby")) : null;
+
+// --- data fetch ---
+
+// The generated RPC return type claims non-null columns, but at runtime
+// is_available is null without a date filter, and city/description/photo_path
+// can be null on a published row edited after publication (the publish gate
+// checks completeness only at publish time).
+interface CatalogRow {
+  id: string;
+  name: string;
+  description: string | null;
+  voivodeship: Voivodeship | null;
+  city: string | null;
+  photo_path: string | null;
+  daily_limit: number;
+  created_at: string;
+  is_available: boolean | null;
+}
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let cities: string[] = [];
+let miasto: string | null = null;
+let rows: CatalogRow[] = [];
+
+if (supabase) {
+  // Cities dropdown: explicit publish predicate — authenticated-owner RLS
+  // would otherwise leak the owner's own draft city into the list.
+  let cityQuery = supabase.from("zagrody").select("city").eq("is_published", true);
+  if (wojewodztwo) cityQuery = cityQuery.eq("voivodeship", wojewodztwo);
+  const { data: cityRows } = await cityQuery;
+
+  const byKey = new Map<string, string>();
+  for (const row of cityRows ?? []) {
+    const trimmed = (row.city ?? "").trim();
+    const key = trimmed.toLowerCase();
+    if (trimmed && !byKey.has(key)) byKey.set(key, trimmed);
+  }
+  cities = [...byKey.values()].sort((a, b) => a.localeCompare(b, "pl"));
+
+  // A miasto that isn't a published city in the selected województwo is
+  // invalid — drop it like any other invalid param.
+  const rawMiasto = (params.get("miasto") ?? "").trim();
+  miasto = rawMiasto ? (cities.find((c) => c.toLowerCase() === rawMiasto.toLowerCase()) ?? null) : null;
+
+  const rpcArgs: Database["public"]["Functions"]["catalog_zagrody"]["Args"] = {};
+  if (wojewodztwo) rpcArgs.p_voivodeship = wojewodztwo;
+  if (miasto) rpcArgs.p_city = miasto;
+  if (data) {
+    rpcArgs.p_trip_date = data;
+    rpcArgs.p_participants = osoby ?? 1;
+  }
+  const { data: rpcRows } = await supabase.rpc("catalog_zagrody", rpcArgs);
+  rows = rpcRows ?? [];
+}
+
+const results = rows.map((r) => ({
+  id: r.id,
+  name: r.name,
+  description: r.description ?? "",
+  city: r.city ?? "",
+  voivodeship: r.voivodeship ?? "",
+  photoUrl:
+    r.photo_path && supabase ? supabase.storage.from("zagroda-photos").getPublicUrl(r.photo_path).data.publicUrl : null,
+  available: r.is_available,
+}));
+
+const inputClass =
+  "w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white [color-scheme:dark] focus:border-purple-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>option]:bg-slate-900";
+const labelClass = "mb-1 block text-sm text-blue-100/70";
+---
+
+<Layout title="Katalog zagród">
+  <div class="bg-cosmic min-h-screen p-4">
+    <div class="mx-auto w-full max-w-md">
+      <Topbar />
+      <main class="rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl">
+        <h1 class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+          Katalog zagród
+        </h1>
+
+        <form method="GET" action="/katalog" id="filter-form" class="mb-6 flex flex-col gap-4">
+          <div>
+            <label for="filter-wojewodztwo" class:list={labelClass}>Województwo</label>
+            <select id="filter-wojewodztwo" name="wojewodztwo" class:list={inputClass}>
+              <option value="">Wszystkie województwa</option>
+              {
+                VOIVODESHIPS.map((v) => (
+                  <option value={v} selected={v === wojewodztwo}>
+                    {v}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+
+          <div>
+            <label for="filter-miasto" class:list={labelClass}>Miasto</label>
+            <select id="filter-miasto" name="miasto" class:list={inputClass}>
+              <option value="">Wszystkie miasta</option>
+              {
+                cities.map((c) => (
+                  <option value={c} selected={c === miasto}>
+                    {c}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-1">
+              <label for="filter-data" class:list={labelClass}>Data wycieczki</label>
+              <input type="date" id="filter-data" name="data" min={today} value={data ?? ""} class:list={inputClass} />
+            </div>
+            <div class="w-28">
+              <label for="filter-osoby" class:list={labelClass}>Liczba osób</label>
+              <input
+                type="number"
+                id="filter-osoby"
+                name="osoby"
+                min="1"
+                max="1000"
+                value={data ? String(osoby ?? 1) : ""}
+                disabled={!data}
+                class:list={inputClass}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-500"
+          >
+            Filtruj
+          </button>
+        </form>
+
+        {
+          results.length === 0 ? (
+            <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+              <p class="font-medium text-white">Brak wyników</p>
+              <p class="mt-1 text-sm text-blue-100/60">
+                Spróbuj poszerzyć kryteria — zmień województwo, miasto lub termin.
+              </p>
+            </div>
+          ) : (
+            <ul class="flex flex-col gap-3">
+              {results.map((r) => (
+                <li>
+                  <ZagrodaCard {...r} />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </main>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Progressive enhancement only — the form is fully functional without JS
+  // (city list shows all published cities; the server ignores osoby without data).
+  const form = document.querySelector<HTMLFormElement>("#filter-form");
+  const wojSelect = document.querySelector<HTMLSelectElement>("#filter-wojewodztwo");
+  const citySelect = document.querySelector<HTMLSelectElement>("#filter-miasto");
+  const dateInput = document.querySelector<HTMLInputElement>("#filter-data");
+  const osobyInput = document.querySelector<HTMLInputElement>("#filter-osoby");
+
+  // Voivodeship change → submit so the city dropdown re-narrows server-side.
+  // The previous city no longer applies in the new voivodeship, so reset it.
+  wojSelect?.addEventListener("change", () => {
+    if (citySelect) citySelect.value = "";
+    form?.submit();
+  });
+
+  // `osoby` only matters with a date — keep it disabled until one is set.
+  dateInput?.addEventListener("input", () => {
+    if (osobyInput) osobyInput.disabled = dateInput.value === "";
+  });
+</script>
