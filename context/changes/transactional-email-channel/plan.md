@@ -308,14 +308,14 @@ One additive migration (`email_outbox` + `claim_due_emails`). No existing tables
 
 #### Automated
 
-- [ ] 1.1 Migration applies cleanly on a reset local stack: `npm run db:reset`
-- [ ] 1.2 DB tests pass: `npm test`
-- [ ] 1.3 Type checking/linting passes: `npm run lint`
-- [ ] 1.4 Build passes (env additions don't break the optional-env build): `npm run build`
+- [x] 1.1 Migration applies cleanly on a reset local stack: `npm run db:reset`
+- [x] 1.2 DB tests pass: `npm test`
+- [x] 1.3 Type checking/linting passes: `npm run lint`
+- [x] 1.4 Build passes (env additions don't break the optional-env build): `npm run build`
 
 #### Manual
 
-- [ ] 1.5 Local Supabase Studio shows `email_outbox` with RLS enabled and no policies
+- [x] 1.5 Local Supabase Studio shows `email_outbox` with RLS enabled and no policies
 
 ### Phase 2: Email Service Library
 
