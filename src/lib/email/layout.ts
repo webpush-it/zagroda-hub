@@ -2,7 +2,11 @@
 // Table-based, inline-styled HTML (email-client-safe), no external
 // images/fonts. Polish copy — HTML-only emails at MVP.
 
-function escapeHtml(text: string): string {
+// Escape a value before interpolating it into `bodyHtml`. Callers building
+// emails from user-supplied data (guest names, messages, descriptions —
+// S-03/S-04/S-05) MUST run untrusted values through this; `renderEmailLayout`
+// only escapes `title`, never `bodyHtml` (which is raw HTML by contract).
+export function escapeHtml(text: string): string {
   return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 }
 

@@ -15,7 +15,7 @@ import { drainDueEmails, enqueueEmail } from "./outbox";
 
 export type { EmailConfig } from "./config";
 export type { EmailMessage } from "./brevo";
-export { renderEmailLayout } from "./layout";
+export { renderEmailLayout, escapeHtml } from "./layout";
 export { drainDueEmails } from "./outbox";
 export type { DrainResult } from "./outbox";
 

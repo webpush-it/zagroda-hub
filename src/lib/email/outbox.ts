@@ -61,6 +61,8 @@ export async function drainDueEmails(
     console.error(`[email] claim_due_emails failed: ${error.message}`);
     return { claimed: 0, sent: 0, failed: 0 };
   }
+  // `rows` is a non-null array here: claim_due_emails returns `setof`, typed
+  // as a non-nullable array, and the error case already returned above.
 
   let sent = 0;
   let failed = 0;
@@ -78,7 +80,9 @@ export async function drainDueEmails(
         .eq("id", row.id);
       if (updateError) {
         // The email went out but the mark failed — the lease prevents an
-        // immediate re-send; the next claim after lease expiry may resend.
+        // immediate re-send, but the next claim after lease expiry WILL
+        // re-send a duplicate (Brevo is not idempotent on this payload).
+        // Bounded to the attempts cap (<= 5 duplicates); accepted for MVP.
         // eslint-disable-next-line no-console
         console.error(`[email] failed to mark ${row.id} sent: ${updateError.message}`);
       }

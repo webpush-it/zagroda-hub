@@ -38,6 +38,12 @@ export async function sendViaBrevo(config: EmailConfig, msg: EmailMessage): Prom
       return { ok: false, error: `Brevo responded ${response.status}: ${text}` };
     }
     const data = (await response.json()) as { messageId?: string };
+    if (!data.messageId) {
+      // 2xx without a messageId — the mail went out but we lose the audit
+      // trail (provider_message_id will be empty). Surface it.
+      // eslint-disable-next-line no-console
+      console.warn("[email] Brevo returned a 2xx response without a messageId");
+    }
     return { ok: true, messageId: data.messageId ?? "" };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error) };
