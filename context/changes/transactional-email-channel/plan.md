@@ -321,26 +321,26 @@ One additive migration (`email_outbox` + `claim_due_emails`). No existing tables
 
 #### Automated
 
-- [x] 2.1 Unit + DB tests pass: `npm test`
-- [x] 2.2 Lint/typecheck passes: `npm run lint`
-- [x] 2.3 Build passes: `npm run build`
+- [x] 2.1 Unit + DB tests pass: `npm test` — abb908e
+- [x] 2.2 Lint/typecheck passes: `npm run lint` — abb908e
+- [x] 2.3 Build passes: `npm run build` — abb908e
 
 #### Manual
 
-- [x] 2.4 Code review of the Brevo payload against Brevo's send-a-transactional-email doc
+- [x] 2.4 Code review of the Brevo payload against Brevo's send-a-transactional-email doc — abb908e
 
 ### Phase 3: Cron Wiring, Test Endpoint, Secrets & Prod Smoke
 
 #### Automated
 
-- [ ] 3.1 Full suite green: `npm test`
-- [ ] 3.2 Lint passes: `npm run lint`
-- [ ] 3.3 Build with custom entry passes: `npm run build`
-- [ ] 3.4 Dry-run deploy includes the cron trigger and stays under the 3 MiB bundle ceiling: `npx wrangler deploy --dry-run`
+- [x] 3.1 Full suite green: `npm test`
+- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.3 Build with custom entry passes: `npm run build`
+- [x] 3.4 Dry-run deploy includes the cron trigger and stays under the 3 MiB bundle ceiling: `npx wrangler deploy --dry-run`
 
 #### Manual
 
-- [ ] 3.5 Brevo sender verified; four secrets visible in `npx wrangler secret list`
+- [x] 3.5 Brevo sender verified; four secrets visible in `npx wrangler secret list`
 - [ ] 3.6 Prod smoke: test email delivered with timestamped < 5 min evidence recorded
-- [ ] 3.7 Retry path observed (row stays pending, later drain picks it up)
+- [x] 3.7 Retry path observed (row stays pending, later drain picks it up)
 - [ ] 3.8 Unauthenticated test-endpoint call returns 401 on prod

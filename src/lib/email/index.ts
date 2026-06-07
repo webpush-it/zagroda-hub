@@ -17,6 +17,7 @@ export type { EmailConfig } from "./config";
 export type { EmailMessage } from "./brevo";
 export { renderEmailLayout } from "./layout";
 export { drainDueEmails } from "./outbox";
+export type { DrainResult } from "./outbox";
 
 export interface SendTransactionalEmailDeps {
   admin: SupabaseClient<Database> | null;

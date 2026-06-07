@@ -30,6 +30,14 @@ Full server-side rendering (`output: "server"` in astro.config.mjs). All pages a
 
 `SUPABASE_URL`/`SUPABASE_KEY` are declared **optional** in the `astro:env` schema, so the app builds and runs without them. `src/lib/config-status.ts` exposes `missingConfigs`, which the UI surfaces as a warning (Polish copy) when auth is disabled. Don't assume the Supabase client exists — guard on the `null` return from `createClient`.
 
+### Transactional email (F-02)
+
+- **Channel**: Brevo HTTP API (single-sender verification, no domain) behind a durable `email_outbox` table with hybrid dispatch — immediate attempt via `waitUntil` after enqueue, plus a `*/5` cron sweep (`scheduled` handler in `src/worker.ts`, trigger in `wrangler.jsonc`) that retries stragglers. Lease-based claims (`claim_due_emails` RPC) make double-send structurally impossible; rows hard-fail after 5 attempts.
+- **Entry point**: `sendTransactionalEmail(deps, msg)` from `@/lib/email` — the ONLY function app code (S-03/S-04/S-05 booking emails) should call. Request-path deps: `createAdminClient()` (`@/lib/supabase-admin`) + `getEmailConfig()` (`@/lib/email/config`). Wrap bodies with `renderEmailLayout`.
+- **Env vars**: `BREVO_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_NAME` (optional, defaults to "Zagroda Hub"), `SUPABASE_SERVICE_ROLE_KEY` — all optional. When unset the channel is a **logged no-op**: callers never break, rows stay `pending` without consuming retry budget (null config must never reach the claim RPC).
+- **Limits & caveats**: Brevo free tier caps at 300 emails/day. Sender is a verified single address without a domain — deliverability may degrade (spam folder); the upgrade path is verifying a domain in Brevo and flipping `EMAIL_FROM`, zero code change. Auth emails (signup verification) stay on Supabase Auth's native mailer — out of this channel's scope.
+- **Accepted risk**: `POST /api/dev/test-email` (smoke endpoint) is auth-only and self-addressed but un-rate-limited — any authenticated user could loop it and exhaust the daily Brevo quota, starving booking emails. Revisit (cap or remove) if abuse appears.
+
 ### Key conventions
 
 - **Path alias**: `@/*` maps to `./src/*` (tsconfig paths).
