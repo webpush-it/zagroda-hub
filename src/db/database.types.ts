@@ -172,6 +172,25 @@ export type Database = {
           requested: number
         }[]
       }
+      catalog_zagrody: {
+        Args: {
+          p_city?: string
+          p_participants?: number
+          p_trip_date?: string
+          p_voivodeship?: Database["public"]["Enums"]["voivodeship"]
+        }
+        Returns: {
+          city: string
+          created_at: string
+          daily_limit: number
+          description: string
+          id: string
+          is_available: boolean
+          name: string
+          photo_path: string
+          voivodeship: Database["public"]["Enums"]["voivodeship"]
+        }[]
+      }
       email_verified: { Args: never; Returns: boolean }
       set_zagroda_published: {
         Args: { publish: boolean; target_zagroda_id: string }
