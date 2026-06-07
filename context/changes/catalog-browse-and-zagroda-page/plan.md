@@ -284,32 +284,32 @@ The public single-zagroda page with the full profile, proper 404 behavior, and t
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npx supabase db reset`
-- [x] 1.2 Types regenerated and committed: `npm run db:types` produces no further diff
-- [x] 1.3 All tests pass (new catalog suite + regressions): `npm test`
-- [x] 1.4 Linting passes: `npm run lint`
-- [x] 1.5 Build passes: `npm run build`
+- [x] 1.1 Migration applies cleanly: `npx supabase db reset` — 0c80143
+- [x] 1.2 Types regenerated and committed: `npm run db:types` produces no further diff — 0c80143
+- [x] 1.3 All tests pass (new catalog suite + regressions): `npm test` — 0c80143
+- [x] 1.4 Linting passes: `npm run lint` — 0c80143
+- [x] 1.5 Build passes: `npm run build` — 0c80143
 
 #### Manual
 
-- [x] 1.6 Studio spot-check: function exists, grants anon/authenticated only, search_path pinned
+- [x] 1.6 Studio spot-check: function exists, grants anon/authenticated only, search_path pinned — 0c80143
 
 ### Phase 2: Catalog Page `/katalog`
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Build passes: `npm run build`
-- [ ] 2.3 Test suite stays green: `npm test`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Build passes: `npm run build`
+- [x] 2.3 Test suite stays green: `npm test`
 
 #### Manual
 
-- [ ] 2.4 Mobile walkthrough: `/` → catalog → published zagrody, newest first
-- [ ] 2.5 Województwo + miasto AND filter; auto-narrowed city dropdown
-- [ ] 2.6 Availability badge: muted, "Brak wolnych miejsc", below available, not clickable
-- [ ] 2.7 Date alone works; osoby disabled until date set
-- [ ] 2.8 Empty state "Brak wyników"; URL shareable
-- [ ] 2.9 No-JS fallback filters end-to-end
+- [x] 2.4 Mobile walkthrough: `/` → catalog → published zagrody, newest first
+- [x] 2.5 Województwo + miasto AND filter; auto-narrowed city dropdown
+- [x] 2.6 Availability badge: muted, "Brak wolnych miejsc", below available, not clickable
+- [x] 2.7 Date alone works; osoby disabled until date set
+- [x] 2.8 Empty state "Brak wyników"; URL shareable
+- [x] 2.9 No-JS fallback filters end-to-end
 
 ### Phase 3: Zagroda Detail Page `/zagrody/[id]` + Production Ship
 

@@ -1,0 +1,63 @@
+---
+interface Props {
+  id: string;
+  name: string;
+  description: string;
+  city: string;
+  voivodeship: string;
+  photoUrl: string | null;
+  available: boolean | null;
+}
+
+// `name` and `location` are renamed locally — the template's type analysis
+// would otherwise resolve them to the (deprecated/always-truthy) DOM globals.
+const { id, name: zagrodaName, description, city, voivodeship, photoUrl, available } = Astro.props;
+
+// `false` mutes the card and removes the link; `null` (no date filter) and
+// `true` both render a clickable card.
+const unavailable = available === false;
+const lokalizacja = [city, voivodeship].filter(Boolean).join(", ");
+const excerpt = description.length > 120 ? `${description.slice(0, 120).trimEnd()}…` : description;
+---
+
+<article
+  class:list={[
+    "relative flex gap-3 rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-colors",
+    unavailable ? "opacity-60" : "hover:bg-white/10",
+  ]}
+>
+  {
+    photoUrl ? (
+      <img src={photoUrl} alt="" class="h-20 w-20 shrink-0 rounded-lg object-cover" loading="lazy" />
+    ) : (
+      <div
+        class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-white/10 text-2xl"
+        aria-hidden="true"
+      >
+        🏡
+      </div>
+    )
+  }
+  <div class="min-w-0">
+    <h2 class="truncate text-base font-semibold text-white">
+      {
+        unavailable ? (
+          zagrodaName
+        ) : (
+          <a href={`/zagrody/${id}`} class="after:absolute after:inset-0 hover:underline">
+            {zagrodaName}
+          </a>
+        )
+      }
+    </h2>
+    {lokalizacja && <p class="truncate text-sm text-blue-100/70">{lokalizacja}</p>}
+    {excerpt && <p class="mt-1 line-clamp-2 text-sm text-blue-100/60">{excerpt}</p>}
+    {
+      unavailable && (
+        <span class="mt-2 inline-block rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-200">
+          Brak wolnych miejsc
+        </span>
+      )
+    }
+  </div>
+</article>
