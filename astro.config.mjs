@@ -19,6 +19,9 @@ export default defineConfig({
       SUPABASE_URL: envField.string({ context: "server", access: "secret", optional: true }),
       SUPABASE_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       SUPABASE_SERVICE_ROLE_KEY: envField.string({ context: "server", access: "secret", optional: true }),
+      BREVO_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
+      EMAIL_FROM: envField.string({ context: "server", access: "secret", optional: true }),
+      EMAIL_FROM_NAME: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },
 });

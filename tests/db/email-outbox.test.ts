@@ -48,6 +48,14 @@ beforeAll(async () => {
   anon = createAnonClient();
   const created = await createOwnerClient(uniqueEmail("outbox-owner"), PASSWORD);
   authed = created.client;
+
+  // Wipe leftovers from previous runs: their ~5 min leases have expired, and
+  // claim_due_emails orders by created_at, so stale rows would steal claims
+  // from test (c)'s fixtures. Within a single run the other fixtures are
+  // leased, capped, or far-future — never due — so a fresh table keeps every
+  // test deterministic. (Service-role only; the table is isolated infra.)
+  const { error } = await admin.from("email_outbox").delete().gte("created_at", "1970-01-01");
+  if (error) throw new Error(`email_outbox cleanup failed: ${error.message}`);
 });
 
 describe("email_outbox — RLS deny-all", () => {

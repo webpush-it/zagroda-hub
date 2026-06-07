@@ -308,26 +308,26 @@ One additive migration (`email_outbox` + `claim_due_emails`). No existing tables
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly on a reset local stack: `npm run db:reset`
-- [x] 1.2 DB tests pass: `npm test`
-- [x] 1.3 Type checking/linting passes: `npm run lint`
-- [x] 1.4 Build passes (env additions don't break the optional-env build): `npm run build`
+- [x] 1.1 Migration applies cleanly on a reset local stack: `npm run db:reset` — 22cf3e6
+- [x] 1.2 DB tests pass: `npm test` — 22cf3e6
+- [x] 1.3 Type checking/linting passes: `npm run lint` — 22cf3e6
+- [x] 1.4 Build passes (env additions don't break the optional-env build): `npm run build` — 22cf3e6
 
 #### Manual
 
-- [x] 1.5 Local Supabase Studio shows `email_outbox` with RLS enabled and no policies
+- [x] 1.5 Local Supabase Studio shows `email_outbox` with RLS enabled and no policies — 22cf3e6
 
 ### Phase 2: Email Service Library
 
 #### Automated
 
-- [ ] 2.1 Unit + DB tests pass: `npm test`
-- [ ] 2.2 Lint/typecheck passes: `npm run lint`
-- [ ] 2.3 Build passes: `npm run build`
+- [x] 2.1 Unit + DB tests pass: `npm test`
+- [x] 2.2 Lint/typecheck passes: `npm run lint`
+- [x] 2.3 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Code review of the Brevo payload against Brevo's send-a-transactional-email doc
+- [x] 2.4 Code review of the Brevo payload against Brevo's send-a-transactional-email doc
 
 ### Phase 3: Cron Wiring, Test Endpoint, Secrets & Prod Smoke
 
