@@ -333,14 +333,14 @@ One additive migration (`email_outbox` + `claim_due_emails`). No existing tables
 
 #### Automated
 
-- [x] 3.1 Full suite green: `npm test`
-- [x] 3.2 Lint passes: `npm run lint`
-- [x] 3.3 Build with custom entry passes: `npm run build`
-- [x] 3.4 Dry-run deploy includes the cron trigger and stays under the 3 MiB bundle ceiling: `npx wrangler deploy --dry-run`
+- [x] 3.1 Full suite green: `npm test` — 96be4f9
+- [x] 3.2 Lint passes: `npm run lint` — 96be4f9
+- [x] 3.3 Build with custom entry passes: `npm run build` — 96be4f9
+- [x] 3.4 Dry-run deploy includes the cron trigger and stays under the 3 MiB bundle ceiling: `npx wrangler deploy --dry-run` — 96be4f9
 
 #### Manual
 
-- [x] 3.5 Brevo sender verified; four secrets visible in `npx wrangler secret list`
+- [x] 3.5 Brevo sender verified; four secrets visible in `npx wrangler secret list` — 96be4f9
 - [ ] 3.6 Prod smoke: test email delivered with timestamped < 5 min evidence recorded
-- [x] 3.7 Retry path observed (row stays pending, later drain picks it up)
+- [x] 3.7 Retry path observed (row stays pending, later drain picks it up) — 96be4f9
 - [ ] 3.8 Unauthenticated test-endpoint call returns 401 on prod
