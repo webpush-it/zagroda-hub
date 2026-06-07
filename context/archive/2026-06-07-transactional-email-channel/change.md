@@ -1,10 +1,10 @@
 ---
 change_id: transactional-email-channel
 title: Transactional email channel
-status: impl_reviewed
+status: archived
 created: 2026-06-07
 updated: 2026-06-08
-archived_at: null
+archived_at: 2026-06-07T22:31:33Z
 ---
 
 ## Notes
