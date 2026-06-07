@@ -315,12 +315,12 @@ The public single-zagroda page with the full profile, proper 404 behavior, and t
 
 #### Automated
 
-- [x] 3.1 Linting passes: `npm run lint`
-- [x] 3.2 Build passes: `npm run build`
-- [x] 3.3 Test suite stays green: `npm test`
+- [x] 3.1 Linting passes: `npm run lint` — ea6fe4d
+- [x] 3.2 Build passes: `npm run build` — ea6fe4d
+- [x] 3.3 Test suite stays green: `npm test` — ea6fe4d
 
 #### Manual
 
-- [x] 3.4 Mobile: detail page shows full profile incl. turnusy times
-- [x] 3.5 404 for unknown UUID, non-UUID, and draft (incl. as owner)
-- [ ] 3.6 Production deploy via `npm run deploy` / CI (migrations before worker) + live smoke
+- [x] 3.4 Mobile: detail page shows full profile incl. turnusy times — ea6fe4d
+- [x] 3.5 404 for unknown UUID, non-UUID, and draft (incl. as owner) — ea6fe4d
+- [x] 3.6 Production deploy via `npm run deploy` / CI (migrations before worker) + live smoke — 28c96eb
