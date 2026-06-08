@@ -1,7 +1,7 @@
 ---
 change_id: owner-oauth-and-password-reset
 title: Owner oauth and password reset
-status: new
+status: planned
 created: 2026-06-08
 updated: 2026-06-08
 archived_at: null
