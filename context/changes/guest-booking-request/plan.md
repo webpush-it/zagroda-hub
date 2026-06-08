@@ -300,15 +300,15 @@ Single additive migration: a new nullable-defaulted column (`NOT NULL DEFAULT ge
 
 #### Automated
 
-- [ ] 1.1 Migration applies cleanly: `npm run db:reset`
-- [ ] 1.2 Types regenerate without diffnoise beyond the new column/RPC: `npm run db:types`
-- [ ] 1.3 New + existing DB tests pass: `npm test`
-- [ ] 1.4 Lint/type check passes: `npm run lint`
+- [x] 1.1 Migration applies cleanly: `npm run db:reset`
+- [x] 1.2 Types regenerate without diffnoise beyond the new column/RPC: `npm run db:types`
+- [x] 1.3 New + existing DB tests pass: `npm test`
+- [x] 1.4 Lint/type check passes: `npm run lint`
 
 #### Manual
 
-- [ ] 1.5 Manual `cancel_booking_request('<token>')` flips pending → cancelled_by_guest; second call is a no-op
-- [ ] 1.6 `accept_booking_request` and `rls.test.ts` behavior unchanged (no F-01 regression)
+- [x] 1.5 Manual `cancel_booking_request('<token>')` flips pending → cancelled_by_guest; second call is a no-op
+- [x] 1.6 `accept_booking_request` and `rls.test.ts` behavior unchanged (no F-01 regression)
 
 ### Phase 2: Submit API + validation helpers
 
