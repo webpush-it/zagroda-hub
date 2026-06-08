@@ -23,7 +23,7 @@ Email+password auth (signup, signin, email verification, resend, signout) is alr
 ### Key Discoveries:
 
 - **OTP recovery mechanism already exists** — `src/pages/api/auth/confirm.ts:22` calls `verifyOtp` and accepts `recovery`. Password reset reuses it; only the post-verification destination must branch (`recovery` → set-password form instead of `/dashboard`).
-- **Supabase default linking already implements most of FR-018** — with `enable_manual_linking=false`, Supabase auto-links a new identity to an existing user **only when the email is verified**. For `email_verified=false` Supabase's default is to create a *separate* user (split-brain), **not** a takeover. Our chosen behavior (block + "zaloguj się hasłem") means the OAuth callback must actively detect the collision and convert that default split-brain into a clean block.
+- **Supabase default linking is expected to implement most of FR-018** — with `enable_manual_linking=false`, Supabase auto-links a new identity to an existing user **only when the email is verified**; for `email_verified=false` its default is a *separate* user (split-brain), **not** a takeover. Our chosen behavior (block + "zaloguj się hasłem") means the OAuth callback must actively detect the collision and convert that default split-brain into a clean block. **Caveat:** this link-vs-separate decision is GoTrue *backend* behavior — it is **not** encoded in `@supabase/auth-js` (which exposes only manual `linkIdentity`; `email_verified` is never a client-side decision input). Likewise, whether `resetPasswordForEmail` reaches an OAuth-only user and whether `updateUser({password})` then yields a working email+password login are backend decisions. **All three must be confirmed empirically in the Phase 2.0 spike before the block logic is written.**
 - **Auth emails are Supabase's emails, not the Brevo outbox** — the existing confirmation email and the new recovery email are sent by Supabase. Locally → Inbucket; in production → must be Brevo SMTP configured on the hosted project (the Brevo outbox in `src/lib/email/` is only for app-generated FR-005/011/016 emails).
 - **`SubmitButton` relies on `useFormStatus`** — it must stay inside a `<form>`. OAuth buttons that navigate via a link/GET endpoint won't share that pending state; they get their own styling.
 
@@ -42,6 +42,7 @@ Email+password auth (signup, signin, email verification, resend, signout) is alr
 - **No Apple OAuth** — only Google + Facebook (FR-017).
 - **No account-management / "link a provider from settings" UI** — out of MVP scope.
 - **No changes to the booking / overbooking domain** — auth only.
+- **No suppression of the OAuth-block message's account-existence signal** — the block message ("To konto loguje się hasłem…") does reveal that a password account exists for that email, which is a mild enumeration vector inconsistent with the no-enumeration stance used for forgot-password. We accept it deliberately: reaching this branch already requires the caller to control an OAuth identity reporting that exact email as `email_verified=false` (Google never does; Facebook rarely), so the marginal leak is acceptable in exchange for a clear, actionable message.
 
 ## Implementation Approach
 
@@ -49,7 +50,7 @@ Phase 1 ships the lowest-risk, fully-locally-testable flow (password reset) by r
 
 ## Critical Implementation Details
 
-- **OAuth callback ordering & the FR-018 block.** Supabase's default for an unverified-email collision is split-brain, not takeover, so the security property is *almost* free — but the chosen UX (block) requires explicit detection. In `GET /api/auth/callback` the order is: (1) `exchangeCodeForSession(code)`; (2) inspect the authenticating identity's `identity_data.email_verified`; (3) **only if false**, call the service-role RPC `password_account_exists(email)` — if it returns true, sign out, delete the just-created orphan OAuth user via the admin API, and redirect to `/auth/signin` with the "zaloguj się hasłem" message; (4) otherwise redirect to `/dashboard`. Google returns `email_verified=true`, so step 3 never fires for it — the cost falls only on the rare Facebook-unverified path.
+- **OAuth callback ordering & the FR-018 block.** Supabase's default for an unverified-email collision is split-brain, not takeover, so the security property is *almost* free — but the chosen UX (block) requires explicit detection. In `GET /api/auth/callback` the order is: (1) `exchangeCodeForSession(code)`; (2) inspect the authenticating identity's `identity_data.email_verified`; (3) **only if false**, call the service-role RPC `password_account_exists(email)` — if it returns true, sign out and redirect to `/auth/signin` with the "zaloguj się hasłem" message; (4) otherwise redirect to `/dashboard`. **Do NOT delete the OAuth user in the block path**: GoTrue re-logs into an *existing* unverified-OAuth account on re-login, so the user may be a pre-existing account that owns a zagroda — and `zagrody.owner_id` is FK `ON DELETE CASCADE`, so deleting would destroy the zagroda/turnusy/booking_requests. An unused orphan account is harmless because the block never grants it access. Google returns `email_verified=true`, so step 3 never fires for it — the cost falls only on the rare Facebook-unverified path.
 - **Collision detection must not enable enumeration.** `password_account_exists` is `SECURITY DEFINER`, returns a bare boolean, and is `REVOKE`d from `anon`/`authenticated` (granted to `service_role` only). It is reachable only from the server callback after a real OAuth handshake, never from a public route.
 - **Recovery session is real.** `verifyOtp({type:"recovery"})` establishes a logged-in session, which is what authorizes `updateUser({password})` on the set-password form. The set-password API route must therefore use the request-bound SSR client (cookies), not the admin client.
 
@@ -77,7 +78,7 @@ Owner can request a password-reset email and set a new password via a recovery l
 
 **Intent**: Validate email (Zod), call `resetPasswordForEmail`, always redirect to the success state regardless of whether the account exists (no enumeration — mirror `resend.ts`).
 
-**Contract**: `POST`. `supabase.auth.resetPasswordForEmail(email, { redirectTo: \`${context.url.origin}/api/auth/confirm?type=recovery\` })`. Always `redirect("/auth/forgot-password?sent=1")` on completion (and on Supabase error). Null-client guard → fixed error string, as in sibling routes.
+**Contract**: `POST`. `supabase.auth.resetPasswordForEmail(email)` — **no `redirectTo`**; the recovery link is built entirely by the template via `{{ .SiteURL }}` (parity with the working signup/confirmation flow, which passes no `redirectTo`). Passing a `redirectTo` not in the allow-list would be rejected by Supabase. Always `redirect("/auth/forgot-password?sent=1")` on completion (and on Supabase error). Null-client guard → fixed error string, as in sibling routes.
 
 #### 3. Recovery email template + config registration
 
@@ -160,6 +161,14 @@ Add a provider-agnostic OAuth initiate + PKCE callback, OAuth buttons on signin/
 
 ### Changes Required:
 
+#### 0. Verification spike — confirm GoTrue behavior FIRST (no production code)
+
+**File**: (throwaway probe against local Supabase; record findings in this plan's References / change.md notes)
+
+**Intent**: Empirically confirm the three GoTrue backend behaviors the guardrail and the OAuth-only-reset promise depend on, before writing the block logic. If any differs from the assumption, adapt the design here.
+
+**Contract**: Against local Supabase, verify: (1) OAuth login on an email with an existing **verified** password account → one merged account (not a duplicate); (2) OAuth login with provider email **unverified** colliding with a password account → a *separate* user is created (so the block has something to detect); (3) `resetPasswordForEmail` sends to a user with **only** an OAuth identity, and `updateUser({password})` afterwards enables email+password login. Record the observed behavior (and the exact location of `email_verified` in the identity payload) before proceeding.
+
 #### 1. Enable providers + env + redirect allow-list (local)
 
 **File**: `supabase/config.toml`, `astro.config.mjs`, `.env.example`
@@ -189,7 +198,7 @@ return context.redirect(data.url);
 
 **Intent**: Exchange the `code` for a session; on an unverified-email collision with an existing password account, block (sign out, delete the orphan OAuth user, redirect with message); otherwise land on the dashboard.
 
-**Contract**: `GET`. Read `code`; `exchangeCodeForSession(code)` → user/session. Find the OAuth identity (`user.identities` where provider ∈ {google,facebook}); read `identity.identity_data.email_verified`. If falsy: call admin RPC `password_account_exists(user.email)`; if true → `signOut()`, `adminClient.auth.admin.deleteUser(user.id)`, `redirect("/auth/signin?error="+ "To konto loguje się hasłem — zaloguj się hasłem (możesz też zresetować hasło).")`. Else `redirect("/dashboard")`. Exchange error → `redirect("/auth/signin?error=...nie powiodło się...")`. See Critical Implementation Details for ordering.
+**Contract**: `GET`. Read `code`; `exchangeCodeForSession(code)` → user/session. Find the OAuth identity (`user.identities` where provider ∈ {google,facebook}); read `identity.identity_data.email_verified`. If falsy: call admin RPC `password_account_exists(user.email)`; if true → `signOut()`, `redirect("/auth/signin?error="+ "To konto loguje się hasłem — zaloguj się hasłem (możesz też zresetować hasło).")` (no `deleteUser` — see Critical Implementation Details for why the cascade makes deletion unsafe). Else `redirect("/dashboard")`. Exchange error → `redirect("/auth/signin?error=...nie powiodło się...")`. See Critical Implementation Details for ordering.
 
 #### 4. Collision-detection SQL function (migration)
 
@@ -248,6 +257,7 @@ Regenerate `src/db/database.types.ts` via `npm run db:types` after the migration
 
 #### Manual Verification:
 
+- Phase 2.0 spike completed: verified→merge, unverified→separate-user, and reset-for-OAuth-only behaviors confirmed against local Supabase and recorded
 - (Requires a real Google OAuth app — see Phase 3 prereq, usable locally) "Kontynuuj z Google" completes the consent flow and lands a new owner on `/dashboard`
 - Signing in with Google on an email that already has a verified password account lands on the **same** account (no duplicate) — FR-018 merge
 - The unverified-collision block path returns the "zaloguj się hasłem" message and creates no orphan account (verify `auth.users` has no duplicate)
@@ -271,7 +281,7 @@ Configure the hosted Supabase project (providers, redirect allow-list, email tem
 
 **Intent**: Enable Google + Facebook with the production OAuth app credentials; set Site URL and the redirect allow-list to the production origin.
 
-**Contract**: Dashboard → Auth → Providers: Google + Facebook client id/secret (provider consoles' authorized redirect URI = `https://<project-ref>.supabase.co/auth/v1/callback`). Auth → URL Configuration: Site URL = production worker URL/custom domain; add `<origin>/api/auth/callback` to redirect allow-list.
+**Contract**: Dashboard → Auth → Providers: Google + Facebook client id/secret (provider consoles' authorized redirect URI = `https://<project-ref>.supabase.co/auth/v1/callback`). Auth → URL Configuration: Site URL = production worker URL/custom domain; add `<origin>/api/auth/callback` to redirect allow-list. **Keep the nonce check enabled in production** — the local `skip_nonce_check = true` (Phase 2 #1) is a dev-only relaxation and must NOT be replicated on the hosted project.
 
 #### 2. Brevo SMTP for auth emails (hosted)
 
@@ -385,6 +395,7 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 #### Manual
 
+- [ ] 2.0 Phase 2.0 spike confirms GoTrue merge/separate/reset-OAuth-only behavior (recorded)
 - [ ] 2.7 Google OAuth registers a new owner → `/dashboard`
 - [ ] 2.8 Google OAuth on existing verified password email → same account (merge, no duplicate)
 - [ ] 2.9 Unverified-collision → "zaloguj się hasłem" message, no orphan account
