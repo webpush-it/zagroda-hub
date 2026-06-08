@@ -370,17 +370,17 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run build`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm test`
-- [x] 1.4 Recovery template registered in `supabase/config.toml`
+- [x] 1.1 Type checking passes: `npm run build` — 9be0be5
+- [x] 1.2 Linting passes: `npm run lint` — 9be0be5
+- [x] 1.3 Unit tests pass: `npm test` — 9be0be5
+- [x] 1.4 Recovery template registered in `supabase/config.toml` — 9be0be5
 
 #### Manual
 
-- [x] 1.5 Forgot-password flow shows identical success for known and unknown email (no enumeration)
-- [x] 1.6 Recovery email in Inbucket; link lands on `/auth/reset-password` with active session
-- [x] 1.7 New password set → `/dashboard`; re-login with new password works
-- [x] 1.8 Direct `/auth/reset-password` with no session → expired-link redirect
+- [x] 1.5 Forgot-password flow shows identical success for known and unknown email (no enumeration) — 9be0be5
+- [x] 1.6 Recovery email in Inbucket; link lands on `/auth/reset-password` with active session — 9be0be5
+- [x] 1.7 New password set → `/dashboard`; re-login with new password works — 9be0be5
+- [x] 1.8 Direct `/auth/reset-password` with no session → expired-link redirect — 9be0be5
 
 ### Phase 2: OAuth Google + Facebook with merge guardrail (local)
 
