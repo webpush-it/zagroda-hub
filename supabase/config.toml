@@ -238,6 +238,13 @@ otp_expiry = 3600
 subject = "Potwierdź swój adres e-mail — ZagrodaHub"
 content_path = "./supabase/templates/confirmation.html"
 
+# Recovery link routed through our callback (/api/auth/confirm?type=recovery)
+# so the user lands on the set-new-password form with an active session. Keep
+# in sync with the production template (Supabase dashboard) — see plan Phase 3.
+[auth.email.template.recovery]
+subject = "Reset hasła — ZagrodaHub"
+content_path = "./supabase/templates/recovery.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true
