@@ -16,7 +16,7 @@ What exists today (verified against the codebase):
 - **There is no `cancel_token` column and no guest-cancel RPC.** Both are net-new here.
 - **Zagroda detail page (S-02).** `src/pages/zagrody/[id].astro` is pure Astro; it loads `name, description, voivodeship, city, daily_limit, photo_path, turnusy(id,label,start_time,end_time)` filtered by `is_published=true` and formats turnusy as `HH:MM–HH:MM`. A React island slots in after the turnusy `</section>` (~`:108`).
 - **Email channel (F-02).** `sendTransactionalEmail(deps, msg)` (`src/lib/email/index.ts`) where `deps = { admin: createAdminClient(), config: getEmailConfig(), waitUntil }` and `msg = { to, subject, html, replyTo? }`. Wrap bodies with `renderEmailLayout({title, bodyHtml})`; escape guest data with `escapeHtml()` (`src/lib/email/layout.ts`). No-op (returns `{enqueued:false}`) when unconfigured — callers never break. The smoke caller `src/pages/api/dev/test-email.ts:36-51` shows the exact call shape and the `waitUntil` drain pattern.
-- **Owner email is not anon-readable.** The owner-notification recipient must be fetched server-side with the **admin client** (`createAdminClient()`, `src/lib/supabase-admin.ts`) — joining `zagrody.owner_id → auth.users.email`. The email-outbox tables are service-role only anyway.
+- **Owner email is not anon-readable.** The owner-notification recipient must be fetched server-side with the **admin client** (`createAdminClient()`, `src/lib/supabase-admin.ts`): read `zagrody.owner_id`, then resolve the email via the GoTrue admin API `auth.admin.getUserById(owner_id)` — the admin client is a `public`-schema PostgREST client and **cannot** `.from("auth.users")`. The email-outbox tables are service-role only anyway.
 - **API + form conventions.** JSON API route pattern in `src/pages/api/zagroda/publish.ts` (local `json()` helper, `createClient(headers, cookies)` null-guard → 503, `context.locals.user`, zod `safeParse` → 422 with field errors, Polish copy, never leak raw DB errors). Form pattern in `src/components/zagroda/ZagrodaProfileForm.tsx`: React island, client-side `safeParse`, `fetch` to the API, branch on `res.status===422 && data.fieldErrors`. Reusable `fieldErrorsFromZod()` lives in `src/lib/zagroda.ts:44-52`.
 - **Validation helpers.** Strict `YYYY-MM-DD` + not-in-past date parsing exists in `src/pages/katalog.astro:23-28` (extractable). **No Polish phone validator exists yet** — net-new.
 - **Tests.** vitest harness: `tests/db/*.test.ts` (real Postgres via `pg`, helpers `createAnonClient/createAdminClient/createOwnerClient/seedZagroda/seedBookingRequest/uniqueEmail` in `tests/helpers/supabase.ts`) and `tests/unit/*.test.ts`. `npm test` runs `vitest run`.
@@ -24,7 +24,7 @@ What exists today (verified against the codebase):
 
 ## Desired End State
 
-A guest on `zagrody/[id]` fills a booking form (turnus, date, participants, name, email, phone), submits, and sees an inline confirmation. They receive a "potwierdzenie wysłania" email containing a `…/anuluj?token=<uuid>` link; the owner receives a "nowe zapytanie" email whose reply-to is the teacher's address. Visiting the cancel link shows the request summary and a confirm button; confirming transitions the request `pending → cancelled_by_guest` (idempotent/safe for already-accepted or already-cancelled cases). The request appears in `booking_requests` as `pending` immediately and is visible to the owner via existing RLS.
+A guest on `zagrody/[id]` fills a booking form (turnus, date, participants, name, email, phone), submits, and sees an inline confirmation. They receive a "potwierdzenie wysłania" email containing a `…/anuluj?token=<uuid>` link; the owner receives a "nowe zapytanie" email whose reply-to is the teacher's address. Visiting the cancel link shows a generic confirmation prompt ("Czy na pewno chcesz anulować to zapytanie?") and a confirm button — no per-request detail is shown, since an anon visitor cannot read `booking_requests` (owner-only SELECT) and this slice adds no anon read path; the guest already has the request context from the email they clicked. Confirming transitions the request `pending → cancelled_by_guest` (idempotent/safe for already-accepted or already-cancelled cases). The request appears in `booking_requests` as `pending` immediately and is visible to the owner via existing RLS.
 
 Verify: `npm test` green (new db + unit tests); `npm run build` + `npm run lint` clean; manual end-to-end submit → both emails enqueued → cancel link works and is GET-safe.
 
@@ -131,7 +131,7 @@ Add booking validation helpers (zod schema, lenient PL-phone, future-date) and t
 
 **Intent**: Validate and persist a guest request, then fire the two emails without blocking the response.
 
-**Contract**: `POST` (uppercase export) following `api/zagroda/publish.ts` conventions: local `json()` helper; `createClient(request.headers, cookies)` with null-guard → 503; parse JSON body (catch → 400); `bookingRequestSchema.safeParse` → 422 with `fieldErrors`. On success: generate `const cancel_token = crypto.randomUUID()`; **bare** `await supabase.from("booking_requests").insert({ ...data, cancel_token })` (no `.select()`); map a turnus/zagroda FK or RLS failure to a Polish 422/409, never leak raw error. Then, best-effort (must not fail the response): with `createAdminClient()` fetch the zagroda `name` + owner `auth.users.email`; call `sendTransactionalEmail` twice — guest confirmation (`to`=guest, body includes `<site>/anuluj?token=<cancel_token>`, built from request origin/`Astro` URL) and owner notification (`to`=owner email, `replyTo`=guest email, body summarizes date/turnus/participants/contact). Wrap bodies in `renderEmailLayout` and `escapeHtml()` all guest-supplied fields. Drain via `waitUntil`. Return `json({ ok: true })` on success.
+**Contract**: `POST` (uppercase export) following `api/zagroda/publish.ts` conventions: local `json()` helper; `createClient(request.headers, cookies)` with null-guard → 503; parse JSON body (catch → 400); `bookingRequestSchema.safeParse` → 422 with `fieldErrors`. Then verify the target zagroda is published: `supabase.from("zagrody").select("id").eq("id", data.zagroda_id).eq("is_published", true).maybeSingle()` → if null, return a Polish 404/422 ("Zagroda niedostępna"). This closes the gap that the anon INSERT policy checks only `status='pending'`, not `is_published`, so a crafted POST could otherwise create a pending request against a draft zagroda. On success: generate `const cancel_token = crypto.randomUUID()`; **bare** `await supabase.from("booking_requests").insert({ ...data, cancel_token })` (no `.select()`); map a turnus/zagroda FK or RLS failure to a Polish 422/409, never leak raw error. Then, best-effort (must not fail the response): with `createAdminClient()` read `admin.from("zagrody").select("name, owner_id")`, then resolve the owner's email via the GoTrue admin API `admin.auth.admin.getUserById(owner_id)` (**not** `.from("auth.users")` — the `auth` schema is not exposed over PostgREST and is absent from `database.types.ts`; no `getUserById` caller exists yet, so this is net-new). Then call `sendTransactionalEmail` twice — guest confirmation (`to`=guest, body includes `<site>/anuluj?token=<cancel_token>`, built from request origin/`Astro` URL) and owner notification (`to`=owner email, `replyTo`=guest email, body summarizes date/turnus/participants/contact). Wrap bodies in `renderEmailLayout` and `escapeHtml()` all guest-supplied fields. Drain via `waitUntil`. Return `json({ ok: true })` on success.
 
 #### 3. Unit tests for validators + email bodies
 
@@ -154,6 +154,7 @@ Add booking validation helpers (zod schema, lenient PL-phone, future-date) and t
 - `curl`/REST POST a valid body → `200 {ok:true}` and a `pending` row appears; invalid phone/past date → `422` with field errors in Polish.
 - With email env configured locally, both emails land (or are enqueued in `email_outbox`); with email env unset, the route still returns success (no-op).
 - Owner email's reply-to is the teacher's address; guest email contains a working `/anuluj?token=…` URL.
+- A POST targeting an unpublished/draft zagroda id is rejected ("Zagroda niedostępna"), no row created.
 
 **Implementation Note**: After automated verification passes, pause for manual confirmation before Phase 3.
 
@@ -210,9 +211,9 @@ The GET-safe cancel page linked from the confirmation email, plus the POST route
 
 **File**: `src/pages/anuluj.astro` (new)
 
-**Intent**: GET landing for the email link — side-effect-free; shows what will be cancelled and a confirm button.
+**Intent**: GET landing for the email link — side-effect-free; presents a generic confirm prompt and a button.
 
-**Contract**: Read `token` from the query string. Render a confirmation card (no DB mutation on GET; minimal/no read needed — keep it simple) with a small island/form that POSTs the token to `/api/booking-request/cancel`. If `token` is missing/malformed, show a Polish "nieprawidłowy link" message. Result rendering driven by the POST response (below).
+**Contract**: Read `token` from the query string. Render a confirmation card with a **generic** prompt ("Czy na pewno chcesz anulować to zapytanie?") — **no per-request detail**, because anon has no SELECT on `booking_requests` and this slice adds no anon read path (the guest has context from their email). No DB read or mutation on GET. The card holds a small island/form that POSTs the token to `/api/booking-request/cancel`. If `token` is missing/malformed, show a Polish "nieprawidłowy link" message. Result rendering driven by the POST response (below).
 
 #### 2. Cancel API route
 
@@ -322,6 +323,7 @@ Single additive migration: a new nullable-defaulted column (`NOT NULL DEFAULT ge
 - [ ] 2.4 Valid POST → 200 `{ok:true}` + pending row; invalid phone/past date → 422 with Polish field errors
 - [ ] 2.5 Email configured → both emails enqueued/sent; email unset → route still succeeds (no-op)
 - [ ] 2.6 Owner email reply-to = teacher; guest email contains a working `/anuluj?token=…` URL
+- [ ] 2.7 POST against an unpublished/draft zagroda id is rejected ("Zagroda niedostępna"), no row created
 
 ### Phase 3: Booking form island
 
