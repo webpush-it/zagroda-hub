@@ -260,6 +260,10 @@ export type Database = {
         }
       }
       email_verified: { Args: never; Returns: boolean }
+      password_account_exists: {
+        Args: { p_email: string }
+        Returns: boolean
+      }
       set_zagroda_published: {
         Args: { publish: boolean; target_zagroda_id: string }
         Returns: boolean

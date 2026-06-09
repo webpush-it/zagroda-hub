@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
+import OAuthButtons from "@/components/auth/OAuthButtons";
 
 const error = Astro.url.searchParams.get("error");
 ---
@@ -14,6 +15,9 @@ const error = Astro.url.searchParams.get("error");
         Sign up
       </h1>
       <SignUpForm serverError={error} client:load />
+      <div class="mt-4">
+        <OAuthButtons client:load />
+      </div>
       <p class="mt-4 text-center text-sm text-blue-100/60">
         Already have an account? <a href="/auth/signin" class="text-purple-300 hover:underline">Sign in</a>
       </p>

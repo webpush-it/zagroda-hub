@@ -73,6 +73,12 @@ const astroConfig = tseslint.config({
     "astro/no-set-html-directive": "error",
     "astro/no-unused-css-selector": "warn",
     "astro/prefer-class-list-directive": "warn",
+    // astro-eslint-parser models a top-level `return` in frontmatter (e.g. an
+    // early Astro.redirect guard) as a return with no enclosing function, which
+    // crashes this type-checked rule's checkReturnStatement (@typescript-eslint
+    // 8.x). Type-aware linting of .astro frontmatter is unsupported upstream, so
+    // disable the rule here (the documented eslint-plugin-astro remedy).
+    "@typescript-eslint/no-misused-promises": "off",
   },
 });
 
