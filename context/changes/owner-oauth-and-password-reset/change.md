@@ -43,17 +43,32 @@ Verified at the HTTP level against the running local Supabase stack (Mailpit on 
 
 Phase 3 is a supervised production cutover. There is **no repository code** to change — every step is hosted-dashboard config, a credentialed deploy, and browser-driven smoke. The agent cannot run any of it (no `supabase` CLI on PATH per the Phase 1/2 notes, no prod Cloudflare/Supabase creds, no browser). Execute the steps below, then report each outcome back so the agent flips the matching `## Progress` rows in `plan.md`.
 
-**Find your two environment specifics first** (the runbook refers to them as placeholders):
-- `<project-ref>` — the hosted Supabase project ref (dashboard URL `https://supabase.com/dashboard/project/<project-ref>`, or the subdomain of `SUPABASE_URL` = `https://<project-ref>.supabase.co`).
-- `<production-origin>` — the deployed worker origin: the custom domain if configured, else the `https://zagroda-hub.<account>.workers.dev` URL from the last `wrangler deploy` output.
+**Environment specifics:**
+- `https://zagroda-hub.webpushit.workers.dev` = **`https://zagroda-hub.webpushit.workers.dev`** — KNOWN (confirmed live in `context/deployment/deploy-plan.md` §1.4/§5.4; already set as the Supabase Site URL in §6.5). All occurrences below are already substituted to this value.
+- `<project-ref>` — **you must read this once**: it's the subdomain of the `SUPABASE_URL` worker secret (`https://<project-ref>.supabase.co`), or the URL segment in the dashboard `https://supabase.com/dashboard/project/<project-ref>`. It isn't committed anywhere (lives only in the secret). Get it via `npx wrangler secret list` won't show the value — open the Supabase dashboard, or run `npx supabase projects list` after login. It only appears in the two OAuth redirect URIs and the `supabase link` command below.
 
 #### Prereq — create PRODUCTION OAuth apps (separate from any local-dev creds)
 
-These are distinct from the local `.env` creds (local redirects to `http://127.0.0.1:54321/auth/v1/callback`). Production OAuth apps must authorize the **hosted Supabase** callback:
+These are distinct from the local `.env` creds (local redirects to `http://127.0.0.1:54321/auth/v1/callback`). Production OAuth apps must authorize the **hosted Supabase** callback. The redirect URI is the same for both providers:
 
-- **Authorized redirect URI (both providers)**: `https://<project-ref>.supabase.co/auth/v1/callback`
-- **Google** ([console.cloud.google.com](https://console.cloud.google.com) → APIs & Services → Credentials → OAuth client ID, type *Web application*): copy Client ID + Client secret. Add `<production-origin>` to *Authorized JavaScript origins*. Google always reports `email_verified=true`, so the FR-018 block path (3.5) never fires for it.
-- **Facebook** ([developers.facebook.com](https://developers.facebook.com) → My Apps → Facebook Login product): copy App ID + App secret. Facebook is the only path that can produce `email_verified=false`. A *Live*-mode app requires Meta app review for the `email` permission — if review isn't done, the app stays in *Development* mode and only listed test users can log in (this is the documented gate for 3.6).
+> **Authorized redirect URI (both providers)**: `https://<project-ref>.supabase.co/auth/v1/callback`
+> (the only spot where you need `<project-ref>`)
+
+**Google** — [console.cloud.google.com](https://console.cloud.google.com):
+1. Top-left project picker → create/select a project (e.g. "ZagrodaHub").
+2. **APIs & Services → OAuth consent screen** → User type **External** → fill app name, support email, developer email → Save. Add scopes `.../auth/userinfo.email` + `openid` (the defaults). While in *Testing* status you can add yourself under **Test users**; *Publish app* lifts the test-user restriction (no Google review needed for these basic scopes).
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID** → Application type **Web application**.
+   - *Authorized JavaScript origins*: `https://zagroda-hub.webpushit.workers.dev`
+   - *Authorized redirect URIs*: `https://<project-ref>.supabase.co/auth/v1/callback`
+4. Create → copy **Client ID** + **Client secret** (these go into the Supabase dashboard, step 3.1.1).
+   Google always reports `email_verified=true`, so the FR-018 block path (3.5) never fires for it.
+
+**Facebook** — [developers.facebook.com](https://developers.facebook.com):
+1. **My Apps → Create App** → use case **Authenticate and request data from users with Facebook Login** → app type **Consumer** → name it → create.
+2. In the app, add the **Facebook Login** product → **Settings**:
+   - *Valid OAuth Redirect URIs*: `https://<project-ref>.supabase.co/auth/v1/callback` → Save changes.
+3. **App settings → Basic** → copy **App ID** + **App secret** (→ Supabase dashboard, step 3.1.1). Also set *App domains* = `zagroda-hub.webpushit.workers.dev` and add a Privacy Policy URL (required before going Live).
+4. Facebook is the only path that can produce `email_verified=false`. The app starts in **Development** mode — only roles/test users you add under **App roles → Roles / Test Users** can log in. Going **Live** + the `email` permission requires Meta **App Review**; until that's approved, document the status for 3.6 instead of expecting a pass.
 
 #### 3.1 / 3.2 — Hosted Supabase config + deploy with migration
 
@@ -62,8 +77,8 @@ These are distinct from the local `.env` creds (local redirects to `http://127.0
    - Enable **Facebook**, paste the production App ID + secret.
    - **Do NOT replicate the local `skip_nonce_check = true`** — leave the nonce check ON in production (it's a dev-only relaxation from `config.toml`, Phase 2 #1).
 2. **URL configuration** — Dashboard → Authentication → URL Configuration:
-   - **Site URL** = `<production-origin>` (this is what the `recovery.html` / `confirmation.html` templates' `{{ .SiteURL }}` resolves to — the reset/confirm links are built entirely from it, so getting this right is what makes 3.4 work).
-   - **Redirect allow-list**: add `<production-origin>/api/auth/callback` (the OAuth `redirectTo`) and `<production-origin>/**`.
+   - **Site URL** = `https://zagroda-hub.webpushit.workers.dev` (this is what the `recovery.html` / `confirmation.html` templates' `{{ .SiteURL }}` resolves to — the reset/confirm links are built entirely from it, so getting this right is what makes 3.4 work).
+   - **Redirect allow-list**: add `https://zagroda-hub.webpushit.workers.dev/api/auth/callback` (the OAuth `redirectTo`) and `https://zagroda-hub.webpushit.workers.dev/**`.
 3. **Email templates** — Dashboard → Authentication → Email Templates: sync **Confirm signup** ← `supabase/templates/confirmation.html` and **Reset password** ← `supabase/templates/recovery.html`. Confirm the recovery template's link target is `{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=recovery`.
 4. **SMTP (Brevo)** — Dashboard → Authentication → SMTP Settings → enable custom SMTP:
    - Host/port/user/pass from the Brevo account; **Sender email** = the Brevo-verified `EMAIL_FROM`; sender name = `EMAIL_FROM_NAME` (defaults "Zagroda Hub").
@@ -79,8 +94,8 @@ These are distinct from the local `.env` creds (local redirects to `http://127.0
 
 #### 3.3–3.6 — Production smoke (browser)
 
-- **3.3** — On `<production-origin>/auth/signin`, click **Kontynuuj z Google**, complete consent → lands on `/dashboard`.
-- **3.4** — `<production-origin>/auth/forgot-password` → submit your email → recovery email arrives **via Brevo within 5 min** → link lands on `/auth/reset-password` with an active session → set a new password → `/dashboard` → sign out and re-login with the new password.
+- **3.3** — On `https://zagroda-hub.webpushit.workers.dev/auth/signin`, click **Kontynuuj z Google**, complete consent → lands on `/dashboard`.
+- **3.4** — `https://zagroda-hub.webpushit.workers.dev/auth/forgot-password` → submit your email → recovery email arrives **via Brevo within 5 min** → link lands on `/auth/reset-password` with an active session → set a new password → `/dashboard` → sign out and re-login with the new password.
 - **3.5** — Unverified-collision block: only reproducible with a Facebook account whose email is unverified *and* already has a password account on the site. If you can stage it, expect the redirect to `/auth/signin` with "To konto loguje się hasłem…" and **no** duplicate/orphan in `auth.users`. If you can't stage an unverified Facebook email, record the reasoning (the `shouldBlockOAuth` decision + the `password_account_exists` function are already proven in Phase 2; only the live `email_verified=false` GoTrue path is unverifiable without such an account).
 - **3.6** — Complete a Facebook login in production. If the Meta app is still in *Development* mode / pending app review, that's the documented remaining gate — note the review status here instead of a pass.
 
