@@ -221,7 +221,7 @@ The GET-safe cancel page linked from the confirmation email, plus the POST route
 
 **Intent**: Perform the cancellation via the RPC and return a typed outcome for the page to render.
 
-**Contract**: `POST` reading `{ token }` (zod uuid → 422 on bad shape). `createClient` null-guard → 503. Call `supabase.rpc("cancel_booking_request", { p_token: token })` (anon is granted EXECUTE). Map the RPC return: `cancelled=true` → `200 {status:"cancelled"}`; `cancelled=false` with status `accepted`/`withdrawn_by_owner` → `200 {status:"already_accepted"}` (page copy: "To zapytanie zostało już zaakceptowane — zadzwoń do gospodarza, aby je odwołać."); status `cancelled_by_guest` → `200 {status:"already_cancelled"}`; no row (null) → `200 {status:"not_found"}` ("Link nieprawidłowy lub zapytanie nie istnieje."). Never leak raw DB errors.
+**Contract**: `POST` reading `{ token }` (zod uuid; a malformed token is folded into the same `not_found` outcome as an unknown one → `200 {status:"not_found"}`, since both mean "no such request" — the guest sees one coherent "nieprawidłowy link" message and the island treats any `status` as terminal). `createClient` null-guard → 503. Call `supabase.rpc("cancel_booking_request", { p_token: token })` (anon is granted EXECUTE). Map the RPC return: `cancelled=true` → `200 {status:"cancelled"}`; `cancelled=false` with status `accepted`/`withdrawn_by_owner` → `200 {status:"already_accepted"}` (page copy: "To zapytanie zostało już zaakceptowane — zadzwoń do gospodarza, aby je odwołać."); status `cancelled_by_guest` → `200 {status:"already_cancelled"}`; no row (null) → `200 {status:"not_found"}` ("Link nieprawidłowy lub zapytanie nie istnieje."). Never leak raw DB errors.
 
 #### 3. Cancel result island (if needed)
 

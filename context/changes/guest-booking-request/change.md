@@ -1,7 +1,7 @@
 ---
 change_id: guest-booking-request
 title: Guest booking request
-status: implemented
+status: impl_reviewed
 created: 2026-06-08
 updated: 2026-06-09
 archived_at: null
