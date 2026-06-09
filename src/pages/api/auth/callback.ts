@@ -34,6 +34,15 @@ export const GET: APIRoute = async (context) => {
     if (admin) {
       const { data: exists } = await admin.rpc("password_account_exists", { p_email: data.user.email });
       passwordAccountExists = Boolean(exists);
+    } else {
+      // No service-role client (missing SERVICE_ROLE_KEY) → the FR-018 collision
+      // block CANNOT run and this unverified-email login is allowed through.
+      // Surface it so a missing key is observable in `wrangler tail` rather than
+      // silently weakening the guardrail.
+      // eslint-disable-next-line no-console -- intentional ops signal for a missing service-role key
+      console.warn(
+        "[auth/callback] admin client unavailable on unverified-email path; FR-018 collision block skipped (password_account_exists not checked)",
+      );
     }
   }
 
