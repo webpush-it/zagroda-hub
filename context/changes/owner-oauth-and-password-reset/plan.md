@@ -410,7 +410,7 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 #### Manual
 
-- [ ] 3.3 Production Google OAuth login lands on `/dashboard`
-- [ ] 3.4 Production reset email delivered via Brevo <5 min and completes end-to-end
+- [x] 3.3 Production Google OAuth login lands on `/dashboard`
+- [x] 3.4 Production reset email delivered via Brevo <5 min and completes end-to-end
 - [ ] 3.5 Unverified-collision block verified or reasoned in production
 - [ ] 3.6 Facebook login works in production, or app-review status documented

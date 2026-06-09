@@ -148,3 +148,8 @@ Google always reports `email_verified=true`, so the FR-018 block path (3.5) neve
 - `GET /api/auth/oauth/facebook` → 302 → Supabase `authorize` → 302 → `www.facebook.com/dialog/oauth` with `client_id=2159807081507410`, same Supabase `redirect_uri`, `scope=email`. **Proves Facebook is enabled + wired.**
 
 → **3.1 and 3.2 marked done** (deploy succeeded, migration landed first, both providers verified reachable). **Still PENDING (browser/email/review — only the user can drive):** 3.3 (Google consent → /dashboard), 3.4 (Brevo recovery email <5 min end-to-end), 3.5 (unverified-FB collision block or reasoned), 3.6 (Facebook live login or app-review status). These also clear the carried-over Phase 2 live rows 2.0/2.7–2.10.
+
+**Smoke results (reported by user 2026-06-09):**
+- **3.3 PASS** — production Google OAuth consent → lands on `/dashboard`.
+- **3.4 PASS** — recovery email delivered via Brevo in ~30s, full reset completed end-to-end.
+- Still pending: 3.5, 3.6, plus carried-over Phase 2 live rows 2.0, 2.8, 2.9, 2.10 (2.7 effectively covered by 3.3 if the Google account was a first-time/new owner — pending user confirmation).
