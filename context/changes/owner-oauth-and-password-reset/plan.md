@@ -397,7 +397,7 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 - [ ] 2.0 Phase 2.0 spike confirms GoTrue merge/separate/reset-OAuth-only behavior (recorded)
 - [x] 2.7 Google OAuth registers a new owner → `/dashboard`
-- [ ] 2.8 Google OAuth on existing verified password email → same account (merge, no duplicate)
+- [x] 2.8 Google OAuth on existing verified password email → same account (merge, no duplicate)
 - [ ] 2.9 Unverified-collision → "zaloguj się hasłem" message, no orphan account
 - [x] 2.10 OAuth-only owner completes reset → can sign in with email+password
 
