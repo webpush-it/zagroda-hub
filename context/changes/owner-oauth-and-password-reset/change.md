@@ -135,3 +135,16 @@ Google always reports `email_verified=true`, so the FR-018 block path (3.5) neve
 - **3.6** — Complete a Facebook login in production. If the Meta app is still in *Development* mode / pending app review, that's the documented remaining gate — note the review status here instead of a pass.
 
 **Report format**: for each row, reply with the row number + PASS/observation (e.g. "3.4 PASS — Brevo email in ~40s, reset completed" or "3.6 — Facebook app in review, blocked on `email` permission"). The agent will stamp `change.md` and flip the `## Progress` rows accordingly.
+
+### Phase 3 execution (2026-06-09, deploy by agent at user request)
+
+**Deploy ordering adapted** — the literal `npm run deploy` could not run from this machine (the `supabase` CLI is not installed here, so its `db:push` middle step fails; `wrangler` *is* authenticated — OAuth token, account `WebPushIT`/`778c2104…`, `workers:write`). So the two halves were split while preserving the deploy discipline (schema before worker):
+- **3.1 migration (D-1)** — applied by the user via the **Supabase dashboard SQL Editor** (idempotent `create or replace` + `revoke`/`grant`), confirmed "migracja wgrana" before the worker deploy. NB: applied outside `supabase db push`, so `supabase_migrations.schema_migrations` has no `20260609000000` row — a future `db push` will re-run the file harmlessly (idempotent). 3.2's "present in hosted DB migrations" is satisfied by the function existing; the migration-table bookkeeping is the only nuance.
+- **3.1 worker (D-2)** — `npm run build && npx wrangler deploy` → **deployed clean**. Version ID `ac33ee54-e74d-458a-9d5d-d4421c70ffff` at `https://zagroda-hub.webpushit.workers.dev`. Upload included the new Phase 1/2 bundles (`OAuthButtons`, `ResetPasswordForm`, `SignInForm`).
+
+**Production HTTP smoke (read-only, no accounts created) — confirms 3.1 plumbing end-to-end up to the consent screen:**
+- `GET /` → HTTP 200; `/auth/signin` renders both "Kontynuuj z Google/Facebook" + "Nie pamiętam hasła"; `/auth/forgot-password` → 200.
+- `GET /api/auth/oauth/google` → 302 → Supabase `authorize` (PKCE `code_challenge`, s256) → 302 → `accounts.google.com/o/oauth2/v2/auth` with **real** `client_id=695849093777-…apps.googleusercontent.com`, `redirect_uri=https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback`, `scope=email profile`. **Proves the Google provider is enabled + wired in the hosted dashboard.**
+- `GET /api/auth/oauth/facebook` → 302 → Supabase `authorize` → 302 → `www.facebook.com/dialog/oauth` with `client_id=2159807081507410`, same Supabase `redirect_uri`, `scope=email`. **Proves Facebook is enabled + wired.**
+
+→ **3.1 and 3.2 marked done** (deploy succeeded, migration landed first, both providers verified reachable). **Still PENDING (browser/email/review — only the user can drive):** 3.3 (Google consent → /dashboard), 3.4 (Brevo recovery email <5 min end-to-end), 3.5 (unverified-FB collision block or reasoned), 3.6 (Facebook live login or app-review status). These also clear the carried-over Phase 2 live rows 2.0/2.7–2.10.

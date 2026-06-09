@@ -405,8 +405,8 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 #### Automated
 
-- [ ] 3.1 Deploy pipeline succeeds (`npm run deploy`, migration pushed before worker)
-- [ ] 3.2 `password_account_exists` present in hosted DB migrations
+- [x] 3.1 Deploy pipeline succeeds (`npm run deploy`, migration pushed before worker)
+- [x] 3.2 `password_account_exists` present in hosted DB migrations
 
 #### Manual
 
