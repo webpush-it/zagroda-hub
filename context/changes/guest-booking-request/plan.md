@@ -341,12 +341,12 @@ Single additive migration: a new nullable-defaulted column (`NOT NULL DEFAULT ge
 
 #### Automated
 
-- [x] 4.1 Build passes: `npm run build`
-- [x] 4.2 Lint passes: `npm run lint`
-- [x] 4.3 Phase-1 cancel-RPC DB tests still pass: `npm test`
+- [x] 4.1 Build passes: `npm run build` — 44047e8
+- [x] 4.2 Lint passes: `npm run lint` — 44047e8
+- [x] 4.3 Phase-1 cancel-RPC DB tests still pass: `npm test` — 44047e8
 
 #### Manual
 
-- [x] 4.4 Email link opens `/anuluj?token=…` with no state change on GET; confirming cancels a pending request
-- [x] 4.5 Already-accepted → "zadzwoń do gospodarza"; already-cancelled/unknown token → idempotent/not-found copy
-- [x] 4.6 Cancelled request shows as `cancelled_by_guest` in the owner's view
+- [x] 4.4 Email link opens `/anuluj?token=…` with no state change on GET; confirming cancels a pending request — 44047e8
+- [x] 4.5 Already-accepted → "zadzwoń do gospodarza"; already-cancelled/unknown token → idempotent/not-found copy — 44047e8
+- [x] 4.6 Cancelled request shows as `cancelled_by_guest` in the owner's view — 44047e8
