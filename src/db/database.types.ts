@@ -36,6 +36,7 @@ export type Database = {
     Tables: {
       booking_requests: {
         Row: {
+          cancel_token: string
           created_at: string
           guest_email: string
           guest_name: string
@@ -49,6 +50,7 @@ export type Database = {
           zagroda_id: string
         }
         Insert: {
+          cancel_token?: string
           created_at?: string
           guest_email: string
           guest_name: string
@@ -62,6 +64,7 @@ export type Database = {
           zagroda_id: string
         }
         Update: {
+          cancel_token?: string
           created_at?: string
           guest_email?: string
           guest_name?: string
@@ -215,6 +218,13 @@ export type Database = {
           daily_limit: number
           occupied: number
           requested: number
+        }[]
+      }
+      cancel_booking_request: {
+        Args: { p_token: string }
+        Returns: {
+          cancelled: boolean
+          status: Database["public"]["Enums"]["request_status"]
         }[]
       }
       catalog_zagrody: {

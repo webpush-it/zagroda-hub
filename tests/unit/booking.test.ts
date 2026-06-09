@@ -1,0 +1,119 @@
+import { describe, expect, it } from "vitest";
+import { bookingRequestSchema, buildBookingEmails, isValidPlPhone, normalizePhone } from "@/lib/booking";
+
+// Locks the validation edges (phone, date, participant bounds) and proves
+// guest-supplied data is HTML-escaped in both email bodies.
+
+const VALID = {
+  zagroda_id: "11111111-1111-4111-8111-111111111111",
+  turnus_id: "22222222-2222-4222-8222-222222222222",
+  trip_date: "2999-12-31",
+  participants_count: 5,
+  guest_name: "Jan Kowalski",
+  guest_email: "jan@example.com",
+  guest_phone: "600700800",
+};
+
+describe("isValidPlPhone / normalizePhone", () => {
+  it("accepts spaced, +48, 0048 and dashed national forms", () => {
+    expect(isValidPlPhone("600 700 800")).toBe(true);
+    expect(isValidPlPhone("+48 600700800")).toBe(true);
+    expect(isValidPlPhone("0048-600-700-800")).toBe(true);
+    expect(isValidPlPhone("(48) 600 700 800")).toBe(true);
+    expect(isValidPlPhone("600700800")).toBe(true);
+  });
+
+  it("rejects too-short, too-long and alphabetic input", () => {
+    expect(isValidPlPhone("12345")).toBe(false);
+    expect(isValidPlPhone("6007008001234")).toBe(false);
+    expect(isValidPlPhone("600 700 80a")).toBe(false);
+    expect(isValidPlPhone("abcdefghi")).toBe(false);
+  });
+
+  it("strips spaces, dashes and parens", () => {
+    expect(normalizePhone("(48) 600-700 800")).toBe("48600700800");
+  });
+});
+
+describe("bookingRequestSchema — trip_date", () => {
+  it("accepts a future date", () => {
+    expect(bookingRequestSchema.safeParse(VALID).success).toBe(true);
+  });
+
+  it("rejects a past date", () => {
+    expect(bookingRequestSchema.safeParse({ ...VALID, trip_date: "2000-01-01" }).success).toBe(false);
+  });
+
+  it("rejects a malformed date", () => {
+    expect(bookingRequestSchema.safeParse({ ...VALID, trip_date: "31-12-2999" }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...VALID, trip_date: "2999-13-40" }).success).toBe(false);
+  });
+});
+
+describe("bookingRequestSchema — participants_count", () => {
+  it("accepts 1 and 1000", () => {
+    expect(bookingRequestSchema.safeParse({ ...VALID, participants_count: 1 }).success).toBe(true);
+    expect(bookingRequestSchema.safeParse({ ...VALID, participants_count: 1000 }).success).toBe(true);
+  });
+
+  it("rejects 0, 1001 and non-integers", () => {
+    expect(bookingRequestSchema.safeParse({ ...VALID, participants_count: 0 }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...VALID, participants_count: 1001 }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...VALID, participants_count: 2.5 }).success).toBe(false);
+  });
+
+  it("coerces a numeric string", () => {
+    const result = bookingRequestSchema.safeParse({ ...VALID, participants_count: "7" });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.participants_count).toBe(7);
+  });
+});
+
+describe("bookingRequestSchema — other fields", () => {
+  it("rejects a bad email and a bad phone", () => {
+    expect(bookingRequestSchema.safeParse({ ...VALID, guest_email: "not-an-email" }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...VALID, guest_phone: "123" }).success).toBe(false);
+  });
+
+  it("rejects an empty name and a non-uuid turnus", () => {
+    expect(bookingRequestSchema.safeParse({ ...VALID, guest_name: "   " }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...VALID, turnus_id: "nope" }).success).toBe(false);
+  });
+});
+
+describe("buildBookingEmails", () => {
+  const ctx = {
+    origin: "https://zagroda.test",
+    cancelToken: "33333333-3333-3333-3333-333333333333",
+    zagrodaName: "Zagroda u Jana",
+    ownerEmail: "owner@example.com",
+    turnusLabel: "Poranny",
+    guest_name: 'Ala <script>alert("x")</script> & Ola',
+    guest_email: "ala@example.com",
+    guest_phone: "600700800",
+    trip_date: "2999-12-31",
+    participants_count: 12,
+  };
+
+  it("escapes guest-supplied data in the owner email", () => {
+    const { owner } = buildBookingEmails(ctx);
+    expect(owner).not.toBeNull();
+    if (!owner) return;
+    expect(owner.html).not.toContain("<script>");
+    expect(owner.html).toContain("&lt;script&gt;");
+    expect(owner.html).toContain("&amp;");
+    expect(owner.replyTo).toBe("ala@example.com");
+  });
+
+  it("embeds the cancel link in the guest email and sets the recipient", () => {
+    const { guest } = buildBookingEmails(ctx);
+    expect(guest.to).toBe("ala@example.com");
+    expect(guest.html).toContain("https://zagroda.test/anuluj?token=33333333-3333-3333-3333-333333333333");
+  });
+
+  it("returns owner: null when no owner address resolved", () => {
+    const { guest, owner } = buildBookingEmails({ ...ctx, ownerEmail: null });
+    expect(owner).toBeNull();
+    expect(guest).not.toBeNull();
+  });
+});
