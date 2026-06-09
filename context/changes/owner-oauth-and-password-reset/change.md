@@ -152,4 +152,5 @@ Google always reports `email_verified=true`, so the FR-018 block path (3.5) neve
 **Smoke results (reported by user 2026-06-09):**
 - **3.3 PASS** — production Google OAuth consent → lands on `/dashboard`.
 - **3.4 PASS** — recovery email delivered via Brevo in ~30s, full reset completed end-to-end.
-- Still pending: 3.5, 3.6, plus carried-over Phase 2 live rows 2.0, 2.8, 2.9, 2.10 (2.7 effectively covered by 3.3 if the Google account was a first-time/new owner — pending user confirmation).
+- **2.7 PASS** — user confirmed the 3.3 Google account was new (first-time login = new-owner registration → `/dashboard`).
+- Still pending: 3.5, 3.6, plus carried-over Phase 2 live rows 2.0, 2.8, 2.9, 2.10.
