@@ -329,24 +329,24 @@ Single additive migration: a new nullable-defaulted column (`NOT NULL DEFAULT ge
 
 #### Automated
 
-- [x] 3.1 Build passes: `npm run build`
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Build passes: `npm run build` — 8f3c41c
+- [x] 3.2 Lint passes: `npm run lint` — 8f3c41c
 
 #### Manual
 
-- [x] 3.3 Form renders on a published zagroda (mobile-portrait); client-side validation shows inline Polish errors; valid submit shows success + creates a pending request
-- [x] 3.4 Turnus/date/participants usable one-handed; past dates not accepted
+- [x] 3.3 Form renders on a published zagroda (mobile-portrait); client-side validation shows inline Polish errors; valid submit shows success + creates a pending request — 8f3c41c
+- [x] 3.4 Turnus/date/participants usable one-handed; past dates not accepted — 8f3c41c
 
 ### Phase 4: Guest cancel flow
 
 #### Automated
 
-- [ ] 4.1 Build passes: `npm run build`
-- [ ] 4.2 Lint passes: `npm run lint`
-- [ ] 4.3 Phase-1 cancel-RPC DB tests still pass: `npm test`
+- [x] 4.1 Build passes: `npm run build`
+- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.3 Phase-1 cancel-RPC DB tests still pass: `npm test`
 
 #### Manual
 
-- [ ] 4.4 Email link opens `/anuluj?token=…` with no state change on GET; confirming cancels a pending request
-- [ ] 4.5 Already-accepted → "zadzwoń do gospodarza"; already-cancelled/unknown token → idempotent/not-found copy
-- [ ] 4.6 Cancelled request shows as `cancelled_by_guest` in the owner's view
+- [x] 4.4 Email link opens `/anuluj?token=…` with no state change on GET; confirming cancels a pending request
+- [x] 4.5 Already-accepted → "zadzwoń do gospodarza"; already-cancelled/unknown token → idempotent/not-found copy
+- [x] 4.6 Cancelled request shows as `cancelled_by_guest` in the owner's view
