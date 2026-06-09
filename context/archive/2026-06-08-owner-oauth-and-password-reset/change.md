@@ -1,10 +1,10 @@
 ---
 change_id: owner-oauth-and-password-reset
 title: Owner oauth and password reset
-status: impl_reviewed
+status: archived
 created: 2026-06-08
 updated: 2026-06-09
-archived_at: null
+archived_at: 2026-06-09T19:18:47Z
 ---
 
 ## Notes
