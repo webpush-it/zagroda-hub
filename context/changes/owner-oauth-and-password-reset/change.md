@@ -111,9 +111,13 @@ Google always reports `email_verified=true`, so the FR-018 block path (3.5) neve
    - **Site URL** = `https://zagroda-hub.webpushit.workers.dev` (this is what the `recovery.html` / `confirmation.html` templates' `{{ .SiteURL }}` resolves to — the reset/confirm links are built entirely from it, so getting this right is what makes 3.4 work).
    - **Redirect allow-list**: add `https://zagroda-hub.webpushit.workers.dev/api/auth/callback` (the OAuth `redirectTo`) and `https://zagroda-hub.webpushit.workers.dev/**`.
 3. **Email templates** — Dashboard → Authentication → Email Templates: sync **Confirm signup** ← `supabase/templates/confirmation.html` and **Reset password** ← `supabase/templates/recovery.html`. Confirm the recovery template's link target is `{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=recovery`.
-4. **SMTP (Brevo)** — Dashboard → Authentication → SMTP Settings → enable custom SMTP:
-   - Host/port/user/pass from the Brevo account; **Sender email** = the Brevo-verified `EMAIL_FROM`; sender name = `EMAIL_FROM_NAME` (defaults "Zagroda Hub").
-   - Without this, auth emails fall back to Supabase's low-rate built-in sender and will miss the <5 min NFR (3.4).
+4. **SMTP (Brevo)** — Dashboard → Authentication → SMTP Settings → enable custom SMTP. Get the values from [app.brevo.com](https://app.brevo.com) → account menu (top-right) → **SMTP & API → SMTP** tab:
+   - **Host** = `smtp-relay.brevo.com`; **Port** = `587` (STARTTLS).
+   - **Username** = the login shown on that page (your Brevo account email, or a `…@smtp-brevo.com` login).
+   - **Password** = the Brevo **SMTP key / "Master password"** from that same SMTP tab (use *Generate a new SMTP key* if none). ⚠️ This is **NOT** the account login password and **NOT** `BREVO_API_KEY` — that `xkeysib-…` value is the REST **API key** the app's outbox (FR-005/011/016) uses, a different credential. Pasting the API key here will fail SMTP auth.
+   - **Sender email** = the Brevo-**verified** sender (same as the app's `EMAIL_FROM`; verify under Brevo → Senders, Domains & Dedicated IPs → Senders). Sender name = `EMAIL_FROM_NAME` (defaults "Zagroda Hub"). An unverified sender → mail silently dropped or spam-foldered → 3.4 fails.
+   - Gotcha: some Brevo accounts have the SMTP relay disabled until the account is confirmed / transactional sending is activated — if auth fails, check the relay is active in Brevo.
+   - Without custom SMTP, auth emails fall back to Supabase's low-rate built-in sender and will miss the <5 min NFR (3.4).
 5. **Link the CLI to the hosted project** (once per machine), then deploy:
    ```bash
    npx supabase link --project-ref viuusqzijkwykfoohulo
