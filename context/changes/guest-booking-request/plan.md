@@ -314,28 +314,28 @@ Single additive migration: a new nullable-defaulted column (`NOT NULL DEFAULT ge
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Type check + lint pass: `npm run lint`
-- [x] 2.3 Build succeeds: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test` — e5f0e14
+- [x] 2.2 Type check + lint pass: `npm run lint` — e5f0e14
+- [x] 2.3 Build succeeds: `npm run build` — e5f0e14
 
 #### Manual
 
-- [x] 2.4 Valid POST → 200 `{ok:true}` + pending row; invalid phone/past date → 422 with Polish field errors
-- [x] 2.5 Email configured → both emails enqueued/sent; email unset → route still succeeds (no-op)
-- [x] 2.6 Owner email reply-to = teacher; guest email contains a working `/anuluj?token=…` URL
-- [x] 2.7 POST against an unpublished/draft zagroda id is rejected ("Zagroda niedostępna"), no row created
+- [x] 2.4 Valid POST → 200 `{ok:true}` + pending row; invalid phone/past date → 422 with Polish field errors — e5f0e14
+- [x] 2.5 Email configured → both emails enqueued/sent; email unset → route still succeeds (no-op) — e5f0e14
+- [x] 2.6 Owner email reply-to = teacher; guest email contains a working `/anuluj?token=…` URL — e5f0e14
+- [x] 2.7 POST against an unpublished/draft zagroda id is rejected ("Zagroda niedostępna"), no row created — e5f0e14
 
 ### Phase 3: Booking form island
 
 #### Automated
 
-- [ ] 3.1 Build passes: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Build passes: `npm run build`
+- [x] 3.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Form renders on a published zagroda (mobile-portrait); client-side validation shows inline Polish errors; valid submit shows success + creates a pending request
-- [ ] 3.4 Turnus/date/participants usable one-handed; past dates not accepted
+- [x] 3.3 Form renders on a published zagroda (mobile-portrait); client-side validation shows inline Polish errors; valid submit shows success + creates a pending request
+- [x] 3.4 Turnus/date/participants usable one-handed; past dates not accepted
 
 ### Phase 4: Guest cancel flow
 

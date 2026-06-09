@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import Topbar from "@/components/Topbar.astro";
+import BookingRequestForm from "@/components/booking/BookingRequestForm";
 import { createClient } from "@/lib/supabase";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -8,6 +9,7 @@ const rawId = Astro.params.id ?? "";
 const id = UUID_RE.test(rawId) ? rawId : null;
 
 interface ZagrodaProfile {
+  id: string;
   name: string;
   description: string;
   lokalizacja: string;
@@ -34,6 +36,7 @@ if (supabase && id) {
     // city/description/photo_path can be null on a published row edited after
     // publication (the publish gate checks completeness only at publish time).
     profile = {
+      id,
       name: zagroda.name,
       description: zagroda.description ?? "",
       lokalizacja: [zagroda.city ?? "", zagroda.voivodeship ?? ""].filter(Boolean).join(", "),
@@ -106,6 +109,15 @@ if (!profile) {
                   </ul>
                 </section>
               )}
+
+              <section class="mt-6 border-t border-white/10 pt-6">
+                <BookingRequestForm
+                  client:load
+                  zagrodaId={profile.id}
+                  turnusy={profile.turnusy}
+                  dailyLimit={profile.dailyLimit}
+                />
+              </section>
             </article>
           ) : (
             <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
