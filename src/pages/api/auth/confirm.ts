@@ -27,5 +27,7 @@ export const GET: APIRoute = async (context) => {
     );
   }
 
-  return context.redirect("/dashboard");
+  // Recovery lands on the set-new-password form (session now established);
+  // every other verified type lands logged-in on the dashboard.
+  return context.redirect(type === "recovery" ? "/auth/reset-password" : "/dashboard");
 };
