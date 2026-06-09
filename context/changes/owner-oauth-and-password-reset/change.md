@@ -153,4 +153,6 @@ Google always reports `email_verified=true`, so the FR-018 block path (3.5) neve
 - **3.3 PASS** — production Google OAuth consent → lands on `/dashboard`.
 - **3.4 PASS** — recovery email delivered via Brevo in ~30s, full reset completed end-to-end.
 - **2.7 PASS** — user confirmed the 3.3 Google account was new (first-time login = new-owner registration → `/dashboard`).
-- Still pending: 3.5, 3.6, plus carried-over Phase 2 live rows 2.0, 2.8, 2.9, 2.10.
+- **2.10 PASS** — user logged in Google-only, then set a password via the reset flow, then could sign in with **both** email+password and Google (one account, no split-brain). Also confirms the 2.0 spike's "reset reaches an OAuth-only user + `updateUser({password})` enables email+password login" behavior.
+- Still pending: 3.5, 3.6, plus 2.0 (merge-direction sub-behavior), 2.8, 2.9.
+  - **Note on 2.8 vs 2.10**: 2.10 is OAuth-first-then-add-password (done). 2.8 is the *reverse* — a password account exists FIRST, then a Google login on the same email must merge into it (one account, no duplicate). Different GoTrue link direction; still to verify by: signup with email+password → then Google login on that same email → confirm single account in `auth.users`.
