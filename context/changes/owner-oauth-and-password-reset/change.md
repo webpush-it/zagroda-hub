@@ -54,21 +54,52 @@ These are distinct from the local `.env` creds (local redirects to `http://127.0
 > **Authorized redirect URI (both providers)**: `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback`
 > (the only spot where you need `viuusqzijkwykfoohulo`)
 
+**Which redirect URI goes where (the #1 confusion):** the flow is server-side via Supabase. Google/Facebook only ever talk to Supabase, never to the worker.
+
+| URL | Where to enter it | Purpose |
+| --- | --- | --- |
+| `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback` | **in Google / Facebook** (Authorized/Valid redirect URI) | the provider redirects here after consent — this is the **Supabase** endpoint, not the app |
+| `https://zagroda-hub.webpushit.workers.dev/api/auth/callback` | **in Supabase** (URL Configuration allow-list, step 3.1.2) | Supabase redirects here after exchanging the code for a session |
+
+Never put the worker URL into the provider's redirect field — that yields `redirect_uri_mismatch`.
+
+---
+
 **Google** — [console.cloud.google.com](https://console.cloud.google.com):
-1. Top-left project picker → create/select a project (e.g. "ZagrodaHub").
-2. **APIs & Services → OAuth consent screen** → User type **External** → fill app name, support email, developer email → Save. Add scopes `.../auth/userinfo.email` + `openid` (the defaults). While in *Testing* status you can add yourself under **Test users**; *Publish app* lifts the test-user restriction (no Google review needed for these basic scopes).
-3. **APIs & Services → Credentials → Create credentials → OAuth client ID** → Application type **Web application**.
-   - *Authorized JavaScript origins*: `https://zagroda-hub.webpushit.workers.dev`
-   - *Authorized redirect URIs*: `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback`
-4. Create → copy **Client ID** + **Client secret** (these go into the Supabase dashboard, step 3.1.1).
-   Google always reports `email_verified=true`, so the FR-018 block path (3.5) never fires for it.
+
+1. **Project** — top-left project picker → New Project → name `ZagrodaHub` → Create → switch to it.
+2. **Consent screen** — menu **Google Auth Platform** (formerly *APIs & Services → OAuth consent screen*); first time → **Get started**:
+   - **Branding**: App name `ZagrodaHub`, user support email = your email.
+     - ⚠️ **Authorized domains — LEAVE EMPTY.** Do **not** try to add `workers.dev` or `supabase.co`: Google rejects them with *"Nieprawidłowa domena: musi to być prywatna domena najwyższego poziomu / must be a private top-level domain"* because both are on the public-suffix list (not registrable domains you can verify in Search Console). This field is **not required** for a server-side OAuth flow with non-sensitive scopes (Testing or published-basic). It only becomes relevant if you later publish with homepage/privacy links on a domain you own — which `*.workers.dev` isn't. Skip it.
+   - **Audience**: **External**.
+   - **Contact information**: your developer email.
+3. **Scopes** — Data Access → Add scopes → select only the non-sensitive trio: `openid`, `.../auth/userinfo.email`, `.../auth/userinfo.profile`. These need **no Google verification** even after publishing. (Supabase derives `email` + `email_verified` from them; Google always returns `email_verified=true`.)
+4. **Publishing / test users** — app starts in **Testing**: only emails listed under **Audience → Test users** can log in. Add your own email now (this covers test 3.3). **Publish app** lifts the restriction and needs **no review** for these basic scopes.
+5. **Create the client** — Google Auth Platform → **Clients** (formerly *Credentials*) → **Create client** → Application type **Web application**, name `zagroda-hub-web`:
+   - *Authorized JavaScript origins*: **not required** for this flow — leave empty (or, if you prefer to fill it, `https://viuusqzijkwykfoohulo.supabase.co`). Do **not** put the worker URL here.
+   - *Authorized redirect URIs* → Add URI → `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback` (exact, no trailing slash).
+   - Create.
+6. **Copy creds** — copy **Client ID** + **Client secret** → they go into Supabase dashboard, step 3.1.1.
+
+Google always reports `email_verified=true`, so the FR-018 block path (3.5) never fires for Google — its merge-on-existing-password-email case is test 2.8.
+
+---
 
 **Facebook** — [developers.facebook.com](https://developers.facebook.com):
-1. **My Apps → Create App** → use case **Authenticate and request data from users with Facebook Login** → app type **Consumer** → name it → create.
-2. In the app, add the **Facebook Login** product → **Settings**:
-   - *Valid OAuth Redirect URIs*: `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback` → Save changes.
-3. **App settings → Basic** → copy **App ID** + **App secret** (→ Supabase dashboard, step 3.1.1). Also set *App domains* = `zagroda-hub.webpushit.workers.dev` and add a Privacy Policy URL (required before going Live).
-4. Facebook is the only path that can produce `email_verified=false`. The app starts in **Development** mode — only roles/test users you add under **App roles → Roles / Test Users** can log in. Going **Live** + the `email` permission requires Meta **App Review**; until that's approved, document the status for 3.6 instead of expecting a pass.
+
+1. **Create app** — My Apps → **Create App** → name it → use case **Authenticate and request data from users with Facebook Login** (older UI: app type **Consumer**) → Create. (May require completing Meta developer-account / business verification first.)
+2. **Add Facebook Login** — left nav: add the **Facebook Login** product → **Facebook Login → Settings**:
+   - *Client OAuth Login* = **Yes**, *Web OAuth Login* = **Yes**.
+   - *Valid OAuth Redirect URIs*: `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback` → **Save changes**. ← this is the load-bearing field for the flow.
+3. **Basic settings** — **App settings → Basic**:
+   - Copy **App ID** + **App secret** (Show) → Supabase dashboard, step 3.1.1.
+   - *App Domains*: optional for this redirect-based flow (the Valid OAuth Redirect URI above is authoritative). If you fill it, use `supabase.co`. Facebook does **not** enforce Google's "private TLD" rule here, so you won't hit that error — but it's also not needed.
+   - *Privacy Policy URL* + *Category*: **required before the app can go Live** (not needed while in Development).
+4. **Permissions** — the app requests `public_profile` + `email`. In **Development** mode, people with an **app role** (Admin/Developer/Tester) get `email` automatically. For the general public, `email` needs **Advanced Access** via Meta **App Review**.
+5. **App mode & testers** — toggle at the top is **Development** vs **Live**:
+   - **Development**: only users added under **App roles → Roles** (or **Test Users**) can log in. Add your Facebook account as a Tester to run a login.
+   - **Live**: needs the privacy policy (step 3) + App Review for `email`. Until approved, that's the documented gate for **test 3.6** — record the review status instead of expecting a pass.
+6. **Copy creds → Supabase** (step 3.1.1). Note: Facebook is the **only** provider that can return `email_verified=false`, so it's the sole trigger for the FR-018 collision block (test 3.5). Some FB accounts (phone-only signups) return no email at all.
 
 #### 3.1 / 3.2 — Hosted Supabase config + deploy with migration
 
