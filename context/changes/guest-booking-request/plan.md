@@ -300,30 +300,30 @@ Single additive migration: a new nullable-defaulted column (`NOT NULL DEFAULT ge
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npm run db:reset`
-- [x] 1.2 Types regenerate without diffnoise beyond the new column/RPC: `npm run db:types`
-- [x] 1.3 New + existing DB tests pass: `npm test`
-- [x] 1.4 Lint/type check passes: `npm run lint`
+- [x] 1.1 Migration applies cleanly: `npm run db:reset` — d18086a
+- [x] 1.2 Types regenerate without diffnoise beyond the new column/RPC: `npm run db:types` — d18086a
+- [x] 1.3 New + existing DB tests pass: `npm test` — d18086a
+- [x] 1.4 Lint/type check passes: `npm run lint` — d18086a
 
 #### Manual
 
-- [x] 1.5 Manual `cancel_booking_request('<token>')` flips pending → cancelled_by_guest; second call is a no-op
-- [x] 1.6 `accept_booking_request` and `rls.test.ts` behavior unchanged (no F-01 regression)
+- [x] 1.5 Manual `cancel_booking_request('<token>')` flips pending → cancelled_by_guest; second call is a no-op — d18086a
+- [x] 1.6 `accept_booking_request` and `rls.test.ts` behavior unchanged (no F-01 regression) — d18086a
 
 ### Phase 2: Submit API + validation helpers
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Type check + lint pass: `npm run lint`
-- [ ] 2.3 Build succeeds: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Type check + lint pass: `npm run lint`
+- [x] 2.3 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Valid POST → 200 `{ok:true}` + pending row; invalid phone/past date → 422 with Polish field errors
-- [ ] 2.5 Email configured → both emails enqueued/sent; email unset → route still succeeds (no-op)
-- [ ] 2.6 Owner email reply-to = teacher; guest email contains a working `/anuluj?token=…` URL
-- [ ] 2.7 POST against an unpublished/draft zagroda id is rejected ("Zagroda niedostępna"), no row created
+- [x] 2.4 Valid POST → 200 `{ok:true}` + pending row; invalid phone/past date → 422 with Polish field errors
+- [x] 2.5 Email configured → both emails enqueued/sent; email unset → route still succeeds (no-op)
+- [x] 2.6 Owner email reply-to = teacher; guest email contains a working `/anuluj?token=…` URL
+- [x] 2.7 POST against an unpublished/draft zagroda id is rejected ("Zagroda niedostępna"), no row created
 
 ### Phase 3: Booking form island
 
