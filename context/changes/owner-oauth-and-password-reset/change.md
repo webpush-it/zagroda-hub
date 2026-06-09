@@ -43,30 +43,30 @@ Verified at the HTTP level against the running local Supabase stack (Mailpit on 
 
 Phase 3 is a supervised production cutover. There is **no repository code** to change — every step is hosted-dashboard config, a credentialed deploy, and browser-driven smoke. The agent cannot run any of it (no `supabase` CLI on PATH per the Phase 1/2 notes, no prod Cloudflare/Supabase creds, no browser). Execute the steps below, then report each outcome back so the agent flips the matching `## Progress` rows in `plan.md`.
 
-**Environment specifics:**
-- `https://zagroda-hub.webpushit.workers.dev` = **`https://zagroda-hub.webpushit.workers.dev`** — KNOWN (confirmed live in `context/deployment/deploy-plan.md` §1.4/§5.4; already set as the Supabase Site URL in §6.5). All occurrences below are already substituted to this value.
-- `<project-ref>` — **you must read this once**: it's the subdomain of the `SUPABASE_URL` worker secret (`https://<project-ref>.supabase.co`), or the URL segment in the dashboard `https://supabase.com/dashboard/project/<project-ref>`. It isn't committed anywhere (lives only in the secret). Get it via `npx wrangler secret list` won't show the value — open the Supabase dashboard, or run `npx supabase projects list` after login. It only appears in the two OAuth redirect URIs and the `supabase link` command below.
+**Environment specifics (both resolved — substituted inline throughout this runbook):**
+- **Production origin** = `https://zagroda-hub.webpushit.workers.dev` (confirmed live in `context/deployment/deploy-plan.md` §1.4/§5.4; already set as the Supabase Site URL in §6.5).
+- **Supabase project ref** = `viuusqzijkwykfoohulo` (so `SUPABASE_URL` = `https://viuusqzijkwykfoohulo.supabase.co`, dashboard = `https://supabase.com/dashboard/project/viuusqzijkwykfoohulo`). Provided by the owner 2026-06-09; not otherwise committed (the value lives only in the `SUPABASE_URL` worker secret).
 
 #### Prereq — create PRODUCTION OAuth apps (separate from any local-dev creds)
 
 These are distinct from the local `.env` creds (local redirects to `http://127.0.0.1:54321/auth/v1/callback`). Production OAuth apps must authorize the **hosted Supabase** callback. The redirect URI is the same for both providers:
 
-> **Authorized redirect URI (both providers)**: `https://<project-ref>.supabase.co/auth/v1/callback`
-> (the only spot where you need `<project-ref>`)
+> **Authorized redirect URI (both providers)**: `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback`
+> (the only spot where you need `viuusqzijkwykfoohulo`)
 
 **Google** — [console.cloud.google.com](https://console.cloud.google.com):
 1. Top-left project picker → create/select a project (e.g. "ZagrodaHub").
 2. **APIs & Services → OAuth consent screen** → User type **External** → fill app name, support email, developer email → Save. Add scopes `.../auth/userinfo.email` + `openid` (the defaults). While in *Testing* status you can add yourself under **Test users**; *Publish app* lifts the test-user restriction (no Google review needed for these basic scopes).
 3. **APIs & Services → Credentials → Create credentials → OAuth client ID** → Application type **Web application**.
    - *Authorized JavaScript origins*: `https://zagroda-hub.webpushit.workers.dev`
-   - *Authorized redirect URIs*: `https://<project-ref>.supabase.co/auth/v1/callback`
+   - *Authorized redirect URIs*: `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback`
 4. Create → copy **Client ID** + **Client secret** (these go into the Supabase dashboard, step 3.1.1).
    Google always reports `email_verified=true`, so the FR-018 block path (3.5) never fires for it.
 
 **Facebook** — [developers.facebook.com](https://developers.facebook.com):
 1. **My Apps → Create App** → use case **Authenticate and request data from users with Facebook Login** → app type **Consumer** → name it → create.
 2. In the app, add the **Facebook Login** product → **Settings**:
-   - *Valid OAuth Redirect URIs*: `https://<project-ref>.supabase.co/auth/v1/callback` → Save changes.
+   - *Valid OAuth Redirect URIs*: `https://viuusqzijkwykfoohulo.supabase.co/auth/v1/callback` → Save changes.
 3. **App settings → Basic** → copy **App ID** + **App secret** (→ Supabase dashboard, step 3.1.1). Also set *App domains* = `zagroda-hub.webpushit.workers.dev` and add a Privacy Policy URL (required before going Live).
 4. Facebook is the only path that can produce `email_verified=false`. The app starts in **Development** mode — only roles/test users you add under **App roles → Roles / Test Users** can log in. Going **Live** + the `email` permission requires Meta **App Review**; until that's approved, document the status for 3.6 instead of expecting a pass.
 
@@ -85,7 +85,7 @@ These are distinct from the local `.env` creds (local redirects to `http://127.0
    - Without this, auth emails fall back to Supabase's low-rate built-in sender and will miss the <5 min NFR (3.4).
 5. **Link the CLI to the hosted project** (once per machine), then deploy:
    ```bash
-   npx supabase link --project-ref <project-ref>
+   npx supabase link --project-ref viuusqzijkwykfoohulo
    npm run deploy        # = npm run build && npm run db:push && wrangler deploy
    ```
    - `db:push` ships `supabase/migrations/20260609000000_password_account_exists.sql` BEFORE the worker (lessons.md deploy discipline — migration is additive, so the old worker survives the rollback window).
