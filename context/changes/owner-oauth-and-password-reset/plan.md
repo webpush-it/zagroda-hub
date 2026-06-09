@@ -395,22 +395,22 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 #### Manual
 
-- [x] 2.0 Phase 2.0 spike confirms GoTrue merge/separate/reset-OAuth-only behavior (recorded)
-- [x] 2.7 Google OAuth registers a new owner → `/dashboard`
-- [x] 2.8 Google OAuth on existing verified password email → same account (merge, no duplicate)
-- [x] 2.9 Unverified-collision → "zaloguj się hasłem" message, no orphan account
-- [x] 2.10 OAuth-only owner completes reset → can sign in with email+password
+- [x] 2.0 Phase 2.0 spike confirms GoTrue merge/separate/reset-OAuth-only behavior (recorded) — eb0428f
+- [x] 2.7 Google OAuth registers a new owner → `/dashboard` — 987a0fd
+- [x] 2.8 Google OAuth on existing verified password email → same account (merge, no duplicate) — 248f62e
+- [x] 2.9 Unverified-collision → "zaloguj się hasłem" message, no orphan account — eb0428f
+- [x] 2.10 OAuth-only owner completes reset → can sign in with email+password — 83d22d2
 
 ### Phase 3: Production rollout + smoke
 
 #### Automated
 
-- [x] 3.1 Deploy pipeline succeeds (`npm run deploy`, migration pushed before worker)
-- [x] 3.2 `password_account_exists` present in hosted DB migrations
+- [x] 3.1 Deploy pipeline succeeds (`npm run deploy`, migration pushed before worker) — 276e624
+- [x] 3.2 `password_account_exists` present in hosted DB migrations — 276e624
 
 #### Manual
 
-- [x] 3.3 Production Google OAuth login lands on `/dashboard`
-- [x] 3.4 Production reset email delivered via Brevo <5 min and completes end-to-end
-- [x] 3.5 Unverified-collision block verified or reasoned in production
-- [x] 3.6 Facebook login works in production, or app-review status documented
+- [x] 3.3 Production Google OAuth login lands on `/dashboard` — c9af486
+- [x] 3.4 Production reset email delivered via Brevo <5 min and completes end-to-end — c9af486
+- [x] 3.5 Unverified-collision block verified or reasoned in production — eb0428f
+- [x] 3.6 Facebook login works in production, or app-review status documented — eb0428f
