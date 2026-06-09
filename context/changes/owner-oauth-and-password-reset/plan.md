@@ -386,12 +386,12 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 #### Automated
 
-- [x] 2.1 Migration applies cleanly: `npm run db:reset`
-- [x] 2.2 `password_account_exists` denied to anon/authenticated, allowed to service_role
-- [x] 2.3 Type checking passes: `npm run build`
-- [x] 2.4 Linting passes: `npm run lint`
-- [x] 2.5 Unit tests pass incl. `shouldBlockOAuth` truth table: `npm test`
-- [x] 2.6 `src/db/database.types.ts` regenerated with the new function
+- [x] 2.1 Migration applies cleanly: `npm run db:reset` — 351c9ae
+- [x] 2.2 `password_account_exists` denied to anon/authenticated, allowed to service_role — 351c9ae
+- [x] 2.3 Type checking passes: `npm run build` — 351c9ae
+- [x] 2.4 Linting passes: `npm run lint` — 351c9ae
+- [x] 2.5 Unit tests pass incl. `shouldBlockOAuth` truth table: `npm test` — 351c9ae
+- [x] 2.6 `src/db/database.types.ts` regenerated with the new function — 351c9ae
 
 #### Manual
 
