@@ -395,10 +395,10 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 #### Manual
 
-- [ ] 2.0 Phase 2.0 spike confirms GoTrue merge/separate/reset-OAuth-only behavior (recorded)
+- [x] 2.0 Phase 2.0 spike confirms GoTrue merge/separate/reset-OAuth-only behavior (recorded)
 - [x] 2.7 Google OAuth registers a new owner → `/dashboard`
 - [x] 2.8 Google OAuth on existing verified password email → same account (merge, no duplicate)
-- [ ] 2.9 Unverified-collision → "zaloguj się hasłem" message, no orphan account
+- [x] 2.9 Unverified-collision → "zaloguj się hasłem" message, no orphan account
 - [x] 2.10 OAuth-only owner completes reset → can sign in with email+password
 
 ### Phase 3: Production rollout + smoke
@@ -412,5 +412,5 @@ Negligible. The only added DB call is `password_account_exists`, which runs **on
 
 - [x] 3.3 Production Google OAuth login lands on `/dashboard`
 - [x] 3.4 Production reset email delivered via Brevo <5 min and completes end-to-end
-- [ ] 3.5 Unverified-collision block verified or reasoned in production
-- [ ] 3.6 Facebook login works in production, or app-review status documented
+- [x] 3.5 Unverified-collision block verified or reasoned in production
+- [x] 3.6 Facebook login works in production, or app-review status documented
