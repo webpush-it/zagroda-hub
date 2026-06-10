@@ -3,7 +3,7 @@ project: "Zagroda Hub"
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-09
+updated: 2026-06-10
 prd_version: 2
 main_goal: quality
 top_blocker: time
@@ -36,7 +36,7 @@ Właściciel zagrody edukacyjnej pracuje w terenie (przy zwierzętach, z dziećm
 | S-03 | guest-booking-request                   | nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować | F-01, F-02, S-02       | FR-004, FR-011, FR-015, US-02                             | done     |
 | S-04 | gated-acceptance-with-overbooking-guard | właściciel widzi listę/szczegóły i akceptuje/odrzuca z blokadą overbookingu   | F-01, F-02, S-01, S-03 | FR-005, FR-012, FR-013, FR-014, US-01                     | proposed |
 | S-05 | owner-undo-acceptance                   | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem   | F-02, S-04             | FR-016                                                    | proposed |
-| S-06 | owner-oauth-and-password-reset          | właściciel loguje się przez Google/Facebook OAuth oraz resetuje hasło         | S-01                   | FR-007, FR-008, FR-017                                    | proposed |
+| S-06 | owner-oauth-and-password-reset          | właściciel loguje się przez Google/Facebook OAuth oraz resetuje hasło         | S-01                   | FR-007, FR-008, FR-017                                    | done     |
 | S-07 | oauth-account-merge-guard               | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge   | S-06                   | FR-018                                                    | blocked  |
 
 ## Streams
@@ -163,7 +163,7 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
   - Konfiguracja aplikacji OAuth u dostawców (Google + Facebook) — credentiale ustawia człowiek w panelach dostawców i Supabase. (external pending)
 - **Unknowns:** —
 - **Risk:** To zakres świadomie przyjęty ponad pierwotny 3-tyg. budżet (`Timeline acknowledgment`); przy `top_blocker: time` sekwencjonowany **po** gwieździe, bo rdzenna pętla działa na samym e-mail+haśle. Nie blokuje S-04 — może iść równolegle, gdy starczy rąk.
-- **Status:** proposed
+- **Status:** done
 
 ### S-07: Bezpieczny merge kont OAuth↔e-mail
 
@@ -216,3 +216,4 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **S-02: nauczyciel przegląda publiczny katalog, filtruje po województwie i mieście (AND) oraz opcjonalnie po dacie i liczbie uczestników (zagrody bez wolnych miejsc znikają/oznaczone), i otwiera stronę pojedynczej zagrody.** — Archived 2026-06-07 → `context/archive/2026-06-07-catalog-browse-and-zagroda-page/`. Lesson: —.
 - **F-02: (foundation) wybrany i wpięty mechanizm wysyłki maili transakcyjnych aplikacji na Cloudflare Workers, z jedną zweryfikowaną ścieżką dostarczenia poniżej 5 minut.** — Archived 2026-06-08 → `context/archive/2026-06-07-transactional-email-channel/`. Lesson: na Windows ustawiaj sekrety wranglera ze źródła bez końcowego newline (`printf '%s'`).
 - **S-03: nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować** — Archived 2026-06-09 → `context/archive/2026-06-08-guest-booking-request/`. Lesson: —.
+- **S-06: właściciel rejestruje się i loguje przez Google OAuth lub Facebook OAuth (e-mail z `email_verified=true` pomija bramkę weryfikacji FR-006) oraz może zresetować hasło ścieżki e-mail+hasło przez e-mail.** — Archived 2026-06-09 → `context/archive/2026-06-08-owner-oauth-and-password-reset/`. Lesson: —.
