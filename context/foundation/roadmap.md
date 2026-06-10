@@ -3,7 +3,7 @@ project: "Zagroda Hub"
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-10
+updated: 2026-06-11
 prd_version: 2
 main_goal: quality
 top_blocker: time
@@ -37,7 +37,7 @@ Właściciel zagrody edukacyjnej pracuje w terenie (przy zwierzętach, z dziećm
 | S-04 | gated-acceptance-with-overbooking-guard | właściciel widzi listę/szczegóły i akceptuje/odrzuca z blokadą overbookingu   | F-01, F-02, S-01, S-03 | FR-005, FR-012, FR-013, FR-014, US-01                     | proposed |
 | S-05 | owner-undo-acceptance                   | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem   | F-02, S-04             | FR-016                                                    | proposed |
 | S-06 | owner-oauth-and-password-reset          | właściciel loguje się przez Google/Facebook OAuth oraz resetuje hasło         | S-01                   | FR-007, FR-008, FR-017                                    | done     |
-| S-07 | oauth-account-merge-guard               | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge   | S-06                   | FR-018                                                    | blocked  |
+| S-07 | oauth-account-merge-guard               | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge   | S-06                   | FR-018                                                    | proposed |
 
 ## Streams
 
@@ -47,7 +47,7 @@ Pomoc nawigacyjna — grupuje elementy dzielące łańcuch prerekwizytów. Kanon
 | ------ | --------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | A      | Reguła rezerwacji (rdzeń)   | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` → `S-05` | Ścieżka krytyczna do gwiazdy `S-04`; sekwencjonowana eagerly zgodnie z celem `quality`.                            |
 | B      | Powiadomienia e-mail        | `F-02`                                              | Równoległy enabler; dołącza do Stream A przy `S-03` (i zasila `S-04`/`S-05`).                                      |
-| C      | Pełne logowanie właściciela | `S-06` → `S-07`                                     | Odgałęzia się od Stream A przy `S-01`; zakres-ryzyko-czasu, po gwieździe; `S-07` zablokowany Otwartym pytaniem #1. |
+| C      | Pełne logowanie właściciela | `S-06` → `S-07`                                     | Odgałęzia się od Stream A przy `S-01`; zakres-ryzyko-czasu, po gwieździe; pytanie #1 rozstrzygnięte (opcja a).     |
 
 ## Baseline
 
@@ -173,10 +173,9 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **Prerequisites:** S-06
 - **Parallel with:** S-05
 - **Blockers:** —
-- **Unknowns:**
-  - UX merge'u gdy dostawca zwraca `email_verified=false` a istnieje konto e-mail+hasło z tym adresem (odrzucić login / split-brain / link weryfikacyjny do ręcznego merge'u)? — Owner: user. Block: yes. (Open Roadmap Question #1)
-- **Risk:** Klasyczny wektor account-takeover — bramka `email_verified=true` jest twarda. Edge case (verified=false) nie ma rozstrzygniętego UX, więc slice jest zablokowany do czasu decyzji; FR-017 (S-06) może ruszyć równolegle bez tego rozstrzygnięcia.
-- **Status:** blocked
+- **Unknowns:** — (UX merge'u przy `email_verified=false` rozstrzygnięty 2026-06-11: opcja (a) — patrz Open Roadmap Questions #1)
+- **Risk:** Klasyczny wektor account-takeover — bramka `email_verified=true` jest twarda. UX edge case'u (verified=false) rozstrzygnięty: opcja (a) — odrzucenie loginu OAuth z komunikatem; S-06 zaimplementował już to zachowanie jako bezpieczny default (`shouldBlockOAuth` + blok w callbacku), więc zakres S-07 kurczy się do weryfikacji live ścieżki `email_verified=false` u prawdziwego dostawcy i ewentualnego dopracowania komunikatu/testów.
+- **Status:** proposed
 
 ## Backlog Handoff
 
@@ -190,11 +189,11 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 | S-04       | gated-acceptance-with-overbooking-guard | Panel akceptacji z blokadą overbookingu (gwiazda)                      | [#6](https://github.com/webpush-it/zagroda-hub/issues/6) | no                    | Czeka na F-01, F-02, S-01, S-03                           |
 | S-05       | owner-undo-acceptance                   | Cofnięcie akceptacji + mail do nauczyciela                             | [#7](https://github.com/webpush-it/zagroda-hub/issues/7) | no                    | Czeka na F-02, S-04                                       |
 | S-06       | owner-oauth-and-password-reset          | OAuth Google/Facebook + reset hasła                                    | [#8](https://github.com/webpush-it/zagroda-hub/issues/8) | no                    | Czeka na S-01; external: credentiale OAuth                |
-| S-07       | oauth-account-merge-guard               | Bezpieczny auto-merge kont OAuth↔e-mail                                | [#9](https://github.com/webpush-it/zagroda-hub/issues/9) | no                    | Zablokowany Open Roadmap Question #1                      |
+| S-07       | oauth-account-merge-guard               | Bezpieczny auto-merge kont OAuth↔e-mail                                | [#9](https://github.com/webpush-it/zagroda-hub/issues/9) | yes                   | Pytanie #1 rozstrzygnięte (opcja a); S-06 done            |
 
 ## Open Roadmap Questions
 
-1. **UX merge'u OAuth gdy `email_verified=false`** (FR-018) — gdy logowanie OAuth zwraca e-mail nie-zweryfikowany przez dostawcę, a istnieje już konto e-mail+hasło z tym samym adresem: (a) odrzucić login OAuth z komunikatem „potwierdź e-mail u dostawcy", (b) utworzyć osobne konto OAuth (split-brain), (c) wysłać link weryfikacyjny do właściciela istniejącego konta z prośbą o ręczne potwierdzenie merge'u? Owner: user. Block: `S-07` (FR-017/S-06 może ruszyć równolegle).
+1. ~~**UX merge'u OAuth gdy `email_verified=false`** (FR-018) — gdy logowanie OAuth zwraca e-mail nie-zweryfikowany przez dostawcę, a istnieje już konto e-mail+hasło z tym samym adresem: (a) odrzucić login OAuth z komunikatem „potwierdź e-mail u dostawcy", (b) utworzyć osobne konto OAuth (split-brain), (c) wysłać link weryfikacyjny do właściciela istniejącego konta z prośbą o ręczne potwierdzenie merge'u? Owner: user. Block: `S-07` (FR-017/S-06 może ruszyć równolegle).~~ **Rozstrzygnięte 2026-06-11 (user): opcja (a)** — login OAuth odrzucony, konto e-mail+hasło nietknięte, logowanie hasłem (i reset) działa; blokada ustępuje sama, gdy dostawca zacznie raportować `email_verified=true` (wtedy standardowy auto-merge). S-06 zaimplementował to zachowanie jako default; S-07 odblokowany.
 
 ## Parked
 
