@@ -4,21 +4,12 @@ import { createAdminClient } from "@/lib/supabase-admin";
 import { getEmailConfig } from "@/lib/email/config";
 import { sendTransactionalEmail } from "@/lib/email";
 import { bookingRequestSchema, buildBookingEmails, fieldErrorsFromZod, type BookingRequestInput } from "@/lib/booking";
+import { getWaitUntil } from "@/lib/cf";
 
 export const prerender = false;
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
-}
-
-/** Cloudflare's `ctx.waitUntil` when reachable (Astro v6 exposes it as locals.cfContext). */
-function getWaitUntil(locals: App.Locals): ((promise: Promise<unknown>) => void) | undefined {
-  const ctx = (locals as { cfContext?: { waitUntil?: (p: Promise<unknown>) => void } }).cfContext;
-  const waitUntil = ctx?.waitUntil;
-  if (typeof waitUntil !== "function") return undefined;
-  return (p) => {
-    waitUntil.call(ctx, p);
-  };
 }
 
 export const POST: APIRoute = async (context) => {
@@ -58,10 +49,12 @@ export const POST: APIRoute = async (context) => {
   }
   const turnusLabel = zagroda.turnusy.find((t) => t.id === data.turnus_id)?.label ?? null;
 
-  // Token generated here so no read-back is needed (anon has no SELECT policy);
-  // bare .insert() — a chained .select() would surface a false RLS error.
+  // Id + token generated here so no read-back is needed (anon has no SELECT
+  // policy); bare .insert() — a chained .select() would surface a false RLS
+  // error. The id feeds the owner email's deep link to the detail page.
+  const id = crypto.randomUUID();
   const cancel_token = crypto.randomUUID();
-  const { error: insertError } = await supabase.from("booking_requests").insert({ ...data, cancel_token });
+  const { error: insertError } = await supabase.from("booking_requests").insert({ ...data, id, cancel_token });
   if (insertError) {
     // FK mismatch (turnus not on this zagroda) or RLS rejection — never leak.
     return json({ error: "Nie udało się utworzyć zapytania. Sprawdź wybrany turnus i spróbuj ponownie." }, 422);
@@ -69,7 +62,7 @@ export const POST: APIRoute = async (context) => {
 
   // Best-effort emails — must never fail the response. Owner contact lives in
   // auth (not anon-readable), so resolve it with the service-role client.
-  await enqueueBookingEmails(context, data, cancel_token, turnusLabel);
+  await enqueueBookingEmails(context, data, id, cancel_token, turnusLabel);
 
   return json({ ok: true });
 };
@@ -77,6 +70,7 @@ export const POST: APIRoute = async (context) => {
 async function enqueueBookingEmails(
   context: Parameters<APIRoute>[0],
   data: BookingRequestInput,
+  requestId: string,
   cancelToken: string,
   turnusLabel: string | null,
 ): Promise<void> {
@@ -101,6 +95,7 @@ async function enqueueBookingEmails(
 
     const { guest, owner } = buildBookingEmails({
       origin: new URL(context.request.url).origin,
+      requestId,
       cancelToken,
       zagrodaName,
       ownerEmail,

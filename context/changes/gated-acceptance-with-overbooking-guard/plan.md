@@ -282,25 +282,25 @@ One additive migration (new function only — no table changes), so old workers 
 
 #### Automated
 
-- [x] 1.1 Migrations apply cleanly: `npm run db:reset`
-- [x] 1.2 Types regenerate with the new function: `npm run db:types`
-- [x] 1.3 New reject tests pass: `npm test -- reject`
-- [x] 1.4 Full suite stays green: `npm test`
-- [x] 1.5 Lint passes: `npm run lint`
+- [x] 1.1 Migrations apply cleanly: `npm run db:reset` — 6838fd8
+- [x] 1.2 Types regenerate with the new function: `npm run db:types` — 6838fd8
+- [x] 1.3 New reject tests pass: `npm test -- reject` — 6838fd8
+- [x] 1.4 Full suite stays green: `npm test` — 6838fd8
+- [x] 1.5 Lint passes: `npm run lint` — 6838fd8
 
 ### Phase 2: Decision APIs + Emails
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test -- unit`
-- [ ] 2.2 Full suite green: `npm test`
-- [ ] 2.3 Lint passes: `npm run lint`
-- [ ] 2.4 Build succeeds: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test -- unit`
+- [x] 2.2 Full suite green: `npm test`
+- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.4 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.5 Owner email contains deep link with valid request id (local smoke)
-- [ ] 2.6 Accept over REST: success + exact blocked-message copy on conflict (local smoke)
+- [x] 2.5 Owner email contains deep link with valid request id (local smoke)
+- [x] 2.6 Accept over REST: success + exact blocked-message copy on conflict (local smoke)
 
 ### Phase 3: Owner UI (List + Detail) and Slice Close-out
 

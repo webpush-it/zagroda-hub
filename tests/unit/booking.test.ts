@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { bookingRequestSchema, buildBookingEmails, isValidPlPhone, normalizePhone } from "@/lib/booking";
+import {
+  bookingRequestSchema,
+  buildAcceptanceEmail,
+  buildBookingEmails,
+  buildRejectionEmail,
+  isValidPlPhone,
+  normalizePhone,
+} from "@/lib/booking";
 
 // Locks the validation edges (phone, date, participant bounds) and proves
 // guest-supplied data is HTML-escaped in both email bodies.
@@ -84,6 +91,7 @@ describe("bookingRequestSchema — other fields", () => {
 describe("buildBookingEmails", () => {
   const ctx = {
     origin: "https://zagroda.test",
+    requestId: "44444444-4444-4444-4444-444444444444",
     cancelToken: "33333333-3333-3333-3333-333333333333",
     zagrodaName: "Zagroda u Jana",
     ownerEmail: "owner@example.com",
@@ -115,5 +123,61 @@ describe("buildBookingEmails", () => {
     const { guest, owner } = buildBookingEmails({ ...ctx, ownerEmail: null });
     expect(owner).toBeNull();
     expect(guest).not.toBeNull();
+  });
+
+  it("embeds the detail-page deep link in the owner email", () => {
+    const { owner } = buildBookingEmails(ctx);
+    expect(owner).not.toBeNull();
+    if (!owner) return;
+    expect(owner.html).toContain("https://zagroda.test/dashboard/zapytania/44444444-4444-4444-4444-444444444444");
+    expect(owner.html).toContain("Zobacz zapytanie");
+  });
+});
+
+describe("buildAcceptanceEmail / buildRejectionEmail", () => {
+  const ctx = {
+    guest_name: 'Ala <script>alert("x")</script> & Ola',
+    guest_email: "ala@example.com",
+    zagroda_name: "Zagroda <u>Jana</u> & spółki",
+    trip_date: "2999-12-31",
+    turnus_label: "Poranny",
+    participants_count: 12,
+  };
+
+  it("acceptance: recipient, Polish subject, summary fields", () => {
+    const msg = buildAcceptanceEmail(ctx);
+    expect(msg.to).toBe("ala@example.com");
+    expect(msg.subject).toBe("Rezerwacja potwierdzona — Zagroda <u>Jana</u> & spółki");
+    expect(msg.html).toContain("2999-12-31");
+    expect(msg.html).toContain("Poranny");
+    expect(msg.html).toContain("12");
+  });
+
+  it("rejection: recipient and Polish subject", () => {
+    const msg = buildRejectionEmail(ctx);
+    expect(msg.to).toBe("ala@example.com");
+    expect(msg.subject).toBe("Zapytanie odrzucone — Zagroda <u>Jana</u> & spółki");
+    expect(msg.html).toContain("odrzucił");
+  });
+
+  it("escapes guest and zagroda fields in both bodies", () => {
+    for (const msg of [buildAcceptanceEmail(ctx), buildRejectionEmail(ctx)]) {
+      expect(msg.html).not.toContain("<script>");
+      expect(msg.html).not.toContain("<u>");
+      expect(msg.html).toContain("&lt;script&gt;");
+      expect(msg.html).toContain("&lt;u&gt;");
+    }
+  });
+
+  it("decision emails are final-state: no cancel link, no reply-to", () => {
+    for (const msg of [buildAcceptanceEmail(ctx), buildRejectionEmail(ctx)]) {
+      expect(msg.html).not.toContain("/anuluj");
+      expect(msg.replyTo).toBeUndefined();
+    }
+  });
+
+  it("omits the turnus row when no label is known", () => {
+    const msg = buildAcceptanceEmail({ ...ctx, turnus_label: null });
+    expect(msg.html).not.toContain("Turnus:");
   });
 });
