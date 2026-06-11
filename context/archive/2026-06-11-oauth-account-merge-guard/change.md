@@ -1,10 +1,10 @@
 ---
 change_id: oauth-account-merge-guard
 title: Oauth account merge guard
-status: impl_reviewed
+status: archived
 created: 2026-06-11
 updated: 2026-06-11
-archived_at: null
+archived_at: 2026-06-11T12:06:23Z
 ---
 
 ## Notes
