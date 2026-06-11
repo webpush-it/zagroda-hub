@@ -282,11 +282,11 @@ One additive migration (new function only — no table changes), so old workers 
 
 #### Automated
 
-- [ ] 1.1 Migrations apply cleanly: `npm run db:reset`
-- [ ] 1.2 Types regenerate with the new function: `npm run db:types`
-- [ ] 1.3 New reject tests pass: `npm test -- reject`
-- [ ] 1.4 Full suite stays green: `npm test`
-- [ ] 1.5 Lint passes: `npm run lint`
+- [x] 1.1 Migrations apply cleanly: `npm run db:reset`
+- [x] 1.2 Types regenerate with the new function: `npm run db:types`
+- [x] 1.3 New reject tests pass: `npm test -- reject`
+- [x] 1.4 Full suite stays green: `npm test`
+- [x] 1.5 Lint passes: `npm run lint`
 
 ### Phase 2: Decision APIs + Emails
 
