@@ -306,16 +306,16 @@ One additive migration (new function only — no table changes), so old workers 
 
 #### Automated
 
-- [x] 3.1 Full suite green: `npm test`
-- [x] 3.2 Lint passes: `npm run lint`
-- [x] 3.3 Build succeeds: `npm run build`
+- [x] 3.1 Full suite green: `npm test` — cd50403
+- [x] 3.2 Lint passes: `npm run lint` — cd50403
+- [x] 3.3 Build succeeds: `npm run build` — cd50403
 
 #### Manual
 
-- [x] 3.4 US-01 end-to-end on mobile viewport (accept + exact blocked message)
-- [x] 3.5 Reject flow with confirm + rejection email < 5 min
-- [x] 3.6 Acceptance email < 5 min
-- [x] 3.7 Owner-email deep link opens the right detail page with an active session
-- [x] 3.8 Privacy: cross-owner 404, anon redirect
-- [x] 3.9 Two-tab race smoke on production: exactly one success
-- [x] 3.10 Deployed via `npm run deploy`; US-01 re-verified on production
+- [x] 3.4 US-01 end-to-end on mobile viewport (accept + exact blocked message) — cd50403
+- [x] 3.5 Reject flow with confirm + rejection email < 5 min — cd50403
+- [x] 3.6 Acceptance email < 5 min — cd50403
+- [x] 3.7 Owner-email deep link opens the right detail page with an active session — cd50403
+- [x] 3.8 Privacy: cross-owner 404, anon redirect — cd50403
+- [x] 3.9 Two-tab race smoke on production: exactly one success — cd50403
+- [x] 3.10 Deployed via `npm run deploy`; US-01 re-verified on production — cd50403
