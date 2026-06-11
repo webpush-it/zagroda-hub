@@ -1,7 +1,7 @@
 ---
 change_id: gated-acceptance-with-overbooking-guard
 title: Gated acceptance with overbooking guard
-status: implemented
+status: impl_reviewed
 created: 2026-06-11
 updated: 2026-06-11
 archived_at: null

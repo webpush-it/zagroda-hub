@@ -7,7 +7,12 @@
 // S-03/S-04/S-05) MUST run untrusted values through this; `renderEmailLayout`
 // only escapes `title`, never `bodyHtml` (which is raw HTML by contract).
 export function escapeHtml(text: string): string {
-  return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 export function renderEmailLayout(opts: { title: string; bodyHtml: string }): string {

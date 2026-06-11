@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { SITE_URL } from "astro:env/server";
 import { createClient } from "@/lib/supabase";
 import { createAdminClient } from "@/lib/supabase-admin";
 import { getEmailConfig } from "@/lib/email/config";
@@ -94,7 +95,9 @@ async function enqueueBookingEmails(
     }
 
     const { guest, owner } = buildBookingEmails({
-      origin: new URL(context.request.url).origin,
+      // Configured origin wins — the request URL is Host-header influenced
+      // and these links land in e-mails (owner deep link, guest cancel).
+      origin: SITE_URL ?? new URL(context.request.url).origin,
       requestId,
       cancelToken,
       zagrodaName,

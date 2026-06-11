@@ -1,19 +1,12 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase";
-import { createAdminClient } from "@/lib/supabase-admin";
-import { getEmailConfig } from "@/lib/email/config";
-import { sendTransactionalEmail, type EmailMessage } from "@/lib/email";
 import { buildAcceptanceEmail } from "@/lib/booking";
-import { getWaitUntil } from "@/lib/cf";
+import { enqueueDecisionEmail, json } from "@/lib/booking-decision";
 
 export const prerender = false;
 
 const acceptSchema = z.object({ id: z.uuid() });
-
-function json(data: unknown, status = 200) {
-  return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
-}
 
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -48,7 +41,7 @@ export const POST: APIRoute = async (context) => {
   // covers both unknown and foreign ids: respond 404 without calling the RPC.
   const { data: request, error: selectError } = await supabase
     .from("booking_requests")
-    .select("id, guest_name, guest_email, trip_date, participants_count, zagroda_id, turnusy(label)")
+    .select("id, guest_name, guest_email, trip_date, participants_count, turnusy(label, zagrody(name))")
     .eq("id", requestId)
     .maybeSingle();
   if (selectError) {
@@ -57,7 +50,6 @@ export const POST: APIRoute = async (context) => {
   if (!request) {
     return json({ error: "Zapytanie nie istnieje" }, 404);
   }
-  const { data: zagroda } = await supabase.from("zagrody").select("name").eq("id", request.zagroda_id).maybeSingle();
 
   const { data, error: rpcError } = await supabase.rpc("accept_booking_request", { request_id: requestId });
   if (rpcError) {
@@ -73,7 +65,10 @@ export const POST: APIRoute = async (context) => {
     }
   }
 
-  const row = data[0];
+  const row = data.at(0);
+  if (!row) {
+    return json({ error: "Nie udało się zaakceptować zapytania" }, 500);
+  }
   if (!row.accepted) {
     // FR-014 blocked outcome — the request stays pending; exact PRD copy.
     return json(
@@ -92,7 +87,7 @@ export const POST: APIRoute = async (context) => {
     buildAcceptanceEmail({
       guest_name: request.guest_name,
       guest_email: request.guest_email,
-      zagroda_name: zagroda?.name ?? "zagroda",
+      zagroda_name: request.turnusy.zagrody.name,
       trip_date: request.trip_date,
       turnus_label: request.turnusy.label,
       participants_count: request.participants_count,
@@ -101,14 +96,3 @@ export const POST: APIRoute = async (context) => {
 
   return json({ ok: true, status: "accepted" });
 };
-
-/** Best-effort enqueue — an email failure must never fail the decision response. */
-async function enqueueDecisionEmail(context: Parameters<APIRoute>[0], msg: EmailMessage): Promise<void> {
-  try {
-    const deps = { admin: createAdminClient(), config: getEmailConfig(), waitUntil: getWaitUntil(context.locals) };
-    await sendTransactionalEmail(deps, msg);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("[booking-accept] email enqueue failed:", error);
-  }
-}

@@ -10,6 +10,7 @@ const rawId = Astro.params.id ?? "";
 const id = UUID_RE.test(rawId) ? rawId : null;
 
 interface RequestDetail {
+  id: string;
   trip_date: string;
   turnus_label: string;
   turnus_time: string;
@@ -39,6 +40,7 @@ if (supabase && user && id) {
 
   if (data) {
     request = {
+      id,
       trip_date: data.trip_date,
       turnus_label: data.turnusy.label,
       turnus_time: `${data.turnusy.start_time.slice(0, 5)}–${data.turnusy.end_time.slice(0, 5)}`,
@@ -135,7 +137,7 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
 
               <section class="mt-6 border-t border-white/10 pt-6">
                 {request.status === "pending" ? (
-                  <RequestDecision client:load id={id ?? ""} />
+                  <RequestDecision client:load id={request.id} />
                 ) : (
                   <div class="space-y-3">
                     <StatusBadge status={request.status} />
