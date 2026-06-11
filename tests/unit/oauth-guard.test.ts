@@ -1,18 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { shouldBlockOAuth, isOAuthProvider } from "../../src/lib/auth/oauth-guard";
+import { resolveOAuthVerdict, isOAuthProvider } from "../../src/lib/auth/oauth-guard";
 
-describe("shouldBlockOAuth", () => {
-  it("never blocks when the provider email is verified (Google always; merge path)", () => {
-    expect(shouldBlockOAuth({ emailVerified: true, passwordAccountExists: true })).toBe(false);
-    expect(shouldBlockOAuth({ emailVerified: true, passwordAccountExists: false })).toBe(false);
+describe("resolveOAuthVerdict", () => {
+  it("always allows when the provider email is verified, regardless of the check's tri-state (Google always; merge path)", () => {
+    expect(resolveOAuthVerdict({ emailVerified: true, passwordAccountExists: true })).toBe("allow");
+    expect(resolveOAuthVerdict({ emailVerified: true, passwordAccountExists: false })).toBe("allow");
+    expect(resolveOAuthVerdict({ emailVerified: true, passwordAccountExists: null })).toBe("allow");
   });
 
   it("blocks an unverified email colliding with an existing password account (FR-018)", () => {
-    expect(shouldBlockOAuth({ emailVerified: false, passwordAccountExists: true })).toBe(true);
+    expect(resolveOAuthVerdict({ emailVerified: false, passwordAccountExists: true })).toBe("block_collision");
+  });
+
+  it("blocks an unverified email when the collision check could not run (fail closed)", () => {
+    expect(resolveOAuthVerdict({ emailVerified: false, passwordAccountExists: null })).toBe("block_unavailable");
   });
 
   it("allows an unverified email with no existing password account (clean new OAuth user)", () => {
-    expect(shouldBlockOAuth({ emailVerified: false, passwordAccountExists: false })).toBe(false);
+    expect(resolveOAuthVerdict({ emailVerified: false, passwordAccountExists: false })).toBe("allow");
   });
 });
 

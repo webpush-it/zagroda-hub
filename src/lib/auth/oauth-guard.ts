@@ -9,6 +9,10 @@ export const OAUTH_MESSAGES = {
   // requires controlling an OAuth identity that reports this exact email as
   // unverified, so the marginal leak buys a clear, actionable message.
   block: "To konto loguje się hasłem — zaloguj się hasłem (możesz też zresetować hasło).",
+  // The fail-closed block: the collision check could not run, so we refuse the
+  // login generically. Deliberately does NOT claim a password account exists —
+  // we don't know, and saying so would be a false enumeration signal.
+  blockUnavailable: "Logowanie przez dostawcę jest chwilowo niedostępne. Spróbuj ponownie później.",
   invalidProvider: "Nieobsługiwany dostawca logowania.",
   exchangeFailed: "Logowanie przez dostawcę nie powiodło się. Spróbuj ponownie.",
 } as const;
@@ -20,15 +24,28 @@ export function isOAuthProvider(value: string | undefined): value is OAuthProvid
   return value === "google" || value === "facebook";
 }
 
+export type OAuthVerdict = "allow" | "block_collision" | "block_unavailable";
+
 /**
- * The FR-018 block decision.
+ * The FR-018 block decision, fail-closed.
  *
- * Block ONLY when the authenticating OAuth identity reports an unverified email
- * AND an email+password account already exists for that address (anti-account-
- * takeover). A verified provider email (always true for Google) auto-merges via
- * Supabase's default linking and is never blocked; an unverified email with no
- * existing password account is a clean new/separate OAuth user and is allowed.
+ * `passwordAccountExists` is tri-state: `true`/`false` mean the collision check
+ * ran; `null` means it COULD NOT run (no admin client, RPC error, or no email
+ * to check against).
+ *
+ * - Verified provider email (always true for Google) → `allow`: auto-merges via
+ *   Supabase's default linking, never blocked, the check is never consulted.
+ * - Unverified + existing password account → `block_collision` (anti-account-
+ *   takeover; the "zaloguj się hasłem" message).
+ * - Unverified + check unavailable → `block_unavailable`: we refuse to guess.
+ *   Allowing here is the fail-open hole this verdict exists to close.
+ * - Unverified + no password account → `allow`: clean new/separate OAuth user.
  */
-export function shouldBlockOAuth(input: { emailVerified: boolean; passwordAccountExists: boolean }): boolean {
-  return !input.emailVerified && input.passwordAccountExists;
+export function resolveOAuthVerdict(input: {
+  emailVerified: boolean;
+  passwordAccountExists: boolean | null;
+}): OAuthVerdict {
+  if (input.emailVerified) return "allow";
+  if (input.passwordAccountExists === null) return "block_unavailable";
+  return input.passwordAccountExists ? "block_collision" : "allow";
 }
