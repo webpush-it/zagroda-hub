@@ -1,0 +1,165 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
+import RequestDecision from "@/components/booking/RequestDecision";
+import { StatusBadge, type RequestStatus } from "@/components/booking/StatusBadge";
+import { createClient } from "@/lib/supabase";
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const rawId = Astro.params.id ?? "";
+const id = UUID_RE.test(rawId) ? rawId : null;
+
+interface RequestDetail {
+  trip_date: string;
+  turnus_label: string;
+  turnus_time: string;
+  participants_count: number;
+  guest_name: string;
+  guest_email: string;
+  guest_phone: string;
+  status: RequestStatus;
+  created_at: string;
+}
+
+const { user } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let request: RequestDetail | null = null;
+
+if (supabase && user && id) {
+  // RLS scopes this read to the owner's own requests — a foreign or unknown id
+  // returns null and renders the same 404 as a nonexistent request.
+  const { data } = await supabase
+    .from("booking_requests")
+    .select(
+      "trip_date, participants_count, guest_name, guest_email, guest_phone, status, created_at, turnusy(label, start_time, end_time)",
+    )
+    .eq("id", id)
+    .maybeSingle();
+
+  if (data) {
+    request = {
+      trip_date: data.trip_date,
+      turnus_label: data.turnusy.label,
+      turnus_time: `${data.turnusy.start_time.slice(0, 5)}–${data.turnusy.end_time.slice(0, 5)}`,
+      participants_count: data.participants_count,
+      guest_name: data.guest_name,
+      guest_email: data.guest_email,
+      guest_phone: data.guest_phone,
+      status: data.status,
+      created_at: data.created_at.slice(0, 10),
+    };
+  }
+}
+
+if (!request) {
+  Astro.response.status = 404;
+}
+
+const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
+  accepted: "To zapytanie zostało zaakceptowane.",
+  rejected: "To zapytanie zostało odrzucone.",
+  cancelled_by_guest: "To zapytanie zostało anulowane przez nauczyciela.",
+  withdrawn_by_owner: "Akceptacja tego zapytania została wycofana.",
+};
+---
+
+<Layout title={request ? "Szczegóły zapytania" : "Nie znaleziono zapytania"}>
+  <div class="bg-cosmic min-h-screen p-4">
+    <div class="mx-auto w-full max-w-md">
+      <Topbar />
+      <main class="rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl">
+        <a
+          href="/dashboard/zapytania"
+          class="mb-4 inline-block text-sm text-purple-300 transition-colors hover:text-purple-100"
+        >
+          ← Wróć do zapytań
+        </a>
+
+        {
+          request ? (
+            <article>
+              <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+                Szczegóły zapytania
+              </h1>
+              <p class="mt-1 text-xs text-blue-100/50">Wysłano {request.created_at}</p>
+
+              <dl class="mt-6 flex flex-col gap-2">
+                <div class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                  <dt class="text-blue-100/70">Data pobytu</dt>
+                  <dd class="font-medium text-white">{request.trip_date}</dd>
+                </div>
+                <div class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                  <dt class="text-blue-100/70">Turnus</dt>
+                  <dd class="text-right font-medium text-white">
+                    {request.turnus_label} <span class="text-blue-100/70">({request.turnus_time})</span>
+                  </dd>
+                </div>
+                <div class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                  <dt class="text-blue-100/70">Liczba uczestników</dt>
+                  <dd class="font-medium text-white">{request.participants_count}</dd>
+                </div>
+              </dl>
+
+              <section class="mt-6">
+                <h2 class="mb-2 text-base font-semibold text-white">Kontakt do nauczyciela</h2>
+                <dl class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                    <dt class="text-blue-100/70">Imię i nazwisko</dt>
+                    <dd class="font-medium text-white">{request.guest_name}</dd>
+                  </div>
+                  <div class="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                    <dt class="text-blue-100/70">E-mail</dt>
+                    <dd class="min-w-0">
+                      <a
+                        href={`mailto:${request.guest_email}`}
+                        class="block truncate font-medium text-purple-300 hover:text-purple-100 hover:underline"
+                      >
+                        {request.guest_email}
+                      </a>
+                    </dd>
+                  </div>
+                  <div class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                    <dt class="text-blue-100/70">Telefon</dt>
+                    <dd>
+                      <a
+                        href={`tel:${request.guest_phone}`}
+                        class="font-medium text-purple-300 hover:text-purple-100 hover:underline"
+                      >
+                        {request.guest_phone}
+                      </a>
+                    </dd>
+                  </div>
+                </dl>
+              </section>
+
+              <section class="mt-6 border-t border-white/10 pt-6">
+                {request.status === "pending" ? (
+                  <RequestDecision client:load id={id ?? ""} />
+                ) : (
+                  <div class="space-y-3">
+                    <StatusBadge status={request.status} />
+                    <p class="rounded-lg border border-white/10 bg-white/5 px-3 py-3 text-sm text-blue-100/70">
+                      {TERMINAL_COPY[request.status]}
+                    </p>
+                  </div>
+                )}
+              </section>
+            </article>
+          ) : (
+            <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+              <p class="font-medium text-white">Nie znaleziono zapytania</p>
+              <p class="mt-1 text-sm text-blue-100/60">
+                Zapytanie nie istnieje lub nie masz do niego dostępu.{" "}
+                <a href="/dashboard/zapytania" class="text-purple-300 hover:text-purple-100 hover:underline">
+                  Wróć do listy
+                </a>
+                .
+              </p>
+            </div>
+          )
+        }
+      </main>
+    </div>
+  </div>
+</Layout>

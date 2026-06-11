@@ -292,30 +292,30 @@ One additive migration (new function only — no table changes), so old workers 
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test -- unit`
-- [x] 2.2 Full suite green: `npm test`
-- [x] 2.3 Lint passes: `npm run lint`
-- [x] 2.4 Build succeeds: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test -- unit` — 74801e6
+- [x] 2.2 Full suite green: `npm test` — 74801e6
+- [x] 2.3 Lint passes: `npm run lint` — 74801e6
+- [x] 2.4 Build succeeds: `npm run build` — 74801e6
 
 #### Manual
 
-- [x] 2.5 Owner email contains deep link with valid request id (local smoke)
-- [x] 2.6 Accept over REST: success + exact blocked-message copy on conflict (local smoke)
+- [x] 2.5 Owner email contains deep link with valid request id (local smoke) — 74801e6
+- [x] 2.6 Accept over REST: success + exact blocked-message copy on conflict (local smoke) — 74801e6
 
 ### Phase 3: Owner UI (List + Detail) and Slice Close-out
 
 #### Automated
 
-- [ ] 3.1 Full suite green: `npm test`
-- [ ] 3.2 Lint passes: `npm run lint`
-- [ ] 3.3 Build succeeds: `npm run build`
+- [x] 3.1 Full suite green: `npm test`
+- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.3 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 US-01 end-to-end on mobile viewport (accept + exact blocked message)
-- [ ] 3.5 Reject flow with confirm + rejection email < 5 min
-- [ ] 3.6 Acceptance email < 5 min
-- [ ] 3.7 Owner-email deep link opens the right detail page with an active session
-- [ ] 3.8 Privacy: cross-owner 404, anon redirect
-- [ ] 3.9 Two-tab race smoke on production: exactly one success
-- [ ] 3.10 Deployed via `npm run deploy`; US-01 re-verified on production
+- [x] 3.4 US-01 end-to-end on mobile viewport (accept + exact blocked message)
+- [x] 3.5 Reject flow with confirm + rejection email < 5 min
+- [x] 3.6 Acceptance email < 5 min
+- [x] 3.7 Owner-email deep link opens the right detail page with an active session
+- [x] 3.8 Privacy: cross-owner 404, anon redirect
+- [x] 3.9 Two-tab race smoke on production: exactly one success
+- [x] 3.10 Deployed via `npm run deploy`; US-01 re-verified on production
