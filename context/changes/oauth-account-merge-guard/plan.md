@@ -223,20 +223,20 @@ No schema changes. Code-only deploy; `wrangler rollback` remains safe.
 
 #### Automated
 
-- [x] 1.1 Type check passes: `npx astro check`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Extended unit truth table passes: `npx vitest run tests/unit/oauth-guard.test.ts`
+- [x] 1.1 Type check passes: `npx astro check` — eb534f6
+- [x] 1.2 Linting passes: `npm run lint` — eb534f6
+- [x] 1.3 Extended unit truth table passes: `npx vitest run tests/unit/oauth-guard.test.ts` — eb534f6
 
 #### Manual
 
-- [x] 1.4 `blockUnavailable` Polish copy reads naturally and does not imply an account exists
+- [x] 1.4 `blockUnavailable` Polish copy reads naturally and does not imply an account exists — eb534f6
 
 ### Phase 2: DB-Level Simulation and Probe Tests
 
 #### Automated
 
-- [ ] 2.1 New DB suite passes: `npx vitest run tests/db/oauth-merge-guard.test.ts`
-- [ ] 2.2 Full suite passes: `npm test`
+- [x] 2.1 New DB suite passes: `npx vitest run tests/db/oauth-merge-guard.test.ts`
+- [x] 2.2 Full suite passes: `npm test`
 
 ### Phase 3: Deploy and Manual Verification
 

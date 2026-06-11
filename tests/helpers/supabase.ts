@@ -67,6 +67,36 @@ export async function createUnverifiedOwnerClient(
   return { client, userId };
 }
 
+/**
+ * Inserts a `facebook` identity row for an existing user via direct SQL —
+ * simulating the post-handshake state GoTrue leaves after an OAuth login
+ * (Meta App Review blocks producing the unverified variant live).
+ *
+ * `auth.identities.email` is a GENERATED column (from identity_data->>'email'),
+ * so it must NOT be inserted; `provider_id` is NOT NULL and part of the
+ * `(provider, provider_id)` unique key, so a fresh uuid stands in for the
+ * provider's `sub`.
+ */
+export async function insertFacebookIdentity(opts: {
+  userId: string;
+  email: string;
+  emailVerified: boolean;
+}): Promise<void> {
+  const pg = new PgClient({ connectionString: inject("supabaseDbUrl") });
+  await pg.connect();
+  try {
+    await pg.query(
+      `insert into auth.identities (id, user_id, provider, provider_id, identity_data, last_sign_in_at, created_at, updated_at)
+       values (gen_random_uuid(), $1, 'facebook', $2,
+               jsonb_build_object('sub', $2::text, 'email', $3::text, 'email_verified', $4::boolean),
+               now(), now(), now())`,
+      [opts.userId, randomUUID(), opts.email, opts.emailVerified],
+    );
+  } finally {
+    await pg.end();
+  }
+}
+
 export function uniqueEmail(prefix = "owner"): string {
   return `${prefix}-${randomUUID()}@test.local`;
 }
