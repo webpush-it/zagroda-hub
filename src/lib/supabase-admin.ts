@@ -4,8 +4,11 @@ import type { Database } from "@/db/database.types";
 
 // Server-only service-role client for internal infrastructure (the email
 // outbox). Bypasses RLS — NEVER import this module from any user-facing data
-// path. Mirrors the null-guard convention of src/lib/supabase.ts: returns
-// null when env is missing so callers degrade gracefully.
+// path. Sanctioned exception: the OAuth callback's FR-018 merge guard, which
+// only calls the service-role-gated `password_account_exists` RPC (returns a
+// bare boolean, never row data). Mirrors the null-guard convention of
+// src/lib/supabase.ts: returns null when env is missing so callers degrade
+// gracefully.
 //
 // The `override` parameter exists for non-request contexts (the Worker
 // `scheduled` handler), which cannot read astro:env and must construct the

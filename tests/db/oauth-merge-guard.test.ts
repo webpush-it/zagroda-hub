@@ -45,6 +45,7 @@ describe("oauth merge guard — collision post-state simulation", () => {
       email_confirm: true,
     });
     expect(createError).toBeNull();
+    if (!oauthUser.user) throw new Error("createUser returned no user");
     const oauthUserId = oauthUser.user.id;
     // Strip the placeholder email identity so the user carries ONLY the
     // facebook identity reporting the collision email as unverified.
@@ -80,6 +81,7 @@ describe("oauth merge guard — OAuth-only boundary (gap #3)", () => {
       email_confirm: true,
     });
     expect(createError).toBeNull();
+    if (!user.user) throw new Error("createUser returned no user");
     const userId = user.user.id;
     await pg.query("delete from auth.identities where user_id = $1 and provider = 'email'", [userId]);
     await insertFacebookIdentity({ userId, email, emailVerified: true });

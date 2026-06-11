@@ -59,6 +59,16 @@ function fromEnv(): StackKeys | null {
   };
 }
 
+const LOCAL_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]", "::1"]);
+
+function isLocal(urlString: string): boolean {
+  try {
+    return LOCAL_HOSTS.has(new URL(urlString).hostname);
+  } catch {
+    return false;
+  }
+}
+
 export default function setup(project: TestProject): void {
   const keys = fromSupabaseStatus() ?? fromEnv();
   if (!keys) {
@@ -66,6 +76,16 @@ export default function setup(project: TestProject): void {
       "Could not resolve local Supabase stack credentials. " +
         "Start the stack with `npm run db:start`, or set SUPABASE_URL, " +
         "SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY and SUPABASE_DB_URL.",
+    );
+  }
+  // The DB suites issue destructive SQL directly against auth.* (identity
+  // deletes/inserts, un-confirming users). The env fallback uses the same
+  // variable names production does, so refuse anything non-local unless the
+  // caller overrides deliberately.
+  if (process.env.ALLOW_REMOTE_TEST_DB !== "1" && !(isLocal(keys.url) && isLocal(keys.dbUrl))) {
+    throw new Error(
+      `Refusing to run tests against a non-local Supabase stack (API: ${keys.url}). ` +
+        "Set ALLOW_REMOTE_TEST_DB=1 to override deliberately.",
     );
   }
   project.provide("supabaseUrl", keys.url);

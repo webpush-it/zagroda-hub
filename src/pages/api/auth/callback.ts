@@ -22,7 +22,11 @@ export const GET: APIRoute = async (context) => {
     return context.redirect(`/auth/signin?error=${encodeURIComponent(OAUTH_MESSAGES.exchangeFailed)}`);
   }
 
-  // (2) Inspect the authenticating OAuth identity's email_verified flag.
+  // (2) Inspect the FIRST OAuth identity's email_verified flag. For a user
+  // holding multiple OAuth identities this may not be the one that just
+  // authenticated — a deliberately deferred imprecision (plan gap #2): the
+  // realistic single-identity case is exact, and a wrong-identity read of
+  // `undefined` coerces to false, i.e. errs toward blocking, not allowing.
   const oauthIdentity = data.user.identities?.find((i) => isOAuthProvider(i.provider));
   const emailVerified = Boolean(oauthIdentity?.identity_data?.email_verified);
 
@@ -75,7 +79,21 @@ export const GET: APIRoute = async (context) => {
   // orphan is harmless: the block never grants access.
   const verdict = resolveOAuthVerdict({ emailVerified, passwordAccountExists });
   if (verdict !== "allow") {
-    await supabase.auth.signOut();
+    const { error: signOutError } = await supabase.auth.signOut();
+    if (signOutError) {
+      // The exchange already set session cookies on this response; if the
+      // sign-out fails the block would be cosmetic (the browser keeps a live
+      // session). Expire every cookie this response has queued instead of
+      // hardcoding the sb-* naming scheme — fail closed all the way down.
+      // eslint-disable-next-line no-console -- intentional ops signal for a failed block-path sign-out
+      console.error(
+        `[auth/callback] signOut failed on FR-018 block path; expiring response auth cookies (fail closed): ${signOutError.message}`,
+      );
+      const queuedCookieNames = [...context.cookies.headers()].map((header) => header.split("=")[0]).filter(Boolean);
+      for (const name of queuedCookieNames) {
+        context.cookies.delete(name, { path: "/" });
+      }
+    }
     const message = verdict === "block_collision" ? OAUTH_MESSAGES.block : OAUTH_MESSAGES.blockUnavailable;
     return context.redirect(`/auth/signin?error=${encodeURIComponent(message)}`);
   }
