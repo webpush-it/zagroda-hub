@@ -283,13 +283,13 @@ Additive only: one new function, no table/enum changes (enum value pre-exists). 
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Type check passes: `npx astro check`
-- [x] 3.3 Full suite passes: `npm run test`
-- [x] 3.4 Production build succeeds: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint` — f6804a6
+- [x] 3.2 Type check passes: `npx astro check` — f6804a6
+- [x] 3.3 Full suite passes: `npm run test` — f6804a6
+- [x] 3.4 Production build succeeds: `npm run build` — f6804a6
 
 #### Manual
 
-- [x] 3.5 Local UI flow: two-tap withdraw, success card, "Wycofane" badge, pending flow unchanged
-- [x] 3.6 Local capacity check: over-limit request acceptable after withdrawal (US-01 via UI)
-- [ ] 3.7 Production smoke after `npm run deploy`: end-to-end withdraw + teacher email <5 min
+- [x] 3.5 Local UI flow: two-tap withdraw, success card, "Wycofane" badge, pending flow unchanged — f6804a6
+- [x] 3.6 Local capacity check: over-limit request acceptable after withdrawal (US-01 via UI) — f6804a6
+- [x] 3.7 Production smoke after `npm run deploy`: end-to-end withdraw + teacher email <5 min — f6804a6
