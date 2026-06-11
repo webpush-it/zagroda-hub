@@ -45,8 +45,9 @@ export const POST: APIRoute = async (context) => {
     case "cancelled_by_guest":
       return json({ status: "already_cancelled" });
     case "accepted":
-    case "withdrawn_by_owner":
       return json({ status: "already_accepted" });
+    case "withdrawn_by_owner":
+      return json({ status: "already_withdrawn" });
     default:
       // status is null (no row matched) or an unexpected value.
       return json({ status: "not_found" });

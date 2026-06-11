@@ -5,7 +5,7 @@ interface Props {
   token: string;
 }
 
-type CancelStatus = "cancelled" | "already_accepted" | "already_cancelled" | "not_found";
+type CancelStatus = "cancelled" | "already_accepted" | "already_cancelled" | "already_withdrawn" | "not_found";
 
 interface CancelResponse {
   status?: CancelStatus;
@@ -29,6 +29,11 @@ const OUTCOMES: Record<CancelStatus, { tone: "ok" | "info" | "error"; title: str
     tone: "info",
     title: "Już anulowane",
     body: "To zapytanie zostało już wcześniej anulowane.",
+  },
+  already_withdrawn: {
+    tone: "info",
+    title: "Akceptacja wycofana",
+    body: "Akceptacja tej rezerwacji została już wycofana przez gospodarza — nie musisz nic robić.",
   },
   not_found: {
     tone: "error",

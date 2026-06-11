@@ -210,3 +210,24 @@ export function buildRejectionEmail(ctx: DecisionEmailContext): EmailMessage {
     }),
   };
 }
+
+/**
+ * Withdrawal notification to the guest (FR-016): the owner undid a previous
+ * acceptance. Same final-state posture as the other decision emails: no
+ * reply-to, no links.
+ */
+export function buildWithdrawalEmail(ctx: DecisionEmailContext): EmailMessage {
+  const name = escapeHtml(ctx.zagroda_name);
+  const guestName = escapeHtml(ctx.guest_name);
+  return {
+    to: ctx.guest_email,
+    subject: `Rezerwacja wycofana — ${ctx.zagroda_name}`,
+    html: renderEmailLayout({
+      title: "Rezerwacja wycofana",
+      bodyHtml: `<p>Dzień dobry, ${guestName}.</p>
+<p>Gospodarz zagrody <strong>${name}</strong> wycofał wcześniej potwierdzoną rezerwację. Rezerwacja nie jest już aktualna.</p>
+<ul>${decisionSummaryRows(ctx)}</ul>
+<p>Zachęcamy do wyszukania innej zagrody lub innego terminu w katalogu Zagroda Hub.</p>`,
+    }),
+  };
+}

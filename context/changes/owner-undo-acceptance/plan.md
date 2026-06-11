@@ -256,28 +256,28 @@ Additive only: one new function, no table/enum changes (enum value pre-exists). 
 
 #### Automated
 
-- [x] 1.1 Migrations apply cleanly from scratch: `npm run db:reset`
-- [x] 1.2 New and upgraded DB tests pass: `npx vitest run tests/db/withdraw.test.ts tests/db/acceptance-rule.test.ts`
-- [x] 1.3 Existing suite unaffected: `npm run test`
+- [x] 1.1 Migrations apply cleanly from scratch: `npm run db:reset` — 60a43c7
+- [x] 1.2 New and upgraded DB tests pass: `npx vitest run tests/db/withdraw.test.ts tests/db/acceptance-rule.test.ts` — 60a43c7
+- [x] 1.3 Existing suite unaffected: `npm run test` — 60a43c7
 
 #### Manual
 
-- [x] 1.4 SQL reviewed against lessons.md lock-order rule (status-only update, no zagroda lock)
+- [x] 1.4 SQL reviewed against lessons.md lock-order rule (status-only update, no zagroda lock) — 60a43c7
 
 ### Phase 2: API route + withdrawal email
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npx vitest run tests/unit/booking.test.ts`
-- [ ] 2.2 Full suite passes: `npm run test`
-- [ ] 2.3 Lint passes: `npm run lint`
-- [ ] 2.4 Type check passes: `npx astro check`
+- [x] 2.1 Unit tests pass: `npx vitest run tests/unit/booking.test.ts`
+- [x] 2.2 Full suite passes: `npm run test`
+- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.4 Type check passes: `npx astro check`
 
 #### Manual
 
-- [ ] 2.5 Local withdraw via API enqueues outbox email and returns 200 with withdrawn status
-- [ ] 2.6 Repeat call returns 409 stale-state message
-- [ ] 2.7 Guest cancel link for a withdrawn request shows "already withdrawn" copy
+- [x] 2.5 Local withdraw via API enqueues outbox email and returns 200 with withdrawn status
+- [x] 2.6 Repeat call returns 409 stale-state message
+- [x] 2.7 Guest cancel link for a withdrawn request shows "already withdrawn" copy
 
 ### Phase 3: UI + deploy
 

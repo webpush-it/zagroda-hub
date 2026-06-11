@@ -252,11 +252,7 @@ describe("withdraw_booking_request — concurrency", () => {
         });
         expect(resReject.data?.[0]?.rejected, `iteration ${i}: reject must be soft`).toBe(false);
 
-        const { data: finalRow, error } = await admin
-          .from("booking_requests")
-          .select("status")
-          .eq("id", id)
-          .single();
+        const { data: finalRow, error } = await admin.from("booking_requests").select("status").eq("id", id).single();
         expect(error).toBeNull();
         expect(finalRow?.status, `iteration ${i}: final state`).toBe("withdrawn_by_owner");
       }

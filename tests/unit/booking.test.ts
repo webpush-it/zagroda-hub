@@ -4,6 +4,7 @@ import {
   buildAcceptanceEmail,
   buildBookingEmails,
   buildRejectionEmail,
+  buildWithdrawalEmail,
   isValidPlPhone,
   normalizePhone,
 } from "@/lib/booking";
@@ -134,7 +135,7 @@ describe("buildBookingEmails", () => {
   });
 });
 
-describe("buildAcceptanceEmail / buildRejectionEmail", () => {
+describe("buildAcceptanceEmail / buildRejectionEmail / buildWithdrawalEmail", () => {
   const ctx = {
     guest_name: 'Ala <script>alert("x")</script> & Ola',
     guest_email: "ala@example.com",
@@ -160,8 +161,18 @@ describe("buildAcceptanceEmail / buildRejectionEmail", () => {
     expect(msg.html).toContain("odrzucił");
   });
 
-  it("escapes guest and zagroda fields in both bodies", () => {
-    for (const msg of [buildAcceptanceEmail(ctx), buildRejectionEmail(ctx)]) {
+  it("withdrawal: recipient, Polish subject, summary fields", () => {
+    const msg = buildWithdrawalEmail(ctx);
+    expect(msg.to).toBe("ala@example.com");
+    expect(msg.subject).toBe("Rezerwacja wycofana — Zagroda <u>Jana</u> & spółki");
+    expect(msg.html).toContain("wycofał");
+    expect(msg.html).toContain("2999-12-31");
+    expect(msg.html).toContain("Poranny");
+    expect(msg.html).toContain("12");
+  });
+
+  it("escapes guest and zagroda fields in all bodies", () => {
+    for (const msg of [buildAcceptanceEmail(ctx), buildRejectionEmail(ctx), buildWithdrawalEmail(ctx)]) {
       expect(msg.html).not.toContain("<script>");
       expect(msg.html).not.toContain("<u>");
       expect(msg.html).toContain("&lt;script&gt;");
@@ -170,9 +181,10 @@ describe("buildAcceptanceEmail / buildRejectionEmail", () => {
   });
 
   it("decision emails are final-state: no cancel link, no reply-to", () => {
-    for (const msg of [buildAcceptanceEmail(ctx), buildRejectionEmail(ctx)]) {
+    for (const msg of [buildAcceptanceEmail(ctx), buildRejectionEmail(ctx), buildWithdrawalEmail(ctx)]) {
       expect(msg.html).not.toContain("/anuluj");
       expect(msg.replyTo).toBeUndefined();
+      expect(msg.html).not.toContain("<a ");
     }
   });
 
