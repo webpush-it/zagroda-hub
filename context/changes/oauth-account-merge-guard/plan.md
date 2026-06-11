@@ -242,10 +242,10 @@ No schema changes. Code-only deploy; `wrangler rollback` remains safe.
 
 #### Automated
 
-- [x] 3.1 Deploy completes cleanly: `npm run deploy`
+- [x] 3.1 Deploy completes cleanly: `npm run deploy` — d630dbd
 
 #### Manual
 
-- [x] 3.2 Production Google sign-in regression lands on `/dashboard`
-- [x] 3.3 `/auth/signin` renders the generic unavailable message via crafted `?error=` param
-- [x] 3.4 Live unverified-Facebook smoke outcome recorded in `change.md` Notes (PASS or blocked-on-Meta)
+- [x] 3.2 Production Google sign-in regression lands on `/dashboard` — d630dbd
+- [x] 3.3 `/auth/signin` renders the generic unavailable message via crafted `?error=` param — d630dbd
+- [x] 3.4 Live unverified-Facebook smoke outcome recorded in `change.md` Notes (PASS or blocked-on-Meta) — d630dbd
