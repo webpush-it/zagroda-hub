@@ -128,12 +128,13 @@ describe("accept_booking_request — daily limit rule", () => {
     const blocked = await accept(f.owner, requestId);
     expect(blocked.row?.accepted).toBe(false);
 
-    // Withdrawal functions are S-05/S-03 — simulate with a direct admin UPDATE.
-    const { error: updateError } = await admin
-      .from("booking_requests")
-      .update({ status: "withdrawn_by_owner" })
-      .eq("id", blocking);
-    expect(updateError).toBeNull();
+    // Free the seats through the real S-05 primitive (US-01 proof:
+    // accept A -> B blocked -> withdraw A -> B accepts).
+    const { data: withdrawData, error: withdrawError } = await f.owner.rpc("withdraw_booking_request", {
+      request_id: blocking,
+    });
+    expect(withdrawError).toBeNull();
+    expect(withdrawData?.[0]).toMatchObject({ withdrawn: true, status: "withdrawn_by_owner" });
 
     const { row, error } = await accept(f.owner, requestId);
     expect(error).toBeNull();

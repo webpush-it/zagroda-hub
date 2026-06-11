@@ -282,6 +282,13 @@ export type Database = {
         Args: { publish: boolean; target_zagroda_id: string }
         Returns: boolean
       }
+      withdraw_booking_request: {
+        Args: { request_id: string }
+        Returns: {
+          status: Database["public"]["Enums"]["request_status"]
+          withdrawn: boolean
+        }[]
+      }
     }
     Enums: {
       request_status:

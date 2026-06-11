@@ -256,13 +256,13 @@ Additive only: one new function, no table/enum changes (enum value pre-exists). 
 
 #### Automated
 
-- [ ] 1.1 Migrations apply cleanly from scratch: `npm run db:reset`
-- [ ] 1.2 New and upgraded DB tests pass: `npx vitest run tests/db/withdraw.test.ts tests/db/acceptance-rule.test.ts`
-- [ ] 1.3 Existing suite unaffected: `npm run test`
+- [x] 1.1 Migrations apply cleanly from scratch: `npm run db:reset`
+- [x] 1.2 New and upgraded DB tests pass: `npx vitest run tests/db/withdraw.test.ts tests/db/acceptance-rule.test.ts`
+- [x] 1.3 Existing suite unaffected: `npm run test`
 
 #### Manual
 
-- [ ] 1.4 SQL reviewed against lessons.md lock-order rule (status-only update, no zagroda lock)
+- [x] 1.4 SQL reviewed against lessons.md lock-order rule (status-only update, no zagroda lock)
 
 ### Phase 2: API route + withdrawal email
 
