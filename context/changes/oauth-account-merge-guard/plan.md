@@ -235,17 +235,17 @@ No schema changes. Code-only deploy; `wrangler rollback` remains safe.
 
 #### Automated
 
-- [x] 2.1 New DB suite passes: `npx vitest run tests/db/oauth-merge-guard.test.ts`
-- [x] 2.2 Full suite passes: `npm test`
+- [x] 2.1 New DB suite passes: `npx vitest run tests/db/oauth-merge-guard.test.ts` — 2e67c1d
+- [x] 2.2 Full suite passes: `npm test` — 2e67c1d
 
 ### Phase 3: Deploy and Manual Verification
 
 #### Automated
 
-- [ ] 3.1 Deploy completes cleanly: `npm run deploy`
+- [x] 3.1 Deploy completes cleanly: `npm run deploy`
 
 #### Manual
 
-- [ ] 3.2 Production Google sign-in regression lands on `/dashboard`
-- [ ] 3.3 `/auth/signin` renders the generic unavailable message via crafted `?error=` param
-- [ ] 3.4 Live unverified-Facebook smoke outcome recorded in `change.md` Notes (PASS or blocked-on-Meta)
+- [x] 3.2 Production Google sign-in regression lands on `/dashboard`
+- [x] 3.3 `/auth/signin` renders the generic unavailable message via crafted `?error=` param
+- [x] 3.4 Live unverified-Facebook smoke outcome recorded in `change.md` Notes (PASS or blocked-on-Meta)
