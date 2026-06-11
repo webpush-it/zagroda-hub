@@ -35,7 +35,7 @@ Właściciel zagrody edukacyjnej pracuje w terenie (przy zwierzętach, z dziećm
 | S-02 | catalog-browse-and-zagroda-page         | nauczyciel przegląda i filtruje katalog oraz otwiera stronę zagrody           | F-01, S-01             | FR-001, FR-002, FR-003, US-02                             | done     |
 | S-03 | guest-booking-request                   | nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować | F-01, F-02, S-02       | FR-004, FR-011, FR-015, US-02                             | done     |
 | S-04 | gated-acceptance-with-overbooking-guard | właściciel widzi listę/szczegóły i akceptuje/odrzuca z blokadą overbookingu   | F-01, F-02, S-01, S-03 | FR-005, FR-012, FR-013, FR-014, US-01                     | done |
-| S-05 | owner-undo-acceptance                   | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem   | F-02, S-04             | FR-016                                                    | proposed |
+| S-05 | owner-undo-acceptance                   | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem   | F-02, S-04             | FR-016                                                    | done |
 | S-06 | owner-oauth-and-password-reset          | właściciel loguje się przez Google/Facebook OAuth oraz resetuje hasło         | S-01                   | FR-007, FR-008, FR-017                                    | done     |
 | S-07 | oauth-account-merge-guard               | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge   | S-06                   | FR-018                                                    | done     |
 
@@ -150,7 +150,7 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Domyka workflow stanów (stan „cofnięte przez właściciela" zwalnia miejsca). Bez maila do nauczyciela powstaje niespójność informacji — stąd zależność od F-02. Mniejszy zakres niż gwiazda, ale wymaga, by akceptacja (S-04) już istniała.
-- **Status:** proposed
+- **Status:** done
 
 ### S-06: Pełne logowanie właściciela — OAuth + reset hasła
 
@@ -217,4 +217,5 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **S-03: nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować** — Archived 2026-06-09 → `context/archive/2026-06-08-guest-booking-request/`. Lesson: —.
 - **S-06: właściciel rejestruje się i loguje przez Google OAuth lub Facebook OAuth (e-mail z `email_verified=true` pomija bramkę weryfikacji FR-006) oraz może zresetować hasło ścieżki e-mail+hasło przez e-mail.** — Archived 2026-06-09 → `context/archive/2026-06-08-owner-oauth-and-password-reset/`. Lesson: —.
 - **S-04: właściciel widzi listę zapytań (oczekujące/zaakceptowane/odrzucone/anulowane) i szczegóły (data, liczba uczestników, kontakt nauczyciela widoczny tylko dla niego), po czym akceptuje lub odrzuca — akceptacja jest blokowana, gdy suma uczestników na dzień przekroczyłaby limit, z komunikatem „X z Y zajęte, Z wymaga miejsca"; gość dostaje mail akceptacji.** — Archived 2026-06-11 → `context/archive/2026-06-11-gated-acceptance-with-overbooking-guard/`. Lesson: —.
+- **S-05: właściciel cofa wcześniejszą akceptację (np. nauczyciel odwołał telefonicznie), co natychmiast zwalnia miejsca dla kolejnych akceptacji i wysyła nauczycielowi mail o cofnięciu.** — Archived 2026-06-11 → `context/archive/2026-06-11-owner-undo-acceptance/`. Lesson: —.
 - **S-07: gdy logowanie OAuth trafia na e-mail istniejącego konta e-mail+hasło, system łączy je w jedno konto **wyłącznie** gdy dostawca zwraca `email_verified=true`; bez verified login OAuth zostaje zablokowany z komunikatem.** — Archived 2026-06-11 → `context/archive/2026-06-11-oauth-account-merge-guard/`. Lesson: —.
