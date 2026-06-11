@@ -37,7 +37,7 @@ Właściciel zagrody edukacyjnej pracuje w terenie (przy zwierzętach, z dziećm
 | S-04 | gated-acceptance-with-overbooking-guard | właściciel widzi listę/szczegóły i akceptuje/odrzuca z blokadą overbookingu   | F-01, F-02, S-01, S-03 | FR-005, FR-012, FR-013, FR-014, US-01                     | proposed |
 | S-05 | owner-undo-acceptance                   | właściciel cofa akceptację, zwalnia miejsca i powiadamia nauczyciela mailem   | F-02, S-04             | FR-016                                                    | proposed |
 | S-06 | owner-oauth-and-password-reset          | właściciel loguje się przez Google/Facebook OAuth oraz resetuje hasło         | S-01                   | FR-007, FR-008, FR-017                                    | done     |
-| S-07 | oauth-account-merge-guard               | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge   | S-06                   | FR-018                                                    | proposed |
+| S-07 | oauth-account-merge-guard               | właściciel logujący się OAuth na istniejący e-mail ma bezpieczny auto-merge   | S-06                   | FR-018                                                    | done     |
 
 ## Streams
 
@@ -175,7 +175,7 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **Blockers:** —
 - **Unknowns:** — (UX merge'u przy `email_verified=false` rozstrzygnięty 2026-06-11: opcja (a) — patrz Open Roadmap Questions #1)
 - **Risk:** Klasyczny wektor account-takeover — bramka `email_verified=true` jest twarda. UX edge case'u (verified=false) rozstrzygnięty: opcja (a) — odrzucenie loginu OAuth z komunikatem; S-06 zaimplementował już to zachowanie jako bezpieczny default (`shouldBlockOAuth` + blok w callbacku), więc zakres S-07 kurczy się do weryfikacji live ścieżki `email_verified=false` u prawdziwego dostawcy i ewentualnego dopracowania komunikatu/testów.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -216,3 +216,4 @@ Co już jest w kodzie na dzień `2026-06-02` (auto-zbadane + potwierdzone przez 
 - **F-02: (foundation) wybrany i wpięty mechanizm wysyłki maili transakcyjnych aplikacji na Cloudflare Workers, z jedną zweryfikowaną ścieżką dostarczenia poniżej 5 minut.** — Archived 2026-06-08 → `context/archive/2026-06-07-transactional-email-channel/`. Lesson: na Windows ustawiaj sekrety wranglera ze źródła bez końcowego newline (`printf '%s'`).
 - **S-03: nauczyciel wysyła zapytanie, dostaje mail z linkiem anulowania, może anulować** — Archived 2026-06-09 → `context/archive/2026-06-08-guest-booking-request/`. Lesson: —.
 - **S-06: właściciel rejestruje się i loguje przez Google OAuth lub Facebook OAuth (e-mail z `email_verified=true` pomija bramkę weryfikacji FR-006) oraz może zresetować hasło ścieżki e-mail+hasło przez e-mail.** — Archived 2026-06-09 → `context/archive/2026-06-08-owner-oauth-and-password-reset/`. Lesson: —.
+- **S-07: gdy logowanie OAuth trafia na e-mail istniejącego konta e-mail+hasło, system łączy je w jedno konto **wyłącznie** gdy dostawca zwraca `email_verified=true`; bez verified login OAuth zostaje zablokowany z komunikatem.** — Archived 2026-06-11 → `context/archive/2026-06-11-oauth-account-merge-guard/`. Lesson: —.
