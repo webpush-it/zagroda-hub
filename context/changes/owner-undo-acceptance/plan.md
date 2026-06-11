@@ -268,28 +268,28 @@ Additive only: one new function, no table/enum changes (enum value pre-exists). 
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npx vitest run tests/unit/booking.test.ts`
-- [x] 2.2 Full suite passes: `npm run test`
-- [x] 2.3 Lint passes: `npm run lint`
-- [x] 2.4 Type check passes: `npx astro check`
+- [x] 2.1 Unit tests pass: `npx vitest run tests/unit/booking.test.ts` — fe134ca
+- [x] 2.2 Full suite passes: `npm run test` — fe134ca
+- [x] 2.3 Lint passes: `npm run lint` — fe134ca
+- [x] 2.4 Type check passes: `npx astro check` — fe134ca
 
 #### Manual
 
-- [x] 2.5 Local withdraw via API enqueues outbox email and returns 200 with withdrawn status
-- [x] 2.6 Repeat call returns 409 stale-state message
-- [x] 2.7 Guest cancel link for a withdrawn request shows "already withdrawn" copy
+- [x] 2.5 Local withdraw via API enqueues outbox email and returns 200 with withdrawn status — fe134ca
+- [x] 2.6 Repeat call returns 409 stale-state message — fe134ca
+- [x] 2.7 Guest cancel link for a withdrawn request shows "already withdrawn" copy — fe134ca
 
 ### Phase 3: UI + deploy
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Type check passes: `npx astro check`
-- [ ] 3.3 Full suite passes: `npm run test`
-- [ ] 3.4 Production build succeeds: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Type check passes: `npx astro check`
+- [x] 3.3 Full suite passes: `npm run test`
+- [x] 3.4 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 3.5 Local UI flow: two-tap withdraw, success card, "Wycofane" badge, pending flow unchanged
-- [ ] 3.6 Local capacity check: over-limit request acceptable after withdrawal (US-01 via UI)
+- [x] 3.5 Local UI flow: two-tap withdraw, success card, "Wycofane" badge, pending flow unchanged
+- [x] 3.6 Local capacity check: over-limit request acceptable after withdrawal (US-01 via UI)
 - [ ] 3.7 Production smoke after `npm run deploy`: end-to-end withdraw + teacher email <5 min

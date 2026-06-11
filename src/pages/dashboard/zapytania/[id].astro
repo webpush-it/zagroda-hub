@@ -136,8 +136,8 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
               </section>
 
               <section class="mt-6 border-t border-white/10 pt-6">
-                {request.status === "pending" ? (
-                  <RequestDecision client:load id={request.id} />
+                {request.status === "pending" || request.status === "accepted" ? (
+                  <RequestDecision client:load id={request.id} initialStatus={request.status} />
                 ) : (
                   <div class="space-y-3">
                     <StatusBadge status={request.status} />
