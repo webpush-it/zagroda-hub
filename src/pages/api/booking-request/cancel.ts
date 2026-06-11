@@ -36,7 +36,10 @@ export const POST: APIRoute = async (context) => {
 
   // The RPC always returns exactly one row: { cancelled, status }, where an
   // unknown token yields { cancelled: false, status: null }.
-  const row = data[0];
+  const row = data.at(0);
+  if (!row) {
+    return json({ error: "Nie udało się anulować zapytania" }, 500);
+  }
   if (row.cancelled) {
     return json({ status: "cancelled" });
   }

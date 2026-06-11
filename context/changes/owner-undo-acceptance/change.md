@@ -1,7 +1,7 @@
 ---
 change_id: owner-undo-acceptance
 title: Owner undo acceptance
-status: implemented
+status: impl_reviewed
 created: 2026-06-11
 updated: 2026-06-11
 archived_at: null

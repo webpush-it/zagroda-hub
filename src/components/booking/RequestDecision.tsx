@@ -70,9 +70,7 @@ export default function RequestDecision({ id, initialStatus }: Props) {
   }
 
   const showDecisionButtons = status === "pending" && notice?.kind !== "stale";
-  // Gate on initialStatus so a fresh accept keeps the unchanged pending flow
-  // (green card, no buttons) — withdraw appears on the next page load.
-  const showWithdrawButton = initialStatus === "accepted" && status === "accepted" && notice?.kind !== "stale";
+  const showWithdrawButton = status === "accepted" && notice?.kind !== "stale";
 
   return (
     <div className="space-y-4">
