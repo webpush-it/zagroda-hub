@@ -270,9 +270,13 @@ export type Database = {
         }
       }
       email_verified: { Args: never; Returns: boolean }
-      password_account_exists: {
-        Args: { p_email: string }
-        Returns: boolean
+      password_account_exists: { Args: { p_email: string }; Returns: boolean }
+      reject_booking_request: {
+        Args: { request_id: string }
+        Returns: {
+          rejected: boolean
+          status: Database["public"]["Enums"]["request_status"]
+        }[]
       }
       set_zagroda_published: {
         Args: { publish: boolean; target_zagroda_id: string }

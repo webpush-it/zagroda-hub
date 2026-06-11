@@ -17,4 +17,9 @@
   "observability": {
     "enabled": true,
   },
+  // Canonical origin for links embedded in outgoing e-mails. Without it the
+  // origin falls back to the incoming request URL (Host-header influenced).
+  "vars": {
+    "SITE_URL": "https://zagroda-hub.webpushit.workers.dev",
+  },
 }
