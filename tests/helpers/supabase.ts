@@ -161,6 +161,10 @@ export interface SeedRequestOptions {
   tripDate: string;
   participants: number;
   status?: Database["public"]["Enums"]["request_status"];
+  /** Per-test guest contact overrides — unique values make outbox rows attributable and leak assertions meaningful. */
+  guestName?: string;
+  guestEmail?: string;
+  guestPhone?: string;
 }
 
 /** Seeds a booking request via the service-role client; any status allowed (fixtures). */
@@ -173,9 +177,9 @@ export async function seedBookingRequest(admin: TypedClient, opts: SeedRequestOp
       trip_date: opts.tripDate,
       participants_count: opts.participants,
       status: opts.status ?? "pending",
-      guest_name: "Jan Testowy",
-      guest_email: "jan@szkola.test",
-      guest_phone: "+48 600 000 000",
+      guest_name: opts.guestName ?? "Jan Testowy",
+      guest_email: opts.guestEmail ?? "jan@szkola.test",
+      guest_phone: opts.guestPhone ?? "+48 600 000 000",
     })
     .select("id")
     .single();
