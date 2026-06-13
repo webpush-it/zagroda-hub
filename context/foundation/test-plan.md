@@ -71,7 +71,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|---|---|---|---|---|---|
 | 1 | HTTP-surface integration on the booking lifecycle | Prove the API/handler layer enforces what the DB layer already proves — concurrency outcome, ownership, tokens, server-side validation parity | #1, #4, #5, #6 | integration | complete | context/archive/2026-06-12-testing-http-surface-booking/ |
 | 2 | E2E critical flow on mobile viewport | One scripted phone-size browser run of the core promise (request → accept → overbooking block), wired to fail CI | #3 | e2e | not started | — |
-| 3 | Email outbox reliability | Prove outbox failure modes (provider error, retry budget, no double-send, no-op config) and make a stuck outbox observable | #2 | integration + manual smoke criterion | change opened | context/changes/testing-email-outbox-reliability/ |
+| 3 | Email outbox reliability | Prove outbox failure modes (provider error, retry budget, no double-send, no-op config) and make a stuck outbox observable | #2 | integration + manual smoke criterion | complete | context/changes/testing-email-outbox-reliability/ |
 | 4 | Quality gates + selective AI-native layer | Lock the floor: e2e gate in CI, typecheck gate, multimodal review of 1–3 owner mobile screens, post-edit hook recommendation | cross-cutting | gates, vision review, post-edit hook | not started | — |
 
 > **Rollout-order note (2026-06-13):** Phase 3 (integration) was opened
@@ -90,7 +90,7 @@ date so future readers can see which lines need re-verification.
 |---|---|---|---|
 | unit + integration | Vitest | 4.1.8 | node env, runs vs local Supabase stack; `fileParallelism: false` (shared DB); 12 db-integration + 4 unit files exist |
 | DB harness | supabase CLI + pg | 2.23.4 / 8.21 | `npx supabase start` (Docker); global setup in `tests/helpers/` |
-| API mocking | none yet — see §3 Phase 3 | — | provider (Brevo) HTTP edge needs a mock strategy for outbox failure modes |
+| API mocking | selective fetch mock (`tests/helpers/brevo-mock.ts`) | n/a — checked: 2026-06-13 | intercepts only `api.brevo.com`, delegates all else to real fetch; restore in `afterEach`. Never `vi.stubGlobal("fetch")` against the real supabase-js client (§6.5) |
 | e2e | none yet — see §3 Phase 2 | — | Playwright is the default candidate (mobile viewport emulation, CI-friendly); phase 2 decides |
 | accessibility | eslint-plugin-jsx-a11y | 6.10.2 | static lint only; no runtime a11y assertions planned (mobile usability handled selectively in §3 Phase 4) |
 | (optional) AI-native | multimodal visual review — checked: 2026-06-12 | n/a | When NOT to use: any regression a deterministic assertion or diff can catch; static/marketing pages (§7). Reserved for the 1–3 owner mobile screens where "usable one-handed in portrait" (PRD guardrail) has no deterministic oracle |
@@ -117,6 +117,32 @@ phase lands; before that, the gate is `planned`.
 | post-edit hook | local (agent loop) | recommended after §3 Phase 4 | regressions at edit time |
 | multimodal visual review (1–3 owner mobile screens) | CI on PR, selective | optional after §3 Phase 4 | one-handed-usability issues with no deterministic oracle |
 | pre-prod smoke (email deliverability criterion) | manual, after deploy | optional after §3 Phase 3 | environment-specific email failures (quota, sender reputation) |
+
+### Pre-prod smoke criterion (email deliverability)
+
+The integration suite mocks the Brevo edge, so it can never catch an
+environment failure: a corrupted runtime secret, an exhausted daily quota, or a
+sender-reputation block. This manual check is the only artifact that exercises
+the *real* edge after a deploy. Run it once per deploy that touches
+`src/lib/email/`, secrets, or the deploy path:
+
+1. As a signed-in owner, `POST /api/dev/test-email` against the deployed
+   environment.
+2. Assert the JSON response is
+   `{enqueued: true, id: "<uuid>", result: {claimed: 1, sent: 1, failed: 0}}`
+   — note `DrainResult` is **nested under `result`**, with `enqueued`/`id` as
+   its siblings (`src/pages/api/dev/test-email.ts`); the F-02 prod-smoke oracle
+   is `enqueued: true` + `result.sent: 1`. Confirm the test message lands in the
+   destination inbox.
+3. **Verify the secret values were read correctly at runtime — not merely that
+   `wrangler secret list` names them.** Per lessons.md "Set wrangler secrets
+   from a newline-free source on Windows", a secret with a trailing `\n` is
+   non-empty (so it passes null-guards and shows in the list) but corrupt.
+4. **Triage**: if `enqueued: false`, suspect a corrupted
+   `SUPABASE_SERVICE_ROLE_KEY` (the admin-client JWT is invalid → enqueue 401),
+   not outbox logic. If a Brevo **401 "Key not found"**, suspect a corrupted
+   `BREVO_API_KEY`. Re-set the secret from a newline-free source before
+   touching application code.
 
 ## 6. Cookbook Patterns
 
@@ -183,7 +209,53 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.5 Adding an email/outbox failure-mode test
 
-- TBD — see §3 Phase 3 (provider-edge mock, retry/no-double-send pattern).
+The drain loop (`drainDueEmails`, `src/lib/email/outbox.ts`) is non-atomic by
+design: claim (write #1) and mark-sent/error (write #2) bracket the Brevo
+network call with no enclosing transaction. Split the test by which failure you
+are pinning:
+
+- **Location split**:
+  - **Integration** (`tests/db/`) — failure modes that depend on real DB
+    state: provider failure leaves the row claimable, retry-budget exhaustion
+    flips to terminal `failed`, an already-sent row is never re-claimed, null
+    config is a logged no-op. These need the real `claim_due_emails` RPC, real
+    lease/attempt writes, real cascades — a mock would lie about them. Reference:
+    `tests/db/email-outbox-drain.test.ts`.
+  - **Hermetic** (`tests/unit/`) — partial-failure branches real infra cannot
+    trigger on command: mark-sent write fails after a Brevo 2xx (row stays
+    `pending`), mark-error write itself fails (swallowed, no throw), claim RPC
+    errors (logged no-op). Stub the admin client (`createMockAdmin`) so the
+    second write returns `{ error }`. Reference: the extended
+    `tests/unit/email.test.ts`.
+- **Mock only the provider edge, never the client.** Use
+  `installBrevoMock()` (`tests/helpers/brevo-mock.ts`) — it intercepts only
+  `https://api.brevo.com/...` and delegates every other request to the real
+  `globalThis.fetch`, so supabase-js keeps reaching the local DB. **Never
+  `vi.stubGlobal("fetch")`** against the integration layer: the real
+  supabase-js admin client uses `fetch` internally and a global stub breaks it.
+  Always `restore()` in `afterEach` — `fileParallelism: false` shares one
+  process, so a leaked stub silently breaks later files.
+- **Inject a literal `EmailConfig`.** The env stub
+  (`tests/helpers/astro-env.ts`) leaves `BREVO_API_KEY`/`EMAIL_FROM` unset so
+  incidental drains no-op. To exercise the *real* send branch, pass a literal
+  `EmailConfig` into `drainDueEmails` — do not flip the env.
+- **Wipe `email_outbox` in `beforeAll`.** `claim_due_emails` orders by
+  `created_at`; stale expired-lease rows sort ahead of fresh fixtures
+  (determinism trap — same as `tests/db/email-outbox.test.ts`).
+- **Seed pre-claim `attempts`.** The attempts counter is bumped *by* the claim.
+  To test the at-cap terminal-`failed` path through the real claim, seed
+  `attempts: 4` (the claim bumps it to 5 ≥ `MAX_ATTEMPTS`). Seeding `attempts: 5`
+  makes the row un-claimable (SQL predicate is `attempts < 5`) and tests the
+  wrong thing.
+- **No-double-send goes through the real RPC.** To prove a sent row is never
+  re-claimed, drain it (mock 2xx → `status='sent'`), then drain again and assert
+  exactly one Brevo call fired. The guard is the `status='pending'` filter in
+  `claim_due_emails`, *not* the lease — don't mock around the RPC. The lease's
+  own no-double-send guarantee (claimed-but-pending row unclaimable until the
+  lease expires; concurrent claims disjoint) is already SQL-covered by
+  `tests/db/email-outbox.test.ts` (b)/(c); don't re-prove it here.
+- **Run locally**: `npx supabase start`, then `npm test` (or
+  `npx vitest run tests/db/email-outbox-drain.test.ts tests/unit/email.test.ts`).
 
 ### 6.6 Per-rollout-phase notes
 
@@ -197,6 +269,20 @@ capturing anything surprising the rollout phase taught.)
   HTTP *before* SQL-clearing `email_confirmed_at` (GoTrue blocks unconfirmed
   signins); and the foreign owner gets **404, not 403** because the RLS
   pre-SELECT hides the row before the RPC's ownership re-check can fire.
+
+- **Phase 3 — Email outbox reliability (2026-06-13)**: The integration seam
+  runs the real claim→send→mark drain against local Supabase with **only the
+  Brevo edge mocked** — a *selective* fetch mock (`tests/helpers/brevo-mock.ts`),
+  never a global stub, because the real supabase-js client uses `fetch`
+  internally and a global stub breaks it. Non-obvious traps: the `attempts`
+  counter is bumped *by the claim*, so a fixture must seed the **pre-claim**
+  value (seed `4` to land at the `5`-attempt cap); null config is a logged no-op
+  that consumes **zero** budget by design (the claim RPC is never called); and
+  the env stub leaves the channel unconfigured, so the real send branch needs a
+  **literal `EmailConfig`** injected, not an env flip. The two partial-failure
+  branches (mark-sent-fails-after-2xx, mark-error-write-fails) are non-atomic by
+  design and accepted — pinned hermetically in `tests/unit/email.test.ts`, not
+  fixed.
 
 ## 7. What We Deliberately Don't Test
 

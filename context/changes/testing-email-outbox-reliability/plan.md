@@ -501,23 +501,23 @@ None — no schema changes. The selective fetch mock must restore the original
 
 #### Automated
 
-- [x] 3.1 `npx vitest run tests/unit/email.test.ts` passes (new + existing)
-- [x] 3.2 Full suite still green: `npm test`
-- [x] 3.3 Lint passes: `npm run lint`
+- [x] 3.1 `npx vitest run tests/unit/email.test.ts` passes (new + existing) — 07d1151
+- [x] 3.2 Full suite still green: `npm test` — 07d1151
+- [x] 3.3 Lint passes: `npm run lint` — 07d1151
 
 #### Manual
 
-- [x] 3.4 Mark-sent-failure test asserts row stays `pending` (not `failed`)
+- [x] 3.4 Mark-sent-failure test asserts row stays `pending` (not `failed`) — 07d1151
 
 ### Phase 4: Documentation & status sync
 
 #### Automated
 
-- [ ] 4.1 §6.5 no longer contains "TBD" stub
-- [ ] 4.2 §3 Phase 3 row shows `complete`
-- [ ] 4.3 `npm test` still green
+- [x] 4.1 §6.5 no longer contains "TBD" stub
+- [x] 4.2 §3 Phase 3 row shows `complete`
+- [x] 4.3 `npm test` still green
 
 #### Manual
 
-- [ ] 4.4 §6.5 is sufficient to author a new provider-edge test without re-reading source
-- [ ] 4.5 §5 smoke criterion names the secrets-newline failure mode explicitly
+- [x] 4.4 §6.5 is sufficient to author a new provider-edge test without re-reading source
+- [x] 4.5 §5 smoke criterion names the secrets-newline failure mode explicitly
