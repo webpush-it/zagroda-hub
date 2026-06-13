@@ -513,11 +513,11 @@ None — no schema changes. The selective fetch mock must restore the original
 
 #### Automated
 
-- [x] 4.1 §6.5 no longer contains "TBD" stub
-- [x] 4.2 §3 Phase 3 row shows `complete`
-- [x] 4.3 `npm test` still green
+- [x] 4.1 §6.5 no longer contains "TBD" stub — 23d39ef
+- [x] 4.2 §3 Phase 3 row shows `complete` — 23d39ef
+- [x] 4.3 `npm test` still green — 23d39ef
 
 #### Manual
 
-- [x] 4.4 §6.5 is sufficient to author a new provider-edge test without re-reading source
-- [x] 4.5 §5 smoke criterion names the secrets-newline failure mode explicitly
+- [x] 4.4 §6.5 is sufficient to author a new provider-edge test without re-reading source — 23d39ef
+- [x] 4.5 §5 smoke criterion names the secrets-newline failure mode explicitly — 23d39ef
