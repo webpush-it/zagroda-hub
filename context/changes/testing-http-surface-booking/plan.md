@@ -356,23 +356,23 @@ None — no schema or production code changes. The lessons.md lock-order rule is
 
 #### Automated
 
-- [x] 3.1 New suite green, full run passes (`npm test`)
-- [x] 3.2 Lint passes (`npm run lint`)
+- [x] 3.1 New suite green, full run passes (`npm test`) — 236696c
+- [x] 3.2 Lint passes (`npm run lint`) — 236696c
 
 #### Manual
 
-- [x] 3.3 Foreign-owner cases assert 404 (not 403) with rationale comment present
+- [x] 3.3 Foreign-owner cases assert 404 (not 403) with rationale comment present — 236696c
 
 ### Phase 4: Hostile Guest Input (Risk #5)
 
 #### Automated
 
-- [ ] 4.1 New suite green, full run passes (`npm test`)
-- [ ] 4.2 Lint passes (`npm run lint`)
+- [x] 4.1 New suite green, full run passes (`npm test`)
+- [x] 4.2 Lint passes (`npm run lint`)
 
 #### Manual
 
-- [ ] 4.3 No test mirrors the client schema as its oracle
+- [x] 4.3 No test mirrors the client schema as its oracle
 
 ### Phase 5: Documentation Closeout
 
