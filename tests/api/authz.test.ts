@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { APIRoute } from "astro";
 import { POST as acceptPost } from "../../src/pages/api/booking-request/accept";
@@ -48,7 +49,7 @@ function uniqueGuest(label: string): GuestContact {
   return {
     guestName: `Klasa ${label}`,
     guestEmail: uniqueEmail(`guest-${label}`),
-    guestPhone: `+48 7${String(Math.floor(Math.random() * 100_000_000)).padStart(8, "0")}`,
+    guestPhone: `+48 7${randomUUID().replace(/\D/g, "").padEnd(8, "0").slice(0, 8)}`,
   };
 }
 

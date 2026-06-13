@@ -1,7 +1,7 @@
 ---
 change_id: testing-http-surface-booking
 title: HTTP-surface integration on the booking lifecycle
-status: implemented
+status: impl_reviewed
 created: 2026-06-12
 updated: 2026-06-13
 ---
