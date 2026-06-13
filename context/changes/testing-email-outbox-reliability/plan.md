@@ -477,25 +477,25 @@ None — no schema changes. The selective fetch mock must restore the original
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Helper importable under node; `tests/db/email-outbox.test.ts` still green (no global-fetch leak)
+- [x] 1.1 Lint passes: `npm run lint` — b72ffcf
+- [x] 1.2 Helper importable under node; `tests/db/email-outbox.test.ts` still green (no global-fetch leak) — b72ffcf
 
 #### Manual
 
-- [x] 1.3 Scratch test confirms selective routing (Brevo mocked, supabase-js reaches local DB)
+- [x] 1.3 Scratch test confirms selective routing (Brevo mocked, supabase-js reaches local DB) — b72ffcf
 
 ### Phase 2: Integration drain tests (real Supabase + mocked Brevo edge)
 
 #### Automated
 
-- [ ] 2.1 `npx vitest run tests/db/email-outbox-drain.test.ts` passes
-- [ ] 2.2 Full suite still green: `npm test`
-- [ ] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 `npx vitest run tests/db/email-outbox-drain.test.ts` passes
+- [x] 2.2 Full suite still green: `npm test`
+- [x] 2.3 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.4 Zero real Brevo egress; run completes within timeout
-- [ ] 2.5 Spot-check one assertion reads from the oracle, not the code
+- [x] 2.4 Zero real Brevo egress; run completes within timeout
+- [x] 2.5 Spot-check one assertion reads from the oracle, not the code
 
 ### Phase 3: Hermetic partial-failure & claim-failure branches
 
