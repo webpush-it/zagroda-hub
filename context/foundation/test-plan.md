@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-12
+> Last updated: 2026-06-13
 
 ## 1. Strategy
 
@@ -69,10 +69,17 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | HTTP-surface integration on the booking lifecycle | Prove the API/handler layer enforces what the DB layer already proves — concurrency outcome, ownership, tokens, server-side validation parity | #1, #4, #5, #6 | integration | change opened | context/changes/testing-http-surface-booking/ |
+| 1 | HTTP-surface integration on the booking lifecycle | Prove the API/handler layer enforces what the DB layer already proves — concurrency outcome, ownership, tokens, server-side validation parity | #1, #4, #5, #6 | integration | complete | context/archive/2026-06-12-testing-http-surface-booking/ |
 | 2 | E2E critical flow on mobile viewport | One scripted phone-size browser run of the core promise (request → accept → overbooking block), wired to fail CI | #3 | e2e | not started | — |
-| 3 | Email outbox reliability | Prove outbox failure modes (provider error, retry budget, no double-send, no-op config) and make a stuck outbox observable | #2 | integration + manual smoke criterion | not started | — |
+| 3 | Email outbox reliability | Prove outbox failure modes (provider error, retry budget, no double-send, no-op config) and make a stuck outbox observable | #2 | integration + manual smoke criterion | change opened | context/changes/testing-email-outbox-reliability/ |
 | 4 | Quality gates + selective AI-native layer | Lock the floor: e2e gate in CI, typecheck gate, multimodal review of 1–3 owner mobile screens, post-edit hook recommendation | cross-cutting | gates, vision review, post-edit hook | not started | — |
+
+> **Rollout-order note (2026-06-13):** Phase 3 (integration) was opened
+> ahead of Phase 2 by decision. Phase 2 (e2e/Playwright) and Phase 4
+> (hooks/MCP/multimodal) are **deferred, not skipped** — they fall outside
+> the current lesson's scope (e2e + MCP = Module 3 Lesson 4; hooks = Lesson
+> 3) and stay `not started` until those lessons. When resuming, route to the
+> first `not started` row whose test types are in the active lesson's scope.
 
 ## 4. Stack
 
