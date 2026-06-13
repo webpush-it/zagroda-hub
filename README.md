@@ -1,174 +1,182 @@
-# 10x Astro Starter
+# Zagroda Hub
 
-![](./public/template.png)
+Mobile-first booking platform for Polish educational farms (*zagrody edukacyjne*). Owners
+manage class-trip booking requests one-handed from the field; the core promise is that the
+system **never accepts an overbooking** — concurrent acceptances on the same day resolve to
+exactly one success, enforced atomically in the database.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+- **Owner** registers (email + password, or Google/Facebook OAuth), publishes one farm
+  profile with a daily participant limit and time slots, and accepts/rejects/withdraws
+  incoming requests from a mobile panel.
+- **Guest** (teacher) browses the public catalog, filters by region + city (+ optional date /
+  group size), and sends a booking request without an account. All status updates arrive by
+  email; a tokenized link lets the guest cancel before acceptance.
+
+See [`context/foundation/prd.md`](./context/foundation/prd.md) for the full product spec and
+[`context/foundation/test-plan.md`](./context/foundation/test-plan.md) for the test strategy.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+- [Astro](https://astro.build/) v6 — server-first rendering (SSR on Cloudflare)
+- [React](https://react.dev/) v19 — interactive islands
+- [TypeScript](https://www.typescriptlang.org/) v5
+- [Tailwind CSS](https://tailwindcss.com/) v4
+- [Supabase](https://supabase.com/) — Postgres, Auth (email/password + OAuth), Storage
+- [Cloudflare Workers](https://workers.cloudflare.com/) — edge deployment runtime
+- [Brevo](https://www.brevo.com/) — transactional email (degrades to a logged no-op when unconfigured)
+- [Zod](https://zod.dev/) v4 — server-side input validation
+- [Vitest](https://vitest.dev/) v4 — unit / DB-integration / HTTP-handler tests
 
 ## Prerequisites
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+- Node.js v22.14.0 (see `.nvmrc`)
+- npm (bundled with Node.js)
+- [Docker](https://www.docker.com/) + ~7 GB RAM — required for the local Supabase stack
+  (Postgres, Auth, Storage) used by `npm run dev` and the test suite
 
 ## Getting Started
 
-1. Clone the repository:
+1. Install dependencies:
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+   ```bash
+   npm install
+   ```
 
-2. Install dependencies:
+2. Create your env files (local dev only — production secrets live in Cloudflare/Supabase):
 
-```bash
-npm install
-```
+   ```bash
+   cp .env.example .env
+   cp .env.example .dev.vars
+   ```
 
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
+3. Start the local Supabase stack (downloads Docker images on first run, applies all
+   migrations in `supabase/migrations/`):
 
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
+   ```bash
+   npm run db:start
+   ```
 
-```bash
-cp .env.example .dev.vars
-```
+4. Copy the printed credentials into `.env` and `.dev.vars`:
 
-5. Run the development server:
+   ```
+   SUPABASE_URL=http://127.0.0.1:54321
+   SUPABASE_KEY=<anon key from CLI output>
+   SUPABASE_SERVICE_ROLE_KEY=<service_role key from CLI output>
+   ```
 
-```bash
-npm run dev
-```
+5. Run the development server (Cloudflare `workerd` runtime):
+
+   ```bash
+   npm run dev
+   ```
 
 ## Available Scripts
 
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
+| Script | Description |
+| --- | --- |
+| `npm run dev` | Start the dev server (Cloudflare `workerd` runtime) |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview the production build |
+| `npm run lint` / `npm run lint:fix` | Type-checked ESLint (auto-fix) |
+| `npm run format` | Run Prettier |
+| `npm test` | Run the Vitest suite (requires the local Supabase stack running) |
+| `npm run db:start` | Start the local Supabase stack (applies migrations) |
+| `npm run db:reset` | Reset the local DB and re-apply all migrations |
+| `npm run db:types` | Regenerate `src/db/database.types.ts` from the local schema |
+| `npm run db:push` | Push migrations to the linked remote project |
+| `npm run deploy` | `build` → `db:push` → `wrangler deploy` |
 
 ## Project Structure
 
 ```md
 .
 ├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
+│  ├── components/         # UI components (Astro & React)
+│  │  ├── auth/ booking/ katalog/ zagroda/ ui/
+│  ├── pages/             # Astro routes
+│  │  ├── api/            # API endpoints (auth, booking-request, zagroda, dev)
+│  │  ├── auth/           # sign-in / sign-up / confirm / reset pages
+│  │  ├── dashboard/      # owner panel (zapytania = requests)
+│  │  ├── zagrody/        # public farm detail pages
+│  │  ├── katalog.astro   # public catalog
+│  │  └── index.astro     # landing
+│  ├── lib/               # auth + email (outbox) domain logic
+│  ├── db/                # generated database.types.ts
+│  ├── layouts/  styles/
+│  └── middleware.ts      # route protection
+├── supabase/migrations/  # SQL schema, atomic-accept RPC, email outbox
+├── tests/                # unit / db / api (see Testing)
+├── context/foundation/   # PRD, test-plan, and other living docs
+├── astro.config.mjs      # astro:env server-secret schema
+└── wrangler.jsonc        # Cloudflare Workers config (name: zagroda-hub)
 ```
 
-## Supabase Configuration
+## Environment Variables
 
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
+Declared via Astro's `astro:env` schema (`astro.config.mjs`) as **server-only secrets** —
+never exposed to the client. All are optional; missing values degrade gracefully (e.g. an
+unset email channel becomes a logged no-op).
 
-### First-time setup (local, no cloud project needed)
+| Variable | Purpose |
+| --- | --- |
+| `SUPABASE_URL`, `SUPABASE_KEY` | Supabase project URL + `anon` key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Admin client for the email outbox; unset → outbox no-op |
+| `SITE_URL` | Origin used for absolute links in emails |
+| `BREVO_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_NAME` | Transactional email; `EMAIL_FROM` must be the Brevo-verified sender |
+| `SUPABASE_AUTH_EXTERNAL_GOOGLE_*`, `SUPABASE_AUTH_EXTERNAL_FACEBOOK_*` | OAuth credentials — **local dev only**, consumed by the Supabase CLI via `config.toml`. Production OAuth lives in the hosted Supabase dashboard. |
 
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
-
-```bash
-cp .env.example .env
-```
-
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
-
-```bash
-npx supabase init
-```
-
-3. Start the local stack (downloads Docker images on first run):
-
-```bash
-npx supabase start
-```
-
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
-
-```
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
-```
-
-5. To stop the stack when done:
-
-```bash
-npx supabase stop
-```
-
-The local Studio UI is available at `http://localhost:54323`.
-
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
-
-### Using a cloud Supabase project instead
-
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
-
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
-
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
-```
-
-### Email confirmation in local development
-
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
-
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
-
-Users can then sign in immediately after sign-up without clicking a confirmation link.
+For a hosted Supabase project, set `SUPABASE_URL`/`SUPABASE_KEY` from
+**Dashboard → Settings → API** instead of the local CLI output.
 
 ### Auth routes
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| Route | Description |
+| --- | --- |
+| `/auth/signin`, `/auth/signup` | Email/password forms |
+| `/auth/confirm-email` | Post-signup "check your inbox" page |
+| `/auth/forgot-password`, `/auth/reset-password` | Password reset flow |
+| `/dashboard`, `/dashboard/zapytania` | Owner panel (protected) |
+| `/katalog`, `/zagrody/[id]` | Public catalog + farm detail |
+| `/anuluj` | Guest cancellation via tokenized link |
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+Route protection lives in `src/middleware.ts`. Email-verification gating, the OAuth
+account-merge guard, and the atomic acceptance rule are enforced in `supabase/migrations/`
+and `src/lib/`.
+
+## Testing
+
+Vitest runs three layers against the **local Supabase stack** (the suite is not hermetic —
+start Docker first). The Brevo edge is the only mocked boundary
+(`tests/helpers/brevo-mock.ts`); file-level parallelism is off since all files share one DB.
+
+```bash
+npm run db:start   # once, leave running
+npm test           # or: npx vitest run tests/db tests/api tests/unit
+```
+
+- `tests/db/` — DB-integration: atomic accept/concurrency, RLS, catalog, email outbox.
+- `tests/api/` — HTTP-handler integration through real middleware (auth, authz/IDOR, guest input).
+- `tests/unit/` — hermetic logic + partial-failure branches the DB can't trigger on command.
+
+See [`context/foundation/test-plan.md`](./context/foundation/test-plan.md) §6 for the cookbook
+on adding tests by layer.
 
 ## Deployment
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
+Deploys to Cloudflare Workers. The CI pipeline (`.github/workflows/ci.yml`) runs lint + build
+and the full test suite (with a local Supabase stack) on every push/PR to `master`; on push
+to `master` it pushes migrations to the linked Supabase project, then deploys the worker
+(migrations land before the worker — additive-only policy).
 
-1. Build the project:
-
-```bash
-npm run build
-```
-
-2. Deploy with Wrangler:
+Manual deploy:
 
 ```bash
-npx wrangler deploy
+npm run deploy   # build → db:push → wrangler deploy
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
-
-## CI
-
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+Set production secrets in Cloudflare (`npx wrangler secret put SUPABASE_URL`, etc.) and the
+required GitHub repository secrets (`SUPABASE_URL`, `SUPABASE_KEY`, `SUPABASE_ACCESS_TOKEN`,
+`SUPABASE_DB_PASSWORD`, `CLOUDFLARE_API_TOKEN`) for CI.
 
 ## License
 
