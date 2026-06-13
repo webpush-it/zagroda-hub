@@ -335,31 +335,31 @@ None — additive. No schema changes, no `seed.sql`, no edits to existing tests 
 
 #### Automated
 
-- [x] 1.1 Playwright installed and discoverable (`npx playwright --version`)
-- [x] 1.2 Chromium browser installs cleanly (`npx playwright install chromium`)
-- [x] 1.3 Lint passes on new TS (`npm run lint`)
-- [x] 1.4 Smoke spec passes against a fresh build (`npm run build && npx playwright test e2e/smoke.spec.ts`)
-- [x] 1.5 `.dev.vars`, `test-results/`, `playwright-report/` are git-ignored
+- [x] 1.1 Playwright installed and discoverable (`npx playwright --version`) — 5333b77
+- [x] 1.2 Chromium browser installs cleanly (`npx playwright install chromium`) — 5333b77
+- [x] 1.3 Lint passes on new TS (`npm run lint`) — 5333b77
+- [x] 1.4 Smoke spec passes against a fresh build (`npm run build && npx playwright test e2e/smoke.spec.ts`) — 5333b77
+- [x] 1.5 `.dev.vars`, `test-results/`, `playwright-report/` are git-ignored — 5333b77
 
 #### Manual
 
-- [x] 1.6 `wrangler dev` launched and torn down (no orphan on :8787)
-- [x] 1.7 `.dev.vars` generated with correct local creds and not committed
-- [x] 1.8 Smoke page renders real catalog content (Supabase env reached the built Worker)
+- [x] 1.6 `wrangler dev` launched and torn down (no orphan on :8787) — 5333b77
+- [x] 1.7 `.dev.vars` generated with correct local creds and not committed — 5333b77
+- [x] 1.8 Smoke page renders real catalog content (Supabase env reached the built Worker) — 5333b77
 
 ### Phase 2: Critical-flow spec (request → accept → overbooking block)
 
 #### Automated
 
-- [ ] 2.1 Critical-flow spec passes against a fresh build
-- [ ] 2.2 Spec re-runs green without a DB reset (unique-data isolation)
-- [ ] 2.3 Lint passes
+- [x] 2.1 Critical-flow spec passes against a fresh build
+- [x] 2.2 Spec re-runs green without a DB reset (unique-data isolation)
+- [x] 2.3 Lint passes
 
 #### Manual
 
-- [ ] 2.4 Block panel shows exact capacity numbers "(1 z 1 zajęte, 1 wymaga miejsca)"
-- [ ] 2.5 Flow is legible/usable on the Pixel-5 viewport
-- [ ] 2.6 No email egress; run does not hang on a network call
+- [x] 2.4 Block panel shows exact capacity numbers "(1 z 1 zajęte, 1 wymaga miejsca)"
+- [x] 2.5 Flow is legible/usable on the Pixel-5 viewport
+- [x] 2.6 No email egress; run does not hang on a network call
 
 ### Phase 3: IDOR contact-data SSR page spec
 
