@@ -488,26 +488,26 @@ None — no schema changes. The selective fetch mock must restore the original
 
 #### Automated
 
-- [x] 2.1 `npx vitest run tests/db/email-outbox-drain.test.ts` passes
-- [x] 2.2 Full suite still green: `npm test`
-- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 `npx vitest run tests/db/email-outbox-drain.test.ts` passes — 6e6f819
+- [x] 2.2 Full suite still green: `npm test` — 6e6f819
+- [x] 2.3 Lint passes: `npm run lint` — 6e6f819
 
 #### Manual
 
-- [x] 2.4 Zero real Brevo egress; run completes within timeout
-- [x] 2.5 Spot-check one assertion reads from the oracle, not the code
+- [x] 2.4 Zero real Brevo egress; run completes within timeout — 6e6f819
+- [x] 2.5 Spot-check one assertion reads from the oracle, not the code — 6e6f819
 
 ### Phase 3: Hermetic partial-failure & claim-failure branches
 
 #### Automated
 
-- [ ] 3.1 `npx vitest run tests/unit/email.test.ts` passes (new + existing)
-- [ ] 3.2 Full suite still green: `npm test`
-- [ ] 3.3 Lint passes: `npm run lint`
+- [x] 3.1 `npx vitest run tests/unit/email.test.ts` passes (new + existing)
+- [x] 3.2 Full suite still green: `npm test`
+- [x] 3.3 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.4 Mark-sent-failure test asserts row stays `pending` (not `failed`)
+- [x] 3.4 Mark-sent-failure test asserts row stays `pending` (not `failed`)
 
 ### Phase 4: Documentation & status sync
 

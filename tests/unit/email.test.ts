@@ -40,14 +40,27 @@ function claimedRow(overrides: Partial<ClaimedRow> = {}): ClaimedRow {
   };
 }
 
-/** Mock admin client recording rpc calls and update payloads. */
-function createMockAdmin(rows: ClaimedRow[] = []) {
+/**
+ * Mock admin client recording rpc calls and update payloads.
+ *
+ * `opts` injects the partial failures real Supabase can't trigger on command:
+ *   - `rpcError`    → the claim RPC resolves `{ data: null, error }` (claim path).
+ *   - `updateError` → the mark write (`update().eq()`) resolves `{ error }`,
+ *     whichever mark fires — sent-mark on a Brevo 2xx, error-mark on a non-2xx.
+ */
+function createMockAdmin(
+  rows: ClaimedRow[] = [],
+  opts: { rpcError?: { message: string }; updateError?: { message: string } } = {},
+) {
   const rpcCalls: { fn: string; args: unknown }[] = [];
   const updates: { values: Record<string, unknown>; id: string }[] = [];
   const inserted: Record<string, unknown>[] = [];
   const mock = {
     rpc(fn: string, args: unknown) {
       rpcCalls.push({ fn, args });
+      if (opts.rpcError) {
+        return Promise.resolve({ data: null, error: opts.rpcError });
+      }
       return Promise.resolve({ data: rows, error: null });
     },
     from() {
@@ -56,7 +69,7 @@ function createMockAdmin(rows: ClaimedRow[] = []) {
           return {
             eq(_column: string, id: string) {
               updates.push({ values, id });
-              return Promise.resolve({ error: null });
+              return Promise.resolve({ error: opts.updateError ?? null });
             },
           };
         },
@@ -197,6 +210,59 @@ describe("drainDueEmails — no-op and failure paths", () => {
     expect(updates).toHaveLength(1);
     expect(updates[0].values).toMatchObject({ status: "sent", provider_message_id: "<brevo-msg-2>" });
     expect(updates[0].values).toHaveProperty("sent_at");
+  });
+
+  // Partial-failure branches real Supabase can't trigger on command (the
+  // second write / the claim RPC fails). Oracle: archived F-02 impl-review F3
+  // (bounded duplicate accepted) + research Open Questions (best-effort, accept
+  // the leak). These pin accepted behaviour so it can't silently regress.
+
+  it("(e) a mark-sent write failure after a Brevo 2xx is logged, never throws, and never flips the row to failed", async () => {
+    stubFetchResponse(201, JSON.stringify({ messageId: "<brevo-msg-3>" }));
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { admin, updates } = createMockAdmin([claimedRow()], { updateError: { message: "db unreachable" } });
+
+    // Must not throw: mail is out; the lost mark is an accepted bounded dup risk.
+    const result = await drainDueEmails(admin, CONFIG);
+
+    // Mail is considered delivered — a bounded re-send (<= attempts cap) is the accepted consequence.
+    expect(result).toEqual({ claimed: 1, sent: 1, failed: 0 });
+    // The only write attempted was the sent-mark; no compensating `failed` write
+    // fires, so the row stays pending (re-claimable) — the load-bearing distinction.
+    expect(updates).toHaveLength(1);
+    expect(updates[0].values).toMatchObject({ status: "sent" });
+    expect(updates[0].values).not.toMatchObject({ status: "failed" });
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining(`failed to mark ${updates[0].id} sent`));
+  });
+
+  it("(f) a mark-error write failure on a non-2xx is swallowed (no throw) and logged", async () => {
+    stubFetchResponse(500, "still broken");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { admin, updates } = createMockAdmin([claimedRow({ attempts: 2 })], {
+      updateError: { message: "db unreachable" },
+    });
+
+    // Best-effort: the attempt is already burned by the claim, so a failed
+    // error-mark leaks one retry-budget slot — accepted, must not throw.
+    const result = await drainDueEmails(admin, CONFIG);
+
+    expect(result).toEqual({ claimed: 1, sent: 0, failed: 0 });
+    expect(updates).toHaveLength(1);
+    expect(updates[0].values).toHaveProperty("last_error");
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining(`failed to record error for ${updates[0].id}`));
+  });
+
+  it("(g) a claim RPC error is a logged no-op: nothing claimed, no provider call, no writes", async () => {
+    const fetchMock = stubFetchResponse(201, "{}");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { admin, updates } = createMockAdmin([claimedRow()], { rpcError: { message: "deadlock detected" } });
+
+    const result = await drainDueEmails(admin, CONFIG);
+
+    expect(result).toEqual({ claimed: 0, sent: 0, failed: 0 });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(updates).toHaveLength(0);
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("claim_due_emails failed"));
   });
 });
 
