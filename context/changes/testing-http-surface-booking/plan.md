@@ -332,25 +332,25 @@ None — no schema or production code changes. The lessons.md lock-order rule is
 
 #### Automated
 
-- [x] 1.1 Full suite passes including the new smoke file (`npm test`)
-- [x] 1.2 Existing `tests/db/` + `tests/unit/` files still pass unchanged
-- [x] 1.3 Lint passes (`npm run lint`)
+- [x] 1.1 Full suite passes including the new smoke file (`npm test`) — 0a777ea
+- [x] 1.2 Existing `tests/db/` + `tests/unit/` files still pass unchanged — 0a777ea
+- [x] 1.3 Lint passes (`npm run lint`) — 0a777ea
 
 #### Manual
 
-- [x] 1.4 Helper surface review — `tests/helpers/api.ts` stays within the documented AstroCookies/APIContext subset
+- [x] 1.4 Helper surface review — `tests/helpers/api.ts` stays within the documented AstroCookies/APIContext subset — 0a777ea
 
 ### Phase 2: Booking Decision Lifecycle (Risk #1)
 
 #### Automated
 
-- [ ] 2.1 New suite green, full run passes (`npm test`)
-- [ ] 2.2 Race test stable across the full run (10 iterations, exactly one winner each)
-- [ ] 2.3 Lint passes (`npm run lint`)
+- [x] 2.1 New suite green, full run passes (`npm test`)
+- [x] 2.2 Race test stable across the full run (10 iterations, exactly one winner each)
+- [x] 2.3 Lint passes (`npm run lint`)
 
 #### Manual
 
-- [ ] 2.4 Capacity-message assertion matches `prd.md` FR-014/US-01 verbatim
+- [x] 2.4 Capacity-message assertion matches `prd.md` FR-014/US-01 verbatim
 
 ### Phase 3: Authorization Surfaces (Risks #4 + #6)
 
