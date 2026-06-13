@@ -477,12 +477,12 @@ None — no schema changes. The selective fetch mock must restore the original
 
 #### Automated
 
-- [ ] 1.1 Lint passes: `npm run lint`
-- [ ] 1.2 Helper importable under node; `tests/db/email-outbox.test.ts` still green (no global-fetch leak)
+- [x] 1.1 Lint passes: `npm run lint`
+- [x] 1.2 Helper importable under node; `tests/db/email-outbox.test.ts` still green (no global-fetch leak)
 
 #### Manual
 
-- [ ] 1.3 Scratch test confirms selective routing (Brevo mocked, supabase-js reaches local DB)
+- [x] 1.3 Scratch test confirms selective routing (Brevo mocked, supabase-js reaches local DB)
 
 ### Phase 2: Integration drain tests (real Supabase + mocked Brevo edge)
 
