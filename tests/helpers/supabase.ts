@@ -68,6 +68,26 @@ export async function createUnverifiedOwnerClient(
 }
 
 /**
+ * Clears email_confirmed_at for an existing user via direct SQL.
+ *
+ * The HTTP-surface harness needs the unverified state AFTER a genuine cookie
+ * signin: create confirmed -> signInOwnerHttp (jar gets cookies) -> clear here
+ * -> call the route. Clearing before signin breaks (GoTrue blocks unconfirmed
+ * signins once confirmations are on — see createUnverifiedOwnerClient). The
+ * FR-006 gate reads auth.users fresh via getUser(), so the session stays valid
+ * and the gate still sees the cleared state.
+ */
+export async function clearEmailConfirmation(userId: string): Promise<void> {
+  const pg = new PgClient({ connectionString: inject("supabaseDbUrl") });
+  await pg.connect();
+  try {
+    await pg.query("update auth.users set email_confirmed_at = null where id = $1", [userId]);
+  } finally {
+    await pg.end();
+  }
+}
+
+/**
  * Inserts a `facebook` identity row for an existing user via direct SQL —
  * simulating the post-handshake state GoTrue leaves after an OAuth login
  * (Meta App Review blocks producing the unverified variant live).

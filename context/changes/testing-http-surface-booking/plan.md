@@ -344,24 +344,24 @@ None — no schema or production code changes. The lessons.md lock-order rule is
 
 #### Automated
 
-- [x] 2.1 New suite green, full run passes (`npm test`)
-- [x] 2.2 Race test stable across the full run (10 iterations, exactly one winner each)
-- [x] 2.3 Lint passes (`npm run lint`)
+- [x] 2.1 New suite green, full run passes (`npm test`) — 5bd3bc3
+- [x] 2.2 Race test stable across the full run (10 iterations, exactly one winner each) — 5bd3bc3
+- [x] 2.3 Lint passes (`npm run lint`) — 5bd3bc3
 
 #### Manual
 
-- [x] 2.4 Capacity-message assertion matches `prd.md` FR-014/US-01 verbatim
+- [x] 2.4 Capacity-message assertion matches `prd.md` FR-014/US-01 verbatim — 5bd3bc3
 
 ### Phase 3: Authorization Surfaces (Risks #4 + #6)
 
 #### Automated
 
-- [ ] 3.1 New suite green, full run passes (`npm test`)
-- [ ] 3.2 Lint passes (`npm run lint`)
+- [x] 3.1 New suite green, full run passes (`npm test`)
+- [x] 3.2 Lint passes (`npm run lint`)
 
 #### Manual
 
-- [ ] 3.3 Foreign-owner cases assert 404 (not 403) with rationale comment present
+- [x] 3.3 Foreign-owner cases assert 404 (not 403) with rationale comment present
 
 ### Phase 4: Hostile Guest Input (Risk #5)
 
