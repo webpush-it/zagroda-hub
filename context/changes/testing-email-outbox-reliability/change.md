@@ -1,7 +1,7 @@
 ---
 change_id: testing-email-outbox-reliability
 title: Testing email outbox reliability
-status: implemented
+status: impl_reviewed
 created: 2026-06-13
 updated: 2026-06-13
 archived_at: null

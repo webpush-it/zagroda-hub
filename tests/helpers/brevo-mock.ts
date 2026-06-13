@@ -12,6 +12,12 @@
 
 const BREVO_HOST = "api.brevo.com";
 
+// Guards against a second install while one is still active: nesting would
+// capture the previous wrapper as "real" and leak a stub across files
+// (fileParallelism:false shares the process). One install + afterEach restore
+// per test is the contract.
+let installed = false;
+
 type QueuedResponse = { kind: "respond"; status: number; body: string } | { kind: "reject"; error: Error };
 
 export interface BrevoRequestRecord {
@@ -69,6 +75,12 @@ function parseJsonBody(init?: RequestInit): Record<string, unknown> | null {
  * real fetch. An unqueued Brevo call throws rather than hitting the network.
  */
 export function installBrevoMock(): BrevoMock {
+  if (installed) {
+    throw new Error(
+      "installBrevoMock: a Brevo mock is already active — call restore() (afterEach) before installing another",
+    );
+  }
+  installed = true;
   const realFetch = globalThis.fetch;
   const queue: QueuedResponse[] = [];
   const requests: BrevoRequestRecord[] = [];
@@ -116,6 +128,7 @@ export function installBrevoMock(): BrevoMock {
     },
     restore() {
       globalThis.fetch = realFetch;
+      installed = false;
     },
   };
 
