@@ -69,7 +69,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | HTTP-surface integration on the booking lifecycle | Prove the API/handler layer enforces what the DB layer already proves — concurrency outcome, ownership, tokens, server-side validation parity | #1, #4, #5, #6 | integration | not started | — |
+| 1 | HTTP-surface integration on the booking lifecycle | Prove the API/handler layer enforces what the DB layer already proves — concurrency outcome, ownership, tokens, server-side validation parity | #1, #4, #5, #6 | integration | change opened | context/changes/testing-http-surface-booking/ |
 | 2 | E2E critical flow on mobile viewport | One scripted phone-size browser run of the core promise (request → accept → overbooking block), wired to fail CI | #3 | e2e | not started | — |
 | 3 | Email outbox reliability | Prove outbox failure modes (provider error, retry budget, no double-send, no-op config) and make a stuck outbox observable | #2 | integration + manual smoke criterion | not started | — |
 | 4 | Quality gates + selective AI-native layer | Lock the floor: e2e gate in CI, typecheck gate, multimodal review of 1–3 owner mobile screens, post-edit hook recommendation | cross-cutting | gates, vision review, post-edit hook | not started | — |
@@ -136,8 +136,39 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.3 Adding an HTTP-surface (API handler) integration test
 
-- TBD — see §3 Phase 1 (concurrent-acceptance-through-the-handler,
-  foreign-owner refusal, hostile-input rejection patterns).
+- **Location**: `tests/api/`, one file per surface (auto-included by
+  `vitest.config.ts` `include: ["tests/**/*.test.ts"]`).
+- **Naming**: `<surface>.test.ts` (e.g. `booking-decision.test.ts`,
+  `authz.test.ts`, `guest-input.test.ts`).
+- **What this layer tests**: the handler + real middleware wiring above the
+  DB — error translation, auth/RLS gates, soft-outcome mapping. It does NOT
+  re-test RPC internals (those live in `tests/db/`).
+- **Harness facts** (all in `tests/helpers/`):
+  - Two vitest aliases unlock the Astro virtual modules:
+    `"astro:middleware"` → `astro/virtual-modules/middleware.js` (real
+    `defineMiddleware`) and `"astro:env/server"` →
+    `./tests/helpers/astro-env.ts` (env stub; keep its 7-name schema in sync
+    with `astro.config.mjs`).
+  - `tests/helpers/api.ts` provides the cookie jar, `createApiContext`,
+    `runRoute(handler, ctx)`, `signInOwnerHttp(jar, email, password)`, and
+    `assertNoContactData(body, { guest_email, guest_phone })`.
+  - **Auth is real**: `signInOwnerHttp` invokes the actual
+    `POST /api/auth/signin` handler so `@supabase/ssr` writes genuine
+    session cookies into the jar — no cookie forgery. It throws unless the
+    redirect `Location` is `/dashboard`.
+  - Env stub keeps `SUPABASE_SERVICE_ROLE_KEY` set (outbox rows observable)
+    but `BREVO_API_KEY`/`EMAIL_FROM` unset (drain no-ops → zero network
+    egress). A test that hangs on an external call is a harness regression.
+- **The load-bearing rule**: compose `onRequest` — call
+  `runRoute(handler, ctx)`, never the bare handler. API routes self-guard on
+  `locals.user`; a direct handler call without the middleware tests an
+  anonymous world and silently passes the wrong assertion.
+- **Reference tests**: `tests/api/booking-decision.test.ts` (parallel-accept
+  race + PRD-derived capacity-message oracle) and `tests/api/authz.test.ts`
+  (two-identity negative: foreign authenticated owner → 404, anonymous →
+  401).
+- **Run locally**: `npx supabase start`, then `npm test` (or
+  `npx vitest run tests/api`).
 
 ### 6.4 Adding an e2e test
 
@@ -151,6 +182,14 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 (After each phase lands, `/10x-implement` appends a 2–3 line note here
 capturing anything surprising the rollout phase taught.)
+
+- **Phase 1 — HTTP-surface integration (2026-06-13)**: The whole layer is
+  unlocked by two vitest aliases — no Astro dev server, no cookie forgery.
+  The non-obvious traps: middleware composition is mandatory (a bare handler
+  call tests an anonymous world); the unverified-owner gate must sign in via
+  HTTP *before* SQL-clearing `email_confirmed_at` (GoTrue blocks unconfirmed
+  signins); and the foreign owner gets **404, not 403** because the RLS
+  pre-SELECT hides the row before the RPC's ownership re-check can fire.
 
 ## 7. What We Deliberately Don't Test
 
@@ -167,6 +206,23 @@ contributors should respect these unless the underlying assumption changes.
 - **High-impact × low-likelihood platform outages** (Supabase/Cloudflare/
   Brevo down) — belong to observability/alerting, not tests; the §3 Phase 3
   smoke criterion covers the email edge of this.
+- **OAuth merge-guard HTTP wiring** (risk #6, account-takeover path) — the
+  guard logic and its RPC are covered at the unit/db layers; the
+  `src/pages/api/auth/callback.ts` HTTP path is deliberately left untested.
+  A full OAuth code-exchange simulation against local GoTrue is
+  high-cost/low-marginal-signal. (Decision: 2026-06-13, §3 Phase 1.)
+  Re-evaluate if the callback flow changes shape.
+- **Quota-drain on `POST /api/booking-request`** (risk #5, resource abuse) —
+  the un-rate-limited create endpoint can drain the daily email quota. This
+  is **accepted for MVP traffic**; the remediation path is Cloudflare-level
+  rate limiting (WAF rules), not application code. (Decision: 2026-06-13,
+  §3 Phase 1.) Re-evaluate once real traffic exists.
+- **IDOR on `/dashboard/zapytania/[id].astro`** (the contact-data SSR page,
+  risk #4) is **not dropped — it is delegated to §3 Phase 2 e2e**. Phase 1
+  covers the API-route side of risk #4 (`tests/api/authz.test.ts`); the
+  SSR-page render is out of the HTTP-handler harness's reach (Astro
+  Container API was evaluated and rejected) and belongs in the browser-level
+  phase.
 
 ## 8. Freshness Ledger
 

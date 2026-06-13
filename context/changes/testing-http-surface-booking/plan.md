@@ -367,20 +367,20 @@ None — no schema or production code changes. The lessons.md lock-order rule is
 
 #### Automated
 
-- [x] 4.1 New suite green, full run passes (`npm test`)
-- [x] 4.2 Lint passes (`npm run lint`)
+- [x] 4.1 New suite green, full run passes (`npm test`) — 0b210eb
+- [x] 4.2 Lint passes (`npm run lint`) — 0b210eb
 
 #### Manual
 
-- [x] 4.3 No test mirrors the client schema as its oracle
+- [x] 4.3 No test mirrors the client schema as its oracle — 0b210eb
 
 ### Phase 5: Documentation Closeout
 
 #### Automated
 
-- [ ] 5.1 Full suite still green (`npm test`)
-- [ ] 5.2 Lint passes (`npm run lint`)
+- [x] 5.1 Full suite still green (`npm test`)
+- [x] 5.2 Lint passes (`npm run lint`)
 
 #### Manual
 
-- [ ] 5.3 §6.3 readable standalone — next contributor can add an HTTP-surface test from it alone
+- [x] 5.3 §6.3 readable standalone — next contributor can add an HTTP-surface test from it alone
