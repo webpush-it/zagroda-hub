@@ -5,7 +5,7 @@ project_name: zagroda-hub
 hints:
   language_family: js
   team_size: solo
-  deployment_target: vercel
+  deployment_target: cloudflare-workers
   ci_provider: github-actions
   ci_default_flow: auto-deploy-on-merge
   bootstrapper_confidence: first-class
@@ -32,7 +32,7 @@ handle. The 10x Astro Starter clears both by shipping Supabase (Postgres + Auth
   NFR (portrait, one-handed, Chrome Android + Safari iOS) is well-served by
   Astro's island architecture. All four agent-friendly gates pass, so a coding
   agent can reason about the stack without extra scaffolding. Deployment target
-  is Vercel rather than the card's Cloudflare default — Astro on Vercel is
-  first-class, so the bootstrapper swaps `@astrojs/cloudflare` for
-  `@astrojs/vercel`. CI on GitHub Actions with auto-deploy-on-merge matches the
-  solo profile.
+  is Cloudflare Workers — the card's default — via `@astrojs/cloudflare` with
+  `output: "server"` and `wrangler deploy` (root `wrangler.jsonc`,
+  `main: "./src/worker.ts"`). CI on GitHub Actions with auto-deploy-on-merge
+  matches the solo profile.
