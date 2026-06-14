@@ -1,10 +1,10 @@
 ---
 change_id: testing-e2e-critical-flow-mobile
 title: Testing e2e critical flow mobile
-status: impl_reviewed
+status: archived
 created: 2026-06-14
 updated: 2026-06-14
-archived_at: null
+archived_at: 2026-06-14T11:39:18Z
 ---
 
 ## Notes
