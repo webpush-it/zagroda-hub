@@ -351,28 +351,28 @@ None — additive. No schema changes, no `seed.sql`, no edits to existing tests 
 
 #### Automated
 
-- [x] 2.1 Critical-flow spec passes against a fresh build
-- [x] 2.2 Spec re-runs green without a DB reset (unique-data isolation)
-- [x] 2.3 Lint passes
+- [x] 2.1 Critical-flow spec passes against a fresh build — 214e240
+- [x] 2.2 Spec re-runs green without a DB reset (unique-data isolation) — 214e240
+- [x] 2.3 Lint passes — 214e240
 
 #### Manual
 
-- [x] 2.4 Block panel shows exact capacity numbers "(1 z 1 zajęte, 1 wymaga miejsca)"
-- [x] 2.5 Flow is legible/usable on the Pixel-5 viewport
-- [x] 2.6 No email egress; run does not hang on a network call
+- [x] 2.4 Block panel shows exact capacity numbers "(1 z 1 zajęte, 1 wymaga miejsca)" — 214e240
+- [x] 2.5 Flow is legible/usable on the Pixel-5 viewport — 214e240
+- [x] 2.6 No email egress; run does not hang on a network call — 214e240
 
 ### Phase 3: IDOR contact-data SSR page spec
 
 #### Automated
 
-- [ ] 3.1 IDOR spec passes against a fresh build
-- [ ] 3.2 Full e2e suite passes together (`npm run build && npx playwright test`)
-- [ ] 3.3 Lint passes
+- [x] 3.1 IDOR spec passes against a fresh build
+- [x] 3.2 Full e2e suite passes together (`npm run build && npx playwright test`)
+- [x] 3.3 Lint passes
 
 #### Manual
 
-- [ ] 3.4 Foreign-owner page shows 404 "Nie znaleziono zapytania"; seeded guest email/phone appear nowhere in the DOM
-- [ ] 3.5 Anonymous navigation lands on `/auth/signin` with no flash of contact data
+- [x] 3.4 Foreign-owner page shows 404 "Nie znaleziono zapytania"; seeded guest email/phone appear nowhere in the DOM
+- [x] 3.5 Anonymous navigation lands on `/auth/signin` with no flash of contact data
 
 ### Phase 4: Cookbook docs + handoff
 
