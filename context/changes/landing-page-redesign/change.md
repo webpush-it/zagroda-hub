@@ -1,7 +1,7 @@
 ---
 id: landing-page-redesign
 title: Przeprojektowanie strony głównej (landing) Zagroda Hub
-status: implementing
+status: implemented
 created: 2026-06-15
 updated: 2026-06-15
 ---

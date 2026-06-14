@@ -271,7 +271,7 @@ się na potwierdzenie manualne (najlepiej zobaczyć stronę w obu stanach logowa
 
 - [x] 1.1 Build przechodzi: `npm run build` — 5d891f8
 - [x] 1.2 Lint przechodzi: `npm run lint` — 5d891f8
-- [x] 1.3 Brak wystąpień „10x Astro Starter" w `src/` (cross-phase: domyka się w Fazie 2 po usunięciu Welcome.astro)
+- [x] 1.3 Brak wystąpień „10x Astro Starter" w `src/` (cross-phase: domyka się w Fazie 2 po usunięciu Welcome.astro) — 7175f57
 - [x] 1.4 Brak tytułów „Sign in"/„Sign up" na stronach auth — 5d891f8
 
 #### Manual
@@ -284,16 +284,16 @@ się na potwierdzenie manualne (najlepiej zobaczyć stronę w obu stanach logowa
 
 #### Automated
 
-- [x] 2.1 Build przechodzi: `npm run build`
-- [x] 2.2 Lint przechodzi: `npm run lint`
-- [x] 2.3 Brak „Sign In"/„Sign Up"/„10x Astro Starter" na landingu
-- [x] 2.4 Brak martwych importów `Welcome` (jeśli usunięty)
+- [x] 2.1 Build przechodzi: `npm run build` — 7175f57
+- [x] 2.2 Lint przechodzi: `npm run lint` — 7175f57
+- [x] 2.3 Brak „Sign In"/„Sign Up"/„10x Astro Starter" na landingu — 7175f57
+- [x] 2.4 Brak martwych importów `Welcome` (jeśli usunięty) — 7175f57
 
 #### Manual
 
-- [x] 2.5 Hero z „Zagroda Hub", problem+rozwiązanie i dwa CTA
-- [x] 2.6 Widoczne sekcje: jak to działa, blok nauczyciela, blok właściciela, stopka
-- [x] 2.7 Brak orb/gwiazd; spójność wizualna z `/katalog`
-- [x] 2.8 CTA świadome stanu logowania (anonim vs właściciel)
-- [x] 2.9 Czytelność i klikalność na telefonie w pionie
-- [x] 2.10 Linki CTA prowadzą do właściwych stron
+- [x] 2.5 Hero z „Zagroda Hub", problem+rozwiązanie i dwa CTA — 7175f57
+- [x] 2.6 Widoczne sekcje: jak to działa, blok nauczyciela, blok właściciela, stopka — 7175f57
+- [x] 2.7 Brak orb/gwiazd; spójność wizualna z `/katalog` — 7175f57
+- [x] 2.8 CTA świadome stanu logowania (anonim vs właściciel) — 7175f57
+- [x] 2.9 Czytelność i klikalność na telefonie w pionie — 7175f57
+- [x] 2.10 Linki CTA prowadzą do właściwych stron — 7175f57
