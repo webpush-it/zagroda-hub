@@ -365,23 +365,23 @@ None — additive. No schema changes, no `seed.sql`, no edits to existing tests 
 
 #### Automated
 
-- [x] 3.1 IDOR spec passes against a fresh build
-- [x] 3.2 Full e2e suite passes together (`npm run build && npx playwright test`)
-- [x] 3.3 Lint passes
+- [x] 3.1 IDOR spec passes against a fresh build — 2a94798
+- [x] 3.2 Full e2e suite passes together (`npm run build && npx playwright test`) — 2a94798
+- [x] 3.3 Lint passes — 2a94798
 
 #### Manual
 
-- [x] 3.4 Foreign-owner page shows 404 "Nie znaleziono zapytania"; seeded guest email/phone appear nowhere in the DOM
-- [x] 3.5 Anonymous navigation lands on `/auth/signin` with no flash of contact data
+- [x] 3.4 Foreign-owner page shows 404 "Nie znaleziono zapytania"; seeded guest email/phone appear nowhere in the DOM — 2a94798
+- [x] 3.5 Anonymous navigation lands on `/auth/signin` with no flash of contact data — 2a94798
 
 ### Phase 4: Cookbook docs + handoff
 
 #### Automated
 
-- [ ] 4.1 test-plan §6.4 no longer contains "TBD"
-- [ ] 4.2 test-plan markdown formats clean (`npx prettier --check`)
+- [x] 4.1 test-plan §6.4 no longer contains "TBD"
+- [x] 4.2 test-plan markdown formats clean (`npx prettier --check`)
 
 #### Manual
 
-- [ ] 4.3 A new contributor can follow §6.4 to add an e2e test without this plan
-- [ ] 4.4 Deferred-CI decision and stale-doc finding are discoverable from the change folder
+- [x] 4.3 A new contributor can follow §6.4 to add an e2e test without this plan
+- [x] 4.4 Deferred-CI decision and stale-doc finding are discoverable from the change folder
