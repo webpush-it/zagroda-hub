@@ -82,7 +82,7 @@ export const POST: APIRoute = async (context) => {
     );
   }
 
-  await enqueueDecisionEmail(
+  const notified = await enqueueDecisionEmail(
     context,
     buildAcceptanceEmail({
       guest_name: request.guest_name,
@@ -94,5 +94,5 @@ export const POST: APIRoute = async (context) => {
     }),
   );
 
-  return json({ ok: true, status: "accepted" });
+  return json({ ok: true, status: "accepted", notified });
 };

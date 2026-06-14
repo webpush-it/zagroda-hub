@@ -121,7 +121,7 @@ describe("POST /api/booking-request — hostile guest input (risk #5)", () => {
     const guest = uniqueGuest("create-valid");
     const response = await postCreate(validPayload(guest));
     expect(response.status).toBe(200);
-    expect(await readJson(response, [guest])).toEqual({ ok: true });
+    expect(await readJson(response, [guest])).toEqual({ ok: true, notified: true });
 
     // The server generated the row (anon has no SELECT policy) — verify via admin.
     const { data, error } = await admin

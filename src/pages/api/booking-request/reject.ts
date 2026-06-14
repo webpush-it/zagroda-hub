@@ -69,7 +69,7 @@ export const POST: APIRoute = async (context) => {
     return json({ error: "To zapytanie nie jest już oczekujące — odśwież stronę", status: row.status }, 409);
   }
 
-  await enqueueDecisionEmail(
+  const notified = await enqueueDecisionEmail(
     context,
     buildRejectionEmail({
       guest_name: request.guest_name,
@@ -81,5 +81,5 @@ export const POST: APIRoute = async (context) => {
     }),
   );
 
-  return json({ ok: true, status: "rejected" });
+  return json({ ok: true, status: "rejected", notified });
 };

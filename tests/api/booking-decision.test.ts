@@ -125,7 +125,7 @@ describe("booking decision lifecycle — HTTP surface", () => {
 
     const response = await postDecision(acceptPost, "/api/booking-request/accept", fixture.jar, { id: requestId });
     expect(response.status).toBe(200);
-    expect(await readBody(response, [guest])).toEqual({ ok: true, status: "accepted" });
+    expect(await readBody(response, [guest])).toEqual({ ok: true, status: "accepted", notified: true });
 
     expect(await requestStatus(requestId)).toBe("accepted");
     expect(await outboxCountFor(guest.guestEmail)).toBe(1);
@@ -144,7 +144,7 @@ describe("booking decision lifecycle — HTTP surface", () => {
 
     const response = await postDecision(rejectPost, "/api/booking-request/reject", fixture.jar, { id: requestId });
     expect(response.status).toBe(200);
-    expect(await readBody(response, [guest])).toEqual({ ok: true, status: "rejected" });
+    expect(await readBody(response, [guest])).toEqual({ ok: true, status: "rejected", notified: true });
 
     expect(await requestStatus(requestId)).toBe("rejected");
   });
@@ -172,7 +172,7 @@ describe("booking decision lifecycle — HTTP surface", () => {
 
     const acceptBig = await postDecision(acceptPost, "/api/booking-request/accept", fixture.jar, { id: requestBig });
     expect(acceptBig.status).toBe(200);
-    expect(await readBody(acceptBig, [guestBig, guestSmall])).toEqual({ ok: true, status: "accepted" });
+    expect(await readBody(acceptBig, [guestBig, guestSmall])).toEqual({ ok: true, status: "accepted", notified: true });
 
     const acceptSmall = await postDecision(acceptPost, "/api/booking-request/accept", fixture.jar, {
       id: requestSmall,
@@ -233,7 +233,11 @@ describe("booking decision lifecycle — HTTP surface", () => {
         const winner = bigWon ? { response: resBig, participants: 20 } : { response: resSmall, participants: 15 };
         const loser = bigWon ? { response: resSmall, participants: 15 } : { response: resBig, participants: 20 };
 
-        expect(await readBody(winner.response, [guestBig, guestSmall])).toEqual({ ok: true, status: "accepted" });
+        expect(await readBody(winner.response, [guestBig, guestSmall])).toEqual({
+          ok: true,
+          status: "accepted",
+          notified: true,
+        });
 
         // The 409's structured fields must be internally consistent: the loser
         // observed the winner's seats under the lock, against the same limit.
@@ -293,7 +297,11 @@ describe("booking decision lifecycle — HTTP surface", () => {
       id: requestBig,
     });
     expect(withdraw.status).toBe(200);
-    expect(await readBody(withdraw, [guestBig, guestSmall])).toEqual({ ok: true, status: "withdrawn_by_owner" });
+    expect(await readBody(withdraw, [guestBig, guestSmall])).toEqual({
+      ok: true,
+      status: "withdrawn_by_owner",
+      notified: true,
+    });
     expect(await requestStatus(requestBig)).toBe("withdrawn_by_owner");
     // FR-016: the withdrawal notifies the guest — acceptance + withdrawal rows.
     expect(await outboxCountFor(guestBig.guestEmail)).toBe(2);
@@ -303,7 +311,11 @@ describe("booking decision lifecycle — HTTP surface", () => {
       id: requestSmall,
     });
     expect(acceptSmall.status).toBe(200);
-    expect(await readBody(acceptSmall, [guestBig, guestSmall])).toEqual({ ok: true, status: "accepted" });
+    expect(await readBody(acceptSmall, [guestBig, guestSmall])).toEqual({
+      ok: true,
+      status: "accepted",
+      notified: true,
+    });
     expect(await requestStatus(requestSmall)).toBe("accepted");
   });
 

@@ -61,7 +61,7 @@ describe("HTTP-surface harness — smoke", () => {
     const ctx = createApiContext({ jar, path: "/api/booking-request/accept", body: { id: requestId } });
     const response = await runRoute(acceptPost, ctx);
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ ok: true, status: "accepted" });
+    expect(await response.json()).toEqual({ ok: true, status: "accepted", notified: true });
 
     const { data: row, error } = await admin.from("booking_requests").select("status").eq("id", requestId).single();
     expect(error).toBeNull();

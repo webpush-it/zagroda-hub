@@ -61,20 +61,28 @@ export const POST: APIRoute = async (context) => {
     return json({ error: "Nie udało się utworzyć zapytania. Sprawdź wybrany turnus i spróbuj ponownie." }, 422);
   }
 
-  // Best-effort emails — must never fail the response. Owner contact lives in
-  // auth (not anon-readable), so resolve it with the service-role client.
-  await enqueueBookingEmails(context, data, id, cancel_token, turnusLabel);
+  // Best-effort emails — must never fail the response (the request row is
+  // already committed). Owner contact lives in auth (not anon-readable), so
+  // resolve it with the service-role client. `notified` reports whether the
+  // guest confirmation reached the durable outbox: a `false` means no cron
+  // retry will fire, so we surface it instead of swallowing it silently.
+  const notified = await enqueueBookingEmails(context, data, id, cancel_token, turnusLabel);
 
-  return json({ ok: true });
+  return json({ ok: true, notified });
 };
 
+// Returns whether the guest confirmation reached the durable outbox. The
+// catch is deliberate, not a swallow: the booking row is already committed, so
+// an email failure must not turn a successful creation into a 500 — but it is
+// reported via the return value so the caller can surface it (`notified`),
+// never lost to a bare console.error.
 async function enqueueBookingEmails(
   context: Parameters<APIRoute>[0],
   data: BookingRequestInput,
   requestId: string,
   cancelToken: string,
   turnusLabel: string | null,
-): Promise<void> {
+): Promise<boolean> {
   try {
     const admin = createAdminClient();
     let zagrodaName = "zagroda";
@@ -111,12 +119,16 @@ async function enqueueBookingEmails(
     });
 
     const deps = { admin, config: getEmailConfig(), waitUntil: getWaitUntil(context.locals) };
-    await sendTransactionalEmail(deps, guest);
+    // The guest confirmation is the notification the response reports on; the
+    // owner alert is a secondary best-effort send on the same durable outbox.
+    const { enqueued } = await sendTransactionalEmail(deps, guest);
     if (owner) {
       await sendTransactionalEmail(deps, owner);
     }
+    return enqueued;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("[booking-request] email enqueue failed:", error);
+    return false;
   }
 }

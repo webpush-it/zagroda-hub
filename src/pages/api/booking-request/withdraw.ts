@@ -69,7 +69,7 @@ export const POST: APIRoute = async (context) => {
     return json({ error: "To zapytanie nie jest już zaakceptowane — odśwież stronę", status: row.status }, 409);
   }
 
-  await enqueueDecisionEmail(
+  const notified = await enqueueDecisionEmail(
     context,
     buildWithdrawalEmail({
       guest_name: request.guest_name,
@@ -81,5 +81,5 @@ export const POST: APIRoute = async (context) => {
     }),
   );
 
-  return json({ ok: true, status: "withdrawn_by_owner" });
+  return json({ ok: true, status: "withdrawn_by_owner", notified });
 };
