@@ -71,14 +71,24 @@ orchestrator updates Status as artifacts appear on disk.
 | --- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------ | ------------ | -------------------------------------------------------- |
 | 1   | HTTP-surface integration on the booking lifecycle | Prove the API/handler layer enforces what the DB layer already proves — concurrency outcome, ownership, tokens, server-side validation parity | #1, #4, #5, #6 | integration                          | complete     | context/archive/2026-06-12-testing-http-surface-booking/ |
 | 2   | E2E critical flow on mobile viewport              | One scripted phone-size browser run of the core promise (request → accept → overbooking block), wired to fail CI                              | #3             | e2e                                  | complete     | context/archive/2026-06-14-testing-e2e-critical-flow-mobile/ |
-| 3   | Email outbox reliability                          | Prove outbox failure modes (provider error, retry budget, no double-send, no-op config) and make a stuck outbox observable                    | #2             | integration + manual smoke criterion | complete     | context/changes/testing-email-outbox-reliability/        |
-| 4   | Quality gates + selective AI-native layer         | Lock the floor: e2e gate in CI, typecheck gate, multimodal review of 1–3 owner mobile screens, post-edit hook recommendation                  | cross-cutting  | gates, vision review, post-edit hook | not started  | —                                                        |
+| 3   | Email outbox reliability                          | Prove outbox failure modes (provider error, retry budget, no double-send, no-op config) and make a stuck outbox observable                    | #2             | integration + manual smoke criterion | complete     | context/archive/2026-06-13-testing-email-outbox-reliability/ |
+| 4   | Multimodal review of owner mobile screens         | Selective vision-model review of 1–3 owner mobile screens for one-handed-portrait usability (PRD guardrail) where no deterministic oracle exists; record the already-shipped post-edit hook (`f72d8d7`) | cross-cutting (PRD mobile-usability guardrail) | vision review (MCP), post-edit hook (record) | change opened | context/changes/testing-multimodal-mobile-review/ |
+| 5   | CI quality gates (e2e + typecheck)                | Wire the blocking e2e critical-flow gate (deferred from Phase 2) and the `astro check` typecheck gate as required CI jobs                      | cross-cutting (#3 — regression ships while CI stays green) | gates (CI YAML)                      | not started  | —                                                        |
 
 > **Rollout-order note (2026-06-13):** Phase 3 (integration) was opened
 > ahead of Phase 2 by decision. Phase 2 (e2e/Playwright) and Phase 4
 > (hooks/MCP/multimodal) are **deferred, not skipped** — they fall outside
 > the current lesson's scope (e2e + MCP = Module 3 Lesson 4; hooks = Lesson 3) and stay `not started` until those lessons. When resuming, route to the
 > first `not started` row whose test types are in the active lesson's scope.
+>
+> **Phase 4 split (2026-06-14):** The original Phase 4 ("Quality gates +
+> selective AI-native layer") bundled four deliverables across lessons. By
+> decision it is split: the **post-edit hook** already shipped standalone
+> (`f72d8d7`, local opt-in); the **multimodal mobile-screen review** (MCP =
+> Module 3 Lesson 4) becomes Phase 4 and is now in active-lesson scope; the
+> **e2e + typecheck CI gates** are carved out into a new deferred **Phase 5**
+> (CI-YAML wiring, its own lesson). Phase 4 reaching `complete` no longer
+> implies the CI gates are wired — that is Phase 5's job.
 
 ## 4. Stack
 
