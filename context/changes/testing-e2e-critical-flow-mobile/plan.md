@@ -378,10 +378,10 @@ None — additive. No schema changes, no `seed.sql`, no edits to existing tests 
 
 #### Automated
 
-- [x] 4.1 test-plan §6.4 no longer contains "TBD"
-- [x] 4.2 test-plan markdown formats clean (`npx prettier --check`)
+- [x] 4.1 test-plan §6.4 no longer contains "TBD" — 99354fd
+- [x] 4.2 test-plan markdown formats clean (`npx prettier --check`) — 99354fd
 
 #### Manual
 
-- [x] 4.3 A new contributor can follow §6.4 to add an e2e test without this plan
-- [x] 4.4 Deferred-CI decision and stale-doc finding are discoverable from the change folder
+- [x] 4.3 A new contributor can follow §6.4 to add an e2e test without this plan — 99354fd
+- [x] 4.4 Deferred-CI decision and stale-doc finding are discoverable from the change folder — 99354fd
