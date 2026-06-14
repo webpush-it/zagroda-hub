@@ -36,6 +36,12 @@ export default defineConfig({
   webServer: {
     command: "npx wrangler dev",
     url: BASE_URL,
+    // Locally we reuse an already-running `wrangler dev` on :8787 for fast
+    // iteration — but a reused server may serve a STALE build or a different
+    // `.dev.vars` than the current run expects (the build prerequisite only
+    // refreshes dist/ for a server we start). On win32, workerd can also orphan
+    // on teardown, surfacing as port-8787-in-use on re-run. If tests run stale
+    // or the port is stuck, kill the stray process or set this to `false`.
     reuseExistingServer: !process.env.CI,
     // Generous: workerd cold start + binding wiring. Build is excluded (it is the
     // documented prerequisite), so this timeout covers only `wrangler dev` boot.

@@ -1,7 +1,7 @@
 ---
 change_id: testing-e2e-critical-flow-mobile
 title: Testing e2e critical flow mobile
-status: implemented
+status: impl_reviewed
 created: 2026-06-14
 updated: 2026-06-14
 archived_at: null

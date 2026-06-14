@@ -92,7 +92,11 @@ export default function globalSetup(): void {
   // Only the two the flow needs — BREVO_API_KEY stays unset so the email drain
   // no-ops (zero network egress); SUPABASE_SERVICE_ROLE_KEY is not used by the
   // Worker for these flows, so it is omitted here (seeding uses it in-process).
-  writeFileSync(".dev.vars", `SUPABASE_URL=${keys.url}\nSUPABASE_KEY=${keys.anonKey}\n`, "utf8");
+  try {
+    writeFileSync(".dev.vars", `SUPABASE_URL=${keys.url}\nSUPABASE_KEY=${keys.anonKey}\n`, "utf8");
+  } catch (cause) {
+    throw new Error("Failed to write .dev.vars (wrangler dev reads runtime secrets from it).", { cause });
+  }
 
   // Exposed to the Node-context seed helper (inherited by forked workers).
   process.env.E2E_SUPABASE_URL = keys.url;

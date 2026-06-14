@@ -19,10 +19,16 @@ import { createAdminClient, createConfirmedOwner, seedBookingRequest, seedZagrod
 
 const OWNER_PASSWORD = "TestHaslo123!";
 
-/** A unique, attributable guest phone so an absence assertion is meaningful (a leak shows this exact string). */
-function uniquePhone(): string {
-  const digits = Math.floor(100_000 + Math.random() * 900_000); // 6 digits
-  return `+48 700 ${digits}`;
+/**
+ * A unique, attributable guest phone so an absence assertion is meaningful (a
+ * leak shows this exact string). Digits are derived from the same UUID `suffix`
+ * that makes the guest name/email unique — NOT an independent 6-digit random
+ * (~900k space), which could collide across the never-torn-down test rows and
+ * let the leak assertion pass against a different test's phone (false negative).
+ */
+function uniquePhone(suffix: string): string {
+  const digits = BigInt(`0x${suffix}`).toString().padStart(9, "0").slice(-9);
+  return `+48 ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
 }
 
 // The /auth/signin form is a controlled React island (client:load). A value
@@ -62,7 +68,7 @@ async function seedForeignRequest(
   });
 
   const guestEmail = uniqueEmail("guest");
-  const guestPhone = uniquePhone();
+  const guestPhone = uniquePhone(suffix);
   const requestId = await seedBookingRequest(admin, {
     zagrodaId,
     turnusId: turnusIds[0],

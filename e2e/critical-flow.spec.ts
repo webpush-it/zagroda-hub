@@ -119,6 +119,11 @@ test("guest request → owner accept fills the single seat → second accept is 
   // Oracle is PRD FR-014: "Limit dzienny przekroczony (X z Y zajęte, Z wymaga miejsca)"
   // — with daily_limit 1 + one accepted participant: (1 z 1 zajęte, 1 wymaga miejsca).
   await expect(page.getByText("Limit dzienny przekroczony (1 z 1 zajęte, 1 wymaga miejsca)")).toBeVisible();
-  // The blocked request is NOT accepted — its status badge still reads pending.
-  await expect(page.getByText("Oczekujące")).toBeVisible();
+  // The blocked request is NOT accepted — it stays pending. Both assertions are
+  // scoped to guest2's single-request detail page: the status badge still reads
+  // "Oczekujące", and the decision buttons remain (RequestDecision only renders
+  // them while status === "pending"), so the seat is still claimable. The button
+  // check binds the pending state to *this* request, not just any page text.
+  await expect(page.getByText("Oczekujące", { exact: true })).toBeVisible();
+  await expect(akceptuj2).toBeVisible();
 });
