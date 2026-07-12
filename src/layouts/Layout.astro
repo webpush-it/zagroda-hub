@@ -13,8 +13,11 @@ const {
   description = "Zagroda Hub — rezerwacje wycieczek do zagród edukacyjnych z gwarancją braku overbookingu.",
 } = Astro.props;
 
-const canonicalUrl = new URL(Astro.url.pathname, Astro.url).href;
-const ogImageUrl = new URL("/og-image.png", Astro.url).href;
+// Configured origin (Astro.site) wins over the Host-header-influenced request
+// URL, so canonical/OG links can't be spoofed via the incoming Host header.
+const base = Astro.site ?? Astro.url;
+const canonicalUrl = new URL(Astro.url.pathname, base).href;
+const ogImageUrl = new URL("/og-image.png", base).href;
 ---
 
 <!doctype html>

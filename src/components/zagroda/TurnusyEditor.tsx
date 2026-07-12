@@ -83,7 +83,7 @@ export function TurnusyEditor({ rows, errors, onChange }: TurnusyEditorProps) {
                     className={fieldClass(startError)}
                   />
                   {startError && (
-                    <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+                    <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
                       <CircleAlert className="size-3 shrink-0" />
                       {startError}
                     </p>
@@ -103,7 +103,7 @@ export function TurnusyEditor({ rows, errors, onChange }: TurnusyEditorProps) {
                     className={fieldClass(endError)}
                   />
                   {endError && (
-                    <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+                    <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
                       <CircleAlert className="size-3 shrink-0" />
                       {endError}
                     </p>

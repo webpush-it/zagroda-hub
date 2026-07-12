@@ -74,7 +74,11 @@ if (!profile) {
           profile ? (
             <article>
               {profile.photoUrl ? (
-                <img src={profile.photoUrl} alt="" class="mb-4 aspect-video w-full rounded-xl object-cover" />
+                <img
+                  src={profile.photoUrl}
+                  alt={profile.name}
+                  class="mb-4 aspect-video w-full rounded-xl object-cover"
+                />
               ) : (
                 <div class="mb-4 aspect-video w-full overflow-hidden rounded-xl">
                   <ZagrodaPlaceholder />

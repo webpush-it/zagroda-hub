@@ -9,7 +9,7 @@ const error = Astro.url.searchParams.get("error");
 <Layout title="Sprawdź skrzynkę">
   <div class="bg-meadow flex min-h-screen items-center justify-center p-4">
     <div class="card-surface w-full max-w-sm text-center">
-      <div class="mb-4 text-5xl">📧</div>
+      <div class="mb-4 text-5xl" aria-hidden="true">📧</div>
       <h1 class="text-brand-700 mb-3 text-2xl font-bold">Sprawdź skrzynkę</h1>
       <p class="text-ink mb-6">
         Wysłaliśmy link potwierdzający na Twój adres e-mail. Kliknij go, aby aktywować konto i zalogować się do panelu.

@@ -8,6 +8,9 @@ import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
+  // Configured origin wins over the Host-header-influenced request URL for
+  // canonical/OG links (Layout.astro uses Astro.site) and enables sitemap().
+  site: "https://zagroda-hub.webpushit.workers.dev",
   output: "server",
   integrations: [react(), sitemap()],
   vite: {
