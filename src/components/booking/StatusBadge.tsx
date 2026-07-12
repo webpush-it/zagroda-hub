@@ -14,7 +14,7 @@ export function StatusBadge({ status }: { status: RequestStatus }) {
   const meta = STATUS_META[status];
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${meta.className}`}
+      className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${meta.className}`}
     >
       {meta.label}
     </span>

@@ -89,9 +89,9 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
                   <dt class="text-ink-muted">Data pobytu</dt>
                   <dd class="text-ink font-medium">{request.trip_date}</dd>
                 </div>
-                <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                  <dt class="text-ink-muted">Turnus</dt>
-                  <dd class="text-ink text-right font-medium">
+                <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+                  <dt class="text-ink-muted shrink-0">Turnus</dt>
+                  <dd class="text-ink min-w-0 text-right font-medium break-words">
                     {request.turnus_label} <span class="text-ink-muted">({request.turnus_time})</span>
                   </dd>
                 </div>
@@ -104,9 +104,9 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
               <section class="mt-6">
                 <h2 class="text-ink mb-2 text-base font-semibold">Kontakt do nauczyciela</h2>
                 <dl class="flex flex-col gap-2">
-                  <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                    <dt class="text-ink-muted">Imię i nazwisko</dt>
-                    <dd class="text-ink font-medium">{request.guest_name}</dd>
+                  <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+                    <dt class="text-ink-muted shrink-0">Imię i nazwisko</dt>
+                    <dd class="text-ink min-w-0 text-right font-medium break-words">{request.guest_name}</dd>
                   </div>
                   <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
                     <dt class="text-ink-muted">E-mail</dt>

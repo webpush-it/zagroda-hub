@@ -66,7 +66,7 @@ if (!profile) {
     <div class="mx-auto w-full max-w-md">
       <Topbar />
       <main class="card-surface">
-        <a href="/katalog" class="text-link hover:text-link-hover mb-4 inline-block text-sm transition-colors">
+        <a href="/katalog" class="text-link hover:text-link-hover tap-target mb-4 text-sm transition-colors">
           ← Wróć do katalogu
         </a>
 
@@ -85,7 +85,7 @@ if (!profile) {
                 </div>
               )}
 
-              <h1 class="text-brand-700 text-2xl font-bold">{profile.name}</h1>
+              <h1 class="text-brand-700 text-2xl font-bold break-words">{profile.name}</h1>
               {profile.lokalizacja && <p class="text-ink-muted mt-1 text-sm">{profile.lokalizacja}</p>}
 
               {profile.description && <p class="text-ink mt-4 text-sm whitespace-pre-line">{profile.description}</p>}
@@ -99,9 +99,9 @@ if (!profile) {
                   <h2 class="text-ink mb-2 text-base font-semibold">Turnusy</h2>
                   <ul class="flex flex-col gap-2">
                     {profile.turnusy.map((t) => (
-                      <li class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                        <span class="text-ink">{t.label}</span>
-                        <span class="text-ink-muted">{t.time}</span>
+                      <li class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+                        <span class="text-ink min-w-0 truncate">{t.label}</span>
+                        <span class="text-ink-muted shrink-0">{t.time}</span>
                       </li>
                     ))}
                   </ul>

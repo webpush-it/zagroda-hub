@@ -43,7 +43,7 @@ export default function RequestsList({ rows }: { rows: RequestRow[] }) {
                 setFilterKey(f.key);
               }}
               className={cn(
-                "shrink-0 rounded-full border px-3 py-2 text-sm transition-colors",
+                "tap-target shrink-0 rounded-full border px-3 py-2 text-sm transition-colors",
                 active
                   ? "border-brand-600 bg-brand-600 font-medium text-white"
                   : "border-edge text-ink-muted hover:bg-brand-50 bg-white",
@@ -71,14 +71,16 @@ export default function RequestsList({ rows }: { rows: RequestRow[] }) {
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <StatusBadge status={r.status} />
-                    <span className="text-ink-muted text-xs">Wysłano {r.created_at.slice(0, 10)}</span>
+                    <span className="text-ink-muted shrink-0 text-xs whitespace-nowrap">
+                      Wysłano {r.created_at.slice(0, 10)}
+                    </span>
                   </div>
                   <p className="text-ink flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                     <span className="flex items-center gap-1">
                       <Calendar className="text-ink-muted size-3.5 shrink-0" aria-hidden="true" />
                       {r.trip_date}
                     </span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex min-w-0 items-center gap-1 break-words">
                       <Clock className="text-ink-muted size-3.5 shrink-0" aria-hidden="true" />
                       {r.turnus_label}
                     </span>

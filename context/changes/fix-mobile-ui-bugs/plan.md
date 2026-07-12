@@ -426,27 +426,27 @@ Brak zmian schematu/danych. Zmiany są wstecznie kompatybilne i nie dotykają lo
 
 #### Automated
 
-- [x] 4.1 Build przechodzi: `npm run build`
-- [x] 4.2 Lint/format czyste: `npm run lint`
+- [x] 4.1 Build przechodzi: `npm run build` — cdc17c1
+- [x] 4.2 Lint/format czyste: `npm run lint` — cdc17c1
 
 #### Manual
 
-- [x] 4.3 @320 hasło nie chowa się pod ikoną oka (signin/signup/reset)
-- [x] 4.4 Toggle trafialny ≥44px, ikona na miejscu
+- [x] 4.3 @320 hasło nie chowa się pod ikoną oka (signin/signup/reset) — cdc17c1
+- [x] 4.4 Toggle trafialny ≥44px, ikona na miejscu — cdc17c1
 
 ### Phase 5: Sweep zawijania treści + tap-targetów
 
 #### Automated
 
-- [ ] 5.1 Build przechodzi: `npm run build`
-- [ ] 5.2 Lint/format czyste: `npm run lint`
-- [ ] 5.3 Istniejące e2e nie regresują: `npm run test:e2e`
+- [x] 5.1 Build przechodzi: `npm run build`
+- [x] 5.2 Lint/format czyste: `npm run lint`
+- [x] 5.3 Istniejące e2e nie regresują: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 5.4 @320 RequestsList/szczegóły zapytania/strona zagrody bez overflow, tokeny zawijają
-- [ ] 5.5 Standalone linki i chipy ≥44px; linki inline-w-zdaniu bez naruszenia baseline
-- [ ] 5.6 Badge nie deformuje się, data „Wysłano…" nie łamie układu
+- [x] 5.4 @320 RequestsList/szczegóły zapytania/strona zagrody bez overflow, tokeny zawijają
+- [x] 5.5 Standalone linki i chipy ≥44px; linki inline-w-zdaniu bez naruszenia baseline
+- [x] 5.6 Badge nie deformuje się, data „Wysłano…" nie łamie układu
 
 ### Phase 6: Bramka regresji @320
 

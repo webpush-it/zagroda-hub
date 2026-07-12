@@ -106,7 +106,10 @@ export default function CancelRequest({ token }: Props) {
         {submitting ? <Loader2 className="size-4 animate-spin" /> : <X className="size-4" />}
         {submitting ? "Anulowanie…" : "Tak, anuluj zapytanie"}
       </button>
-      <a href="/katalog" className="text-link hover:text-link-hover block text-center text-sm transition-colors">
+      <a
+        href="/katalog"
+        className="text-link hover:text-link-hover tap-target w-full justify-center text-sm transition-colors"
+      >
         Nie, wróć do katalogu
       </a>
     </div>
