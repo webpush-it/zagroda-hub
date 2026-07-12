@@ -1,0 +1,24 @@
+---
+/**
+ * Logomark „Łąka i miód" — placeholder brandu (świadomie prosty, łatwy do podmiany).
+ * Wariant "mark" = sam znak; "full" = znak + wordmark.
+ */
+type Variant = "mark" | "full";
+
+interface Props {
+  variant?: Variant;
+  size?: number;
+  class?: string;
+}
+
+const { variant = "full", size = 32, class: className } = Astro.props;
+---
+
+<span class:list={["inline-flex items-center gap-2", className]}>
+  <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <circle cx="35" cy="13" r="8" fill="#D98E2B"></circle>
+    <path d="M9 42V24L14 15L24 11L34 15L39 24V42H9Z" fill="#3F7D2C"></path>
+    <path d="M20 42V34C20 31.79 21.79 30 24 30C26.21 30 28 31.79 28 34V42H20Z" fill="#F7F5EF"></path>
+  </svg>
+  {variant === "full" && <span class="text-brand-700 text-lg font-extrabold tracking-tight">Zagroda Hub</span>}
+</span>

@@ -3,26 +3,72 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Nunito (OFL, licencja w public/fonts/OFL.txt) — variable font, wagi 400–800,
+   subset latin + latin-ext (polskie diakrytyki). */
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("/fonts/nunito-latin-pl.woff2") format("woff2");
+}
+
+/*
+ * Paleta „Łąka i miód" — kontrasty WCAG (wyliczone, cel: AA 4.5:1 tekst / 3:1 UI):
+ *   ink #27301F na surface #F7F5EF ........ 12.60:1 ✓
+ *   ink-muted #5B6350 na surface #F7F5EF ..  5.76:1 ✓
+ *   ink-muted #5B6350 na bieli ............  6.28:1 ✓
+ *   biel na brand-600 #3F7D2C .............  5.02:1 ✓
+ *   biel na brand-700 #336423 .............  7.03:1 ✓
+ *   link #2E6B27 na surface #F7F5EF .......  5.93:1 ✓ (na bieli 6.46:1 ✓)
+ *   edge-strong #8B917F na bieli ..........  3.25:1 ✓ (border inputu, UI ≥3:1)
+ *   accent-700 #8A4407 na surface .........  6.62:1 ✓ (tekst miodowy)
+ *   accent-600 #B45E14 na surface .........  4.23:1 ✗ dla tekstu <18px — używać
+ *     wyłącznie dekoracyjnie / dla dużego tekstu; tekst akcentowy = accent-700.
+ */
+@theme {
+  --font-sans:
+    "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-brand-50: #f1f6ec;
+  --color-brand-100: #e2edd8;
+  --color-brand-200: #c6dcb4;
+  --color-brand-600: #3f7d2c;
+  --color-brand-700: #336423;
+  --color-brand-800: #29511c;
+  --color-accent-100: #f6e8d5;
+  --color-accent-400: #d98e2b;
+  --color-accent-600: #b45e14;
+  --color-accent-700: #8a4407;
+  --color-surface: #f7f5ef;
+  --color-ink: #27301f;
+  --color-ink-muted: #5b6350;
+  --color-link: #2e6b27;
+  --color-link-hover: #21491b;
+  --color-edge: #e3e0d3;
+  --color-edge-strong: #8b917f;
+}
+
 :root {
+  color-scheme: light;
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: #f7f5ef;
+  --foreground: #27301f;
+  --card: #ffffff;
+  --card-foreground: #27301f;
+  --popover: #ffffff;
+  --popover-foreground: #27301f;
+  --primary: #3f7d2c;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f6ec;
+  --secondary-foreground: #29511c;
+  --muted: #efece1;
+  --muted-foreground: #5b6350;
+  --accent: #f6e8d5;
+  --accent-foreground: #8a4407;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #e3e0d3;
+  --input: #8b917f;
+  --ring: #3f7d2c;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -110,8 +156,99 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Stary motyw startera — konsumenci znikają w fazach 2–4, definicja do usunięcia w fazie 5. */
 @utility bg-cosmic {
   background-image: linear-gradient(to bottom, #0a0e1a, #0f1529, #0a0e1a);
+}
+
+/* Tło aplikacji: krem z bardzo subtelnym pionowym gradientem. */
+@utility bg-meadow {
+  background-color: var(--color-surface);
+  background-image: linear-gradient(to bottom, #fbfaf6, #f7f5ef 55%, #f2efe4);
+}
+
+/* Karta na jasnym tle — zastępuje glass-idiom
+   `rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl`. */
+@utility card-surface {
+  border-radius: 1rem;
+  border: 1px solid var(--color-edge);
+  background-color: #ffffff;
+  padding: 1.5rem;
+  color: var(--color-ink);
+  box-shadow:
+    0 1px 2px rgb(39 48 31 / 0.05),
+    0 4px 12px rgb(39 48 31 / 0.05);
+}
+
+/* Przycisk główny — zastępuje `bg-purple-600 hover:bg-purple-500`.
+   min-height 2.75rem = tap-target ≥44px (guardrail jednoręczności). */
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: var(--color-brand-600);
+  transition: background-color 150ms ease;
+  &:hover {
+    background-color: var(--color-brand-700);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-brand-700);
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* Przycisk drugorzędny — obrys marki na jasnym tle,
+   zastępuje `border-white/20 hover:bg-white/10`. */
+@utility btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  color: var(--color-brand-700);
+  border: 1px solid var(--color-brand-600);
+  background-color: transparent;
+  transition: background-color 150ms ease;
+  &:hover {
+    background-color: var(--color-brand-50);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-brand-700);
+    outline-offset: 2px;
+  }
+}
+
+/* Pole formularza — zastępuje `bg-white/10 border-white/20 focus:ring-purple-400`.
+   Border edge-strong 3.25:1 na bieli (≥3:1 UI). */
+@utility input-field {
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-edge-strong);
+  background-color: #ffffff;
+  padding: 0.625rem 0.75rem;
+  color: var(--color-ink);
+  &::placeholder {
+    color: var(--color-ink-muted);
+  }
+  &:focus {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: -1px;
+    border-color: var(--color-brand-600);
+  }
 }
 
 @layer base {

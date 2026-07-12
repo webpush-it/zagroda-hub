@@ -1,0 +1,44 @@
+---
+/**
+ * Ilustracja-placeholder zagrody (zastępuje emoji 🏡) — scena: zagroda na łące,
+ * słońce, płot. Dekoracyjna (aria-hidden), skaluje się do kontenera jak object-cover.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 400 225"
+  width="100%"
+  height="100%"
+  preserveAspectRatio="xMidYMid slice"
+  aria-hidden="true"
+  class:list={[className]}
+>
+  <rect width="400" height="225" fill="#FBF8EF"></rect>
+  <circle cx="325" cy="50" r="27" fill="#F2DCB0"></circle>
+  <circle cx="325" cy="50" r="18" fill="#D98E2B"></circle>
+  <path d="M0 152 Q100 112 200 140 T400 128 V225 H0 Z" fill="#D5E5C6"></path>
+  <path d="M0 182 Q120 152 250 176 T400 170 V225 H0 Z" fill="#A9CB90"></path>
+  <path d="M0 210 Q140 192 280 206 T400 200 V225 H0 Z" fill="#7FAE66"></path>
+  <path d="M100 196V150L112 132L135 124L158 132L170 150V196H100Z" fill="#3F7D2C"></path>
+  <path d="M112 132L135 124L158 132" stroke="#29511C" stroke-width="4" fill="none" stroke-linecap="round"></path>
+  <path d="M128 196V172C128 168.13 131.13 165 135 165C138.87 165 142 168.13 142 172V196H128Z" fill="#F7F5EF"></path>
+  <g fill="#8A4407">
+    <rect x="222" y="168" width="5" height="26" rx="2"></rect>
+    <rect x="252" y="166" width="5" height="26" rx="2"></rect>
+    <rect x="282" y="165" width="5" height="26" rx="2"></rect>
+    <rect x="312" y="166" width="5" height="26" rx="2"></rect>
+    <rect x="216" y="172" width="106" height="4" rx="2"></rect>
+    <rect x="216" y="182" width="106" height="4" rx="2"></rect>
+  </g>
+  <g fill="#D98E2B">
+    <circle cx="60" cy="205" r="3"></circle>
+    <circle cx="82" cy="212" r="3"></circle>
+    <circle cx="190" cy="208" r="3"></circle>
+    <circle cx="360" cy="212" r="3"></circle>
+  </g>
+</svg>
