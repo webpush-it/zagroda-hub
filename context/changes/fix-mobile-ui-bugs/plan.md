@@ -398,29 +398,29 @@ Brak zmian schematu/danych. Zmiany są wstecznie kompatybilne i nie dotykają lo
 
 #### Automated
 
-- [x] 2.1 Build przechodzi: `npm run build`
-- [x] 2.2 Lint/format czyste: `npm run lint`
-- [x] 2.3 Istniejące e2e nie regresują: `npm run test:e2e`
+- [x] 2.1 Build przechodzi: `npm run build` — d2310f7
+- [x] 2.2 Lint/format czyste: `npm run lint` — d2310f7
+- [x] 2.3 Istniejące e2e nie regresują: `npm run test:e2e` — d2310f7
 
 #### Manual
 
-- [x] 2.4 @320 brak poziomego scrolla na 8 stronach (gość + zalogowany)
-- [x] 2.5 Hamburger/drawer: Escape zamyka, wybór linku nawiguje i zamyka, focus wraca
-- [x] 2.6 `aria-expanded` poprawny, drawer osiągalny klawiaturą
-- [x] 2.7 @≥sm nagłówek jak dotychczas (linki inline)
-- [x] 2.8 Tap-targety hamburgera/linków/loga ≥44px
+- [x] 2.4 @320 brak poziomego scrolla na 8 stronach (gość + zalogowany) — d2310f7
+- [x] 2.5 Hamburger/drawer: Escape zamyka, wybór linku nawiguje i zamyka, focus wraca — d2310f7
+- [x] 2.6 `aria-expanded` poprawny, drawer osiągalny klawiaturą — d2310f7
+- [x] 2.7 @≥sm nagłówek jak dotychczas (linki inline) — d2310f7
+- [x] 2.8 Tap-targety hamburgera/linków/loga ≥44px — d2310f7
 
 ### Phase 3: Natywne kontrolki — stack pełnej szerokości @<sm
 
 #### Automated
 
-- [ ] 3.1 Build przechodzi: `npm run build`
-- [ ] 3.2 Lint/format czyste: `npm run lint`
+- [x] 3.1 Build przechodzi: `npm run build`
+- [x] 3.2 Lint/format czyste: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 @320 Chrome i Firefox: data katalogu, czasy TurnusyEditor, data rezerwacji nieprzycięte
-- [ ] 3.4 @≥sm kontrolki wracają do układu wielokolumnowego
+- [x] 3.3 @320 Chrome i Firefox: data katalogu, czasy TurnusyEditor, data rezerwacji nieprzycięte
+- [x] 3.4 @≥sm kontrolki wracają do układu wielokolumnowego
 
 ### Phase 4: Pola hasła (auth)
 

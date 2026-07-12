@@ -68,7 +68,7 @@ export function TurnusyEditor({ rows, errors, onChange }: TurnusyEditorProps) {
                   <Trash2 className="size-4" />
                 </button>
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <div>
                   <label htmlFor={`turnus-${row.key}-start`} className="text-ink-muted mb-1 block text-xs">
                     Od

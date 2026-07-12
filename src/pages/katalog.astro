@@ -143,12 +143,12 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
             </select>
           </div>
 
-          <div class="flex gap-3">
+          <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
             <div class="flex-1">
               <label for="filter-data" class:list={labelClass}>Data wycieczki</label>
               <input type="date" id="filter-data" name="data" min={today} value={data ?? ""} class:list={inputClass} />
             </div>
-            <div class="w-28">
+            <div class="w-full sm:w-28">
               <label for="filter-osoby" class:list={labelClass}>Liczba osób</label>
               <input
                 type="number"
