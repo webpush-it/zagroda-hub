@@ -474,15 +474,15 @@ Usunięcie starego motywu i plików startera, restyle Banner, uzgodnienie palety
 
 #### Automated
 
-- [x] 5.1 Build + lint + vitest przechodzą
-- [x] 5.2 Globalny grep-gate motywu nic nie zwraca (wyjątek: brand-SVG OAuth)
-- [x] 5.3 Grep-gate `10x-astro-starter` w src/, public/, package.json nic nie zwraca
-- [x] 5.4 LibBadge.astro i template.png usunięte
-- [x] 5.5 Pełny lokalny e2e przechodzi: `npm run test:e2e`
+- [x] 5.1 Build + lint + vitest przechodzą — 08f1778
+- [x] 5.2 Globalny grep-gate motywu nic nie zwraca (wyjątek: brand-SVG OAuth) — 08f1778
+- [x] 5.3 Grep-gate `10x-astro-starter` w src/, public/, package.json nic nie zwraca — 08f1778
+- [x] 5.4 LibBadge.astro i template.png usunięte — 08f1778
+- [x] 5.5 Pełny lokalny e2e przechodzi: `npm run test:e2e` — 08f1778
 
 #### Manual
 
-- [x] 5.6 E-mail testowy spójny z brandem w realnym kliencie poczty
-- [x] 5.7 Banner konfiguracyjny w palecie motywu
-- [x] 5.8 Finalny przegląd wszystkich stron (Pixel 5 + desktop)
-- [x] 5.9 OG-preview linku pokazuje nowy obraz i opis
+- [x] 5.6 E-mail testowy spójny z brandem w realnym kliencie poczty — 08f1778
+- [x] 5.7 Banner konfiguracyjny w palecie motywu — 08f1778
+- [x] 5.8 Finalny przegląd wszystkich stron (Pixel 5 + desktop) — 08f1778
+- [x] 5.9 OG-preview linku pokazuje nowy obraz i opis — 08f1778
