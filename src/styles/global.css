@@ -226,6 +226,15 @@
   }
 }
 
+/* Wspólny guardrail tap-target ≥44px (jednoręczność) — ten sam próg co btn-*,
+   ale wielokrotny: linki nav, chipy, PasswordToggle, standalone linki text-sm.
+   inline-flex + align-items, by min-height obowiązywała także dla <a>/<button>. */
+@utility tap-target {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
 /* Pole formularza — zastępuje półprzezroczyste pole startera z fioletowym focusem.
    Border edge-strong 3.25:1 na bieli (≥3:1 UI). */
 @utility input-field {
