@@ -45,12 +45,13 @@ async function waitForIslandHydrated(field: Locator): Promise<void> {
 /** Signs an owner in through the real form so @supabase/ssr writes genuine session cookies. */
 async function signInOwner(page: Page, email: string, password: string): Promise<void> {
   await page.goto("/auth/signin");
-  const emailField = page.getByLabel("Email", { exact: true });
+  const emailField = page.getByLabel("E-mail", { exact: true });
   await waitForIslandHydrated(emailField);
   await emailField.fill(email);
-  // exact: avoids the "Show password" toggle, whose aria-label also contains "Password".
-  await page.getByLabel("Password", { exact: true }).fill(password);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  // exact: avoids the "Pokaż hasło" toggle, whose aria-label also contains "hasło".
+  await page.getByLabel("Hasło", { exact: true }).fill(password);
+  // role=button disambiguates from the Topbar "Zaloguj się" link, which shares the copy.
+  await page.getByRole("button", { name: "Zaloguj się" }).click();
   await page.waitForURL("**/dashboard");
 }
 

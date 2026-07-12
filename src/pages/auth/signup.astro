@@ -7,19 +7,15 @@ const error = Astro.url.searchParams.get("error");
 ---
 
 <Layout title="Zarejestruj się">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent"
-      >
-        Zarejestruj się
-      </h1>
+  <div class="bg-meadow flex min-h-screen items-center justify-center p-4">
+    <div class="card-surface w-full max-w-sm">
+      <h1 class="text-brand-700 mb-6 text-center text-2xl font-bold">Zarejestruj się</h1>
       <SignUpForm serverError={error} client:load />
       <div class="mt-4">
         <OAuthButtons client:load />
       </div>
-      <p class="mt-4 text-center text-sm text-blue-100/60">
-        Masz już konto? <a href="/auth/signin" class="text-purple-300 hover:underline">Zaloguj się</a>
+      <p class="text-ink-muted mt-4 text-center text-sm">
+        Masz już konto? <a href="/auth/signin" class="text-link hover:text-link-hover hover:underline">Zaloguj się</a>
       </p>
     </div>
   </div>

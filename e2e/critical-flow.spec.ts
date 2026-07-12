@@ -90,12 +90,13 @@ test("guest request → owner accept fills the single seat → second accept is 
 
   // --- Step 2: owner signs in via the real form (genuine @supabase/ssr cookies).
   await page.goto("/auth/signin");
-  const emailField = page.getByLabel("Email", { exact: true });
+  const emailField = page.getByLabel("E-mail", { exact: true });
   await waitForIslandHydrated(emailField);
   await emailField.fill(ownerEmail);
-  // exact: avoids the "Show password" toggle, whose aria-label also contains "Password".
-  await page.getByLabel("Password", { exact: true }).fill(OWNER_PASSWORD);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  // exact: avoids the "Pokaż hasło" toggle, whose aria-label also contains "hasło".
+  await page.getByLabel("Hasło", { exact: true }).fill(OWNER_PASSWORD);
+  // role=button disambiguates from the Topbar "Zaloguj się" link, which shares the copy.
+  await page.getByRole("button", { name: "Zaloguj się" }).click();
   await page.waitForURL("**/dashboard");
 
   // --- Step 3: accept the guest's request — fills the single seat.

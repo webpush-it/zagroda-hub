@@ -22,15 +22,15 @@ export default function ResetPasswordForm({ serverError }: Props) {
     const next: typeof errors = {};
 
     if (!password) {
-      next.password = "Password is required";
+      next.password = "Podaj hasło";
     } else if (password.length < MIN_PASSWORD_LENGTH) {
-      next.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
+      next.password = `Hasło musi mieć co najmniej ${MIN_PASSWORD_LENGTH} znaków`;
     }
 
     if (!confirmPassword) {
-      next.confirmPassword = "Please confirm your password";
+      next.confirmPassword = "Powtórz hasło";
     } else if (password !== confirmPassword) {
-      next.confirmPassword = "Passwords do not match";
+      next.confirmPassword = "Hasła nie są takie same";
     }
 
     setErrors(next);
@@ -47,11 +47,11 @@ export default function ResetPasswordForm({ serverError }: Props) {
     }
   }
 
+  const missing = MIN_PASSWORD_LENGTH - password.length;
   const passwordHint =
     !errors.password && password.length > 0 && password.length < MIN_PASSWORD_LENGTH ? (
-      <p className="mt-1 text-xs text-blue-100/50">
-        {MIN_PASSWORD_LENGTH - password.length} more character
-        {MIN_PASSWORD_LENGTH - password.length !== 1 ? "s" : ""} needed
+      <p className="text-ink-muted mt-1 text-xs">
+        Brakuje jeszcze {missing} {missing === 1 ? "znaku" : "znaków"}
       </p>
     ) : undefined;
 
@@ -66,7 +66,7 @@ export default function ResetPasswordForm({ serverError }: Props) {
           setPassword(v);
           clearError("password");
         }}
-        placeholder="Min. 6 characters"
+        placeholder="Min. 6 znaków"
         error={errors.password}
         hint={passwordHint}
         icon={<Lock className="size-4" />}
@@ -90,7 +90,7 @@ export default function ResetPasswordForm({ serverError }: Props) {
           setConfirmPassword(v);
           clearError("confirmPassword");
         }}
-        placeholder="Re-enter your password"
+        placeholder="Powtórz nowe hasło"
         error={errors.confirmPassword}
         icon={<Lock className="size-4" />}
         endContent={

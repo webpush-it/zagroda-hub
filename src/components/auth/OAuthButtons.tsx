@@ -34,15 +34,15 @@ function FacebookIcon() {
 export default function OAuthButtons() {
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-3 text-xs text-blue-100/50">
-        <span className="h-px flex-1 bg-white/10" />
+      <div className="text-ink-muted flex items-center gap-3 text-xs">
+        <span className="bg-edge h-px flex-1" />
         <span>lub</span>
-        <span className="h-px flex-1 bg-white/10" />
+        <span className="bg-edge h-px flex-1" />
       </div>
 
       <a
         href="/api/auth/oauth/google"
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
+        className="text-ink border-edge-strong hover:bg-brand-50 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium transition-colors"
       >
         <GoogleIcon />
         Kontynuuj z Google
@@ -50,7 +50,7 @@ export default function OAuthButtons() {
 
       <a
         href="/api/auth/oauth/facebook"
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
+        className="text-ink border-edge-strong hover:bg-brand-50 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium transition-colors"
       >
         <FacebookIcon />
         Kontynuuj z Facebook

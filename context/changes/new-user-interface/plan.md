@@ -430,31 +430,31 @@ Usunięcie starego motywu i plików startera, restyle Banner, uzgodnienie palety
 
 #### Automated
 
-- [x] 2.1 Build + lint przechodzą
-- [x] 2.2 Grep starych idiomów w plikach publicznych nic nie zwraca
-- [x] 2.3 Smoke e2e przechodzi: `npm run test:e2e -- e2e/smoke.spec.ts`
+- [x] 2.1 Build + lint przechodzą — 6c29252
+- [x] 2.2 Grep starych idiomów w plikach publicznych nic nie zwraca — 6c29252
+- [x] 2.3 Smoke e2e przechodzi: `npm run test:e2e -- e2e/smoke.spec.ts` — 6c29252
 
 #### Manual
 
-- [x] 2.4 Strony publiczne + 404 obejrzane na Pixel 5, czytelne jednoręcznie
-- [x] 2.5 Ilustracja-placeholder zamiast emoji; jasne kontrolki filtrów
-- [x] 2.6 Formularz rezerwacji działa end-to-end na dev
-- [x] 2.7 Strony panelu/auth (ciemne) nadal działają
+- [x] 2.4 Strony publiczne + 404 obejrzane na Pixel 5, czytelne jednoręcznie — 6c29252
+- [x] 2.5 Ilustracja-placeholder zamiast emoji; jasne kontrolki filtrów — 6c29252
+- [x] 2.6 Formularz rezerwacji działa end-to-end na dev — 6c29252
+- [x] 2.7 Strony panelu/auth (ciemne) nadal działają — 6c29252
 
 ### Phase 3: Auth — restyle, pełna polonizacja i aktualizacja e2e
 
 #### Automated
 
-- [ ] 3.1 Build + lint przechodzą
-- [ ] 3.2 Grep angielskich stringów startera w src/components/auth/ nic nie zwraca
-- [ ] 3.3 Grep starych idiomów w plikach auth nic nie zwraca
-- [ ] 3.4 Pełny lokalny e2e przechodzi: `npm run test:e2e`
+- [x] 3.1 Build + lint przechodzą
+- [x] 3.2 Grep angielskich stringów startera w src/components/auth/ nic nie zwraca
+- [x] 3.3 Grep starych idiomów w plikach auth nic nie zwraca
+- [x] 3.4 Pełny lokalny e2e przechodzi: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 3.5 Strony auth na Pixel 5: nowy motyw, całość po polsku
-- [ ] 3.6 Logowanie + toggle hasła + polskie walidacje działają
-- [ ] 3.7 Przyciski OAuth czytelne, brand-kolory nietknięte
+- [x] 3.5 Strony auth na Pixel 5: nowy motyw, całość po polsku
+- [x] 3.6 Logowanie + toggle hasła + polskie walidacje działają
+- [x] 3.7 Przyciski OAuth czytelne, brand-kolory nietknięte
 
 ### Phase 4: Panel właściciela
 
