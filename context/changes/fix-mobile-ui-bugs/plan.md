@@ -414,25 +414,25 @@ Brak zmian schematu/danych. Zmiany są wstecznie kompatybilne i nie dotykają lo
 
 #### Automated
 
-- [x] 3.1 Build przechodzi: `npm run build`
-- [x] 3.2 Lint/format czyste: `npm run lint`
+- [x] 3.1 Build przechodzi: `npm run build` — 61b74fd
+- [x] 3.2 Lint/format czyste: `npm run lint` — 61b74fd
 
 #### Manual
 
-- [x] 3.3 @320 Chrome i Firefox: data katalogu, czasy TurnusyEditor, data rezerwacji nieprzycięte
-- [x] 3.4 @≥sm kontrolki wracają do układu wielokolumnowego
+- [x] 3.3 @320 Chrome i Firefox: data katalogu, czasy TurnusyEditor, data rezerwacji nieprzycięte — 61b74fd
+- [x] 3.4 @≥sm kontrolki wracają do układu wielokolumnowego — 61b74fd
 
 ### Phase 4: Pola hasła (auth)
 
 #### Automated
 
-- [ ] 4.1 Build przechodzi: `npm run build`
-- [ ] 4.2 Lint/format czyste: `npm run lint`
+- [x] 4.1 Build przechodzi: `npm run build`
+- [x] 4.2 Lint/format czyste: `npm run lint`
 
 #### Manual
 
-- [ ] 4.3 @320 hasło nie chowa się pod ikoną oka (signin/signup/reset)
-- [ ] 4.4 Toggle trafialny ≥44px, ikona na miejscu
+- [x] 4.3 @320 hasło nie chowa się pod ikoną oka (signin/signup/reset)
+- [x] 4.4 Toggle trafialny ≥44px, ikona na miejscu
 
 ### Phase 5: Sweep zawijania treści + tap-targetów
 

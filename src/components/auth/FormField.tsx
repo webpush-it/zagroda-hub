@@ -45,7 +45,7 @@ export function FormField({
             onChange(e.target.value);
           }}
           placeholder={placeholder}
-          className={cn("input-field pl-10!", error && "border-red-500 focus:border-red-500")}
+          className={cn("input-field pl-10!", endContent && "pr-10!", error && "border-red-500 focus:border-red-500")}
         />
         {endContent}
       </div>
