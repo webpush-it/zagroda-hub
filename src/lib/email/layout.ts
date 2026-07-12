@@ -24,11 +24,11 @@ export function renderEmailLayout(opts: { title: string; bodyHtml: string }): st
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title}</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f4f1;font-family:Arial,Helvetica,sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f1;">
+<body style="margin:0;padding:0;background-color:#f7f5ef;font-family:Arial,Helvetica,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f5ef;">
 <tr><td align="center" style="padding:24px 12px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:8px;overflow:hidden;">
-<tr><td style="background-color:#2d5a27;padding:20px 32px;">
+<tr><td style="background-color:#3f7d2c;padding:20px 32px;">
 <span style="color:#ffffff;font-size:20px;font-weight:bold;">Zagroda Hub</span>
 </td></tr>
 <tr><td style="padding:32px;">

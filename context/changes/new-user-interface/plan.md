@@ -460,29 +460,29 @@ Usunięcie starego motywu i plików startera, restyle Banner, uzgodnienie palety
 
 #### Automated
 
-- [x] 4.1 Build + lint przechodzą
-- [x] 4.2 Grep starych idiomów w plikach panelu nic nie zwraca
-- [x] 4.3 Pełny lokalny e2e przechodzi: `npm run test:e2e`
+- [x] 4.1 Build + lint przechodzą — a08b7b5
+- [x] 4.2 Grep starych idiomów w plikach panelu nic nie zwraca — a08b7b5
+- [x] 4.3 Pełny lokalny e2e przechodzi: `npm run test:e2e` — a08b7b5
 
 #### Manual
 
-- [x] 4.4 Strony panelu na Pixel 5 czytelne jednoręcznie, statusy rozróżnialne
-- [x] 4.5 Edycja profilu, upload zdjęcia, akceptacja/odrzucenie działają
-- [x] 4.6 Spot-check guardrailu < 15 s do decyzji
+- [x] 4.4 Strony panelu na Pixel 5 czytelne jednoręcznie, statusy rozróżnialne — a08b7b5
+- [x] 4.5 Edycja profilu, upload zdjęcia, akceptacja/odrzucenie działają — a08b7b5
+- [x] 4.6 Spot-check guardrailu < 15 s do decyzji — a08b7b5
 
 ### Phase 5: Sprzątanie startera i spójność e-maili
 
 #### Automated
 
-- [ ] 5.1 Build + lint + vitest przechodzą
-- [ ] 5.2 Globalny grep-gate motywu nic nie zwraca (wyjątek: brand-SVG OAuth)
-- [ ] 5.3 Grep-gate `10x-astro-starter` w src/, public/, package.json nic nie zwraca
-- [ ] 5.4 LibBadge.astro i template.png usunięte
-- [ ] 5.5 Pełny lokalny e2e przechodzi: `npm run test:e2e`
+- [x] 5.1 Build + lint + vitest przechodzą
+- [x] 5.2 Globalny grep-gate motywu nic nie zwraca (wyjątek: brand-SVG OAuth)
+- [x] 5.3 Grep-gate `10x-astro-starter` w src/, public/, package.json nic nie zwraca
+- [x] 5.4 LibBadge.astro i template.png usunięte
+- [x] 5.5 Pełny lokalny e2e przechodzi: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 5.6 E-mail testowy spójny z brandem w realnym kliencie poczty
-- [ ] 5.7 Banner konfiguracyjny w palecie motywu
-- [ ] 5.8 Finalny przegląd wszystkich stron (Pixel 5 + desktop)
-- [ ] 5.9 OG-preview linku pokazuje nowy obraz i opis
+- [x] 5.6 E-mail testowy spójny z brandem w realnym kliencie poczty
+- [x] 5.7 Banner konfiguracyjny w palecie motywu
+- [x] 5.8 Finalny przegląd wszystkich stron (Pixel 5 + desktop)
+- [x] 5.9 OG-preview linku pokazuje nowy obraz i opis

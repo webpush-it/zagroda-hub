@@ -156,19 +156,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* Stary motyw startera — konsumenci znikają w fazach 2–4, definicja do usunięcia w fazie 5. */
-@utility bg-cosmic {
-  background-image: linear-gradient(to bottom, #0a0e1a, #0f1529, #0a0e1a);
-}
-
 /* Tło aplikacji: krem z bardzo subtelnym pionowym gradientem. */
 @utility bg-meadow {
   background-color: var(--color-surface);
   background-image: linear-gradient(to bottom, #fbfaf6, #f7f5ef 55%, #f2efe4);
 }
 
-/* Karta na jasnym tle — zastępuje glass-idiom
-   `rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl`. */
+/* Karta na jasnym tle — zastępuje ciemny glass-idiom startera
+   (półprzezroczysta karta z rozmyciem tła). */
 @utility card-surface {
   border-radius: 1rem;
   border: 1px solid var(--color-edge);
@@ -180,7 +175,7 @@
     0 4px 12px rgb(39 48 31 / 0.05);
 }
 
-/* Przycisk główny — zastępuje `bg-purple-600 hover:bg-purple-500`.
+/* Przycisk główny — zastępuje fioletowy przycisk startera.
    min-height 2.75rem = tap-target ≥44px (guardrail jednoręczności). */
 @utility btn-primary {
   display: inline-flex;
@@ -208,7 +203,7 @@
 }
 
 /* Przycisk drugorzędny — obrys marki na jasnym tle,
-   zastępuje `border-white/20 hover:bg-white/10`. */
+   zastępuje półprzezroczysty obrys startera. */
 @utility btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -231,7 +226,7 @@
   }
 }
 
-/* Pole formularza — zastępuje `bg-white/10 border-white/20 focus:ring-purple-400`.
+/* Pole formularza — zastępuje półprzezroczyste pole startera z fioletowym focusem.
    Border edge-strong 3.25:1 na bieli (≥3:1 UI). */
 @utility input-field {
   display: block;
