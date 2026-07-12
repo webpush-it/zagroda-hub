@@ -452,12 +452,12 @@ Brak zmian schematu/danych. Zmiany są wstecznie kompatybilne i nie dotykają lo
 
 #### Automated
 
-- [x] 6.1 Nowy spec @320 przechodzi: `npm run test:e2e`
-- [x] 6.2 Spec @320 asertuje tap-target ≥44 (hamburger + link) i rezerwę pola hasła, nie tylko overflow
-- [x] 6.3 Cała suita e2e zielona: `npm run test:e2e`
-- [x] 6.4 Lint/format czyste: `npm run lint`
+- [x] 6.1 Nowy spec @320 przechodzi: `npm run test:e2e` — 1345c63
+- [x] 6.2 Spec @320 asertuje tap-target ≥44 (hamburger + link) i rezerwę pola hasła, nie tylko overflow — 1345c63
+- [x] 6.3 Cała suita e2e zielona: `npm run test:e2e` — 1345c63
+- [x] 6.4 Lint/format czyste: `npm run lint` — 1345c63
 
 #### Manual
 
-- [x] 6.5 Manualna checklista @320 (Chrome + Firefox) dla powierzchni authed zaliczona
-- [x] 6.6 Sanity: cofnięcie fixu Topbara wywala spec @320
+- [x] 6.5 Manualna checklista @320 (Chrome + Firefox) dla powierzchni authed zaliczona — 1345c63
+- [x] 6.6 Sanity: cofnięcie fixu Topbara wywala spec @320 — 1345c63
