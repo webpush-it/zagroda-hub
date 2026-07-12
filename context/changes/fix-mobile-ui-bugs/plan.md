@@ -386,29 +386,29 @@ Brak zmian schematu/danych. Zmiany są wstecznie kompatybilne i nie dotykają lo
 
 #### Automated
 
-- [x] 1.1 Build przechodzi: `npm run build`
-- [x] 1.2 Lint/format czyste: `npm run lint`
+- [x] 1.1 Build przechodzi: `npm run build` — 8daf902
+- [x] 1.2 Lint/format czyste: `npm run lint` — 8daf902
 
 #### Manual
 
-- [x] 1.3 @320 brak przypadkowego zoomu po zmianie orientacji
-- [x] 1.4 `tap-target` daje wysokość 44px na testowym elemencie
+- [x] 1.3 @320 brak przypadkowego zoomu po zmianie orientacji — 8daf902
+- [x] 1.4 `tap-target` daje wysokość 44px na testowym elemencie — 8daf902
 
 ### Phase 2: Topbar — zwinięcie responsywne (hamburger + drawer)
 
 #### Automated
 
-- [ ] 2.1 Build przechodzi: `npm run build`
-- [ ] 2.2 Lint/format czyste: `npm run lint`
-- [ ] 2.3 Istniejące e2e nie regresują: `npm run test:e2e`
+- [x] 2.1 Build przechodzi: `npm run build`
+- [x] 2.2 Lint/format czyste: `npm run lint`
+- [x] 2.3 Istniejące e2e nie regresują: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 2.4 @320 brak poziomego scrolla na 8 stronach (gość + zalogowany)
-- [ ] 2.5 Hamburger/drawer: Escape zamyka, wybór linku nawiguje i zamyka, focus wraca
-- [ ] 2.6 `aria-expanded` poprawny, drawer osiągalny klawiaturą
-- [ ] 2.7 @≥sm nagłówek jak dotychczas (linki inline)
-- [ ] 2.8 Tap-targety hamburgera/linków/loga ≥44px
+- [x] 2.4 @320 brak poziomego scrolla na 8 stronach (gość + zalogowany)
+- [x] 2.5 Hamburger/drawer: Escape zamyka, wybór linku nawiguje i zamyka, focus wraca
+- [x] 2.6 `aria-expanded` poprawny, drawer osiągalny klawiaturą
+- [x] 2.7 @≥sm nagłówek jak dotychczas (linki inline)
+- [x] 2.8 Tap-targety hamburgera/linków/loga ≥44px
 
 ### Phase 3: Natywne kontrolki — stack pełnej szerokości @<sm
 

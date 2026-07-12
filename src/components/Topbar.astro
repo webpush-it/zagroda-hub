@@ -1,48 +1,53 @@
 ---
 import Logo from "@/components/brand/Logo.astro";
+import TopbarMobileMenu, { type NavLink } from "@/components/TopbarMobileMenu";
 
 const { user } = Astro.locals;
 
-// Tap-target ≥44px na mobile (guardrail jednoręczności): py-2.5 + text-sm ≈ 44px.
-const navLink = "inline-flex items-center py-2.5 text-link transition-colors hover:text-link-hover hover:underline";
+// Tap-target ≥44px na mobile (guardrail jednoręczności).
+const navLink = "tap-target text-link transition-colors hover:text-link-hover hover:underline";
+
+// Payload linków budowany raz — współdzielony przez wariant desktop (inline) i mobile (drawer),
+// by stan gość/zalogowany nie rozjechał się między powierzchniami.
+const links: NavLink[] = user
+  ? [
+      { href: "/katalog", label: "Katalog" },
+      { href: "/dashboard", label: "Panel" },
+      { href: "/dashboard/zapytania", label: "Zapytania" },
+    ]
+  : [
+      { href: "/katalog", label: "Katalog" },
+      { href: "/auth/signin", label: "Zaloguj się" },
+      { href: "/auth/signup", label: "Zarejestruj się" },
+    ];
+const signOutAction = user ? "/api/auth/signout" : undefined;
 ---
 
 <div
-  class="border-edge text-ink-muted mb-4 flex items-center justify-between gap-3 rounded-xl border bg-white px-4 py-2 text-sm"
+  class="border-edge text-ink-muted mb-4 flex min-w-0 items-center justify-between gap-3 rounded-xl border bg-white px-4 py-2 text-sm"
 >
-  <a href="/" class="inline-flex items-center" aria-label="Zagroda Hub — strona główna">
+  <a href="/" class="tap-target" aria-label="Zagroda Hub — strona główna">
     <Logo variant="full" size={28} />
   </a>
-  {
-    user ? (
-      <div class="flex items-center gap-4">
-        <a href="/katalog" class:list={navLink}>
-          Katalog
+
+  <div class="hidden items-center gap-4 sm:flex">
+    {
+      links.map((link) => (
+        <a href={link.href} class:list={navLink}>
+          {link.label}
         </a>
-        <a href="/dashboard" class:list={navLink}>
-          Panel
-        </a>
-        <a href="/dashboard/zapytania" class:list={navLink}>
-          Zapytania
-        </a>
-        <form method="POST" action="/api/auth/signout">
+      ))
+    }
+    {
+      signOutAction && (
+        <form method="POST" action={signOutAction}>
           <button type="submit" class:list={navLink}>
             Wyloguj
           </button>
         </form>
-      </div>
-    ) : (
-      <div class="flex items-center gap-4">
-        <a href="/katalog" class:list={navLink}>
-          Katalog
-        </a>
-        <a href="/auth/signin" class:list={navLink}>
-          Zaloguj się
-        </a>
-        <a href="/auth/signup" class:list={navLink}>
-          Zarejestruj się
-        </a>
-      </div>
-    )
-  }
+      )
+    }
+  </div>
+
+  <TopbarMobileMenu client:idle links={links} signOutAction={signOutAction} />
 </div>
