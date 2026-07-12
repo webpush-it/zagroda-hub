@@ -35,22 +35,20 @@ if (supabase && user) {
 ---
 
 <Layout title="Zapytania o rezerwację">
-  <div class="bg-cosmic min-h-screen p-4">
+  <div class="bg-meadow min-h-screen p-4">
     <div class="mx-auto w-full max-w-md">
       <Topbar />
-      <main class="rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl">
-        <h1 class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
-          Zapytania o rezerwację
-        </h1>
+      <main class="card-surface">
+        <h1 class="text-brand-700 mb-6 text-2xl font-bold">Zapytania o rezerwację</h1>
         {
           hasZagroda ? (
             <RequestsList client:load rows={rows} />
           ) : (
-            <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-              <p class="font-medium text-white">Brak profilu zagrody</p>
-              <p class="mt-1 text-sm text-blue-100/60">
+            <div class="border-edge bg-surface rounded-xl border p-6 text-center">
+              <p class="text-ink font-medium">Brak profilu zagrody</p>
+              <p class="text-ink-muted mt-1 text-sm">
                 Uzupełnij profil zagrody, aby przyjmować zapytania.{" "}
-                <a href="/dashboard" class="text-purple-300 hover:text-purple-100 hover:underline">
+                <a href="/dashboard" class="text-link hover:text-link-hover hover:underline">
                   Przejdź do panelu
                 </a>
                 .

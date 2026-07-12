@@ -445,30 +445,30 @@ Usunięcie starego motywu i plików startera, restyle Banner, uzgodnienie palety
 
 #### Automated
 
-- [x] 3.1 Build + lint przechodzą
-- [x] 3.2 Grep angielskich stringów startera w src/components/auth/ nic nie zwraca
-- [x] 3.3 Grep starych idiomów w plikach auth nic nie zwraca
-- [x] 3.4 Pełny lokalny e2e przechodzi: `npm run test:e2e`
+- [x] 3.1 Build + lint przechodzą — da2327a
+- [x] 3.2 Grep angielskich stringów startera w src/components/auth/ nic nie zwraca — da2327a
+- [x] 3.3 Grep starych idiomów w plikach auth nic nie zwraca — da2327a
+- [x] 3.4 Pełny lokalny e2e przechodzi: `npm run test:e2e` — da2327a
 
 #### Manual
 
-- [x] 3.5 Strony auth na Pixel 5: nowy motyw, całość po polsku
-- [x] 3.6 Logowanie + toggle hasła + polskie walidacje działają
-- [x] 3.7 Przyciski OAuth czytelne, brand-kolory nietknięte
+- [x] 3.5 Strony auth na Pixel 5: nowy motyw, całość po polsku — da2327a
+- [x] 3.6 Logowanie + toggle hasła + polskie walidacje działają — da2327a
+- [x] 3.7 Przyciski OAuth czytelne, brand-kolory nietknięte — da2327a
 
 ### Phase 4: Panel właściciela
 
 #### Automated
 
-- [ ] 4.1 Build + lint przechodzą
-- [ ] 4.2 Grep starych idiomów w plikach panelu nic nie zwraca
-- [ ] 4.3 Pełny lokalny e2e przechodzi: `npm run test:e2e`
+- [x] 4.1 Build + lint przechodzą
+- [x] 4.2 Grep starych idiomów w plikach panelu nic nie zwraca
+- [x] 4.3 Pełny lokalny e2e przechodzi: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 4.4 Strony panelu na Pixel 5 czytelne jednoręcznie, statusy rozróżnialne
-- [ ] 4.5 Edycja profilu, upload zdjęcia, akceptacja/odrzucenie działają
-- [ ] 4.6 Spot-check guardrailu < 15 s do decyzji
+- [x] 4.4 Strony panelu na Pixel 5 czytelne jednoręcznie, statusy rozróżnialne
+- [x] 4.5 Edycja profilu, upload zdjęcia, akceptacja/odrzucenie działają
+- [x] 4.6 Spot-check guardrailu < 15 s do decyzji
 
 ### Phase 5: Sprzątanie startera i spójność e-maili
 

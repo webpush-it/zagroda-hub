@@ -52,7 +52,7 @@ export function PhotoUpload({ disabled, photoUrl, onUploaded }: PhotoUploadProps
 
   return (
     <div>
-      <span className="mb-1 block text-sm text-blue-100/80">Zdjęcie (opcjonalne)</span>
+      <span className="text-ink-muted mb-1 block text-sm">Zdjęcie (opcjonalne)</span>
       {photoUrl && (
         <img src={photoUrl} alt="Zdjęcie zagrody" className="mb-2 max-h-48 w-full rounded-lg object-cover" />
       )}
@@ -71,7 +71,7 @@ export function PhotoUpload({ disabled, photoUrl, onUploaded }: PhotoUploadProps
         type="button"
         disabled={disabled || uploading}
         onClick={() => inputRef.current?.click()}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-sm text-white transition-colors hover:bg-white/20 disabled:opacity-50"
+        className="btn-secondary w-full text-sm disabled:opacity-50"
       >
         {uploading ? (
           <>
@@ -85,9 +85,9 @@ export function PhotoUpload({ disabled, photoUrl, onUploaded }: PhotoUploadProps
           </>
         )}
       </button>
-      {disabled && <p className="mt-1 text-xs text-blue-100/50">Zapisz profil, aby dodać zdjęcie.</p>}
+      {disabled && <p className="text-ink-muted mt-1 text-xs">Zapisz profil, aby dodać zdjęcie.</p>}
       {error && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+        <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
           <CircleAlert className="size-3 shrink-0" />
           {error}
         </p>

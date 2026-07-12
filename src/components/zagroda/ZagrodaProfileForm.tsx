@@ -35,17 +35,14 @@ interface PublishResponse {
   error?: string;
 }
 
-const inputBase =
-  "w-full rounded-lg border bg-white/10 px-3 py-2 text-white placeholder-white/40 transition-colors focus:outline-none focus:ring-2";
-
 function fieldClass(error?: string) {
-  return cn(inputBase, error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400");
+  return cn("input-field", error && "border-red-500 focus:border-red-500");
 }
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+    <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
       <CircleAlert className="size-3 shrink-0" />
       {message}
     </p>
@@ -154,13 +151,11 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white">Profil zagrody</h2>
+        <h2 className="text-ink text-lg font-semibold">Profil zagrody</h2>
         <span
           className={cn(
             "rounded-full border px-3 py-1 text-xs font-medium",
-            isPublished
-              ? "border-green-400/30 bg-green-400/15 text-green-300"
-              : "border-white/20 bg-white/10 text-blue-100/70",
+            isPublished ? "border-green-300 bg-green-100 text-green-900" : "border-edge bg-surface text-ink-muted",
           )}
         >
           {isPublished ? "Opublikowana" : "Szkic"}
@@ -181,7 +176,7 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
       />
 
       <div>
-        <label htmlFor="description" className="mb-1 block text-sm text-blue-100/80">
+        <label htmlFor="description" className="text-ink-muted mb-1 block text-sm">
           Opis
         </label>
         <textarea
@@ -199,7 +194,7 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
       </div>
 
       <div>
-        <label htmlFor="voivodeship" className="mb-1 block text-sm text-blue-100/80">
+        <label htmlFor="voivodeship" className="text-ink-muted mb-1 block text-sm">
           Województwo
         </label>
         <select
@@ -211,11 +206,9 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
           }}
           className={cn(fieldClass(fieldErrors.voivodeship || undefined), "appearance-none")}
         >
-          <option value="" className="bg-slate-900">
-            — wybierz —
-          </option>
+          <option value="">— wybierz —</option>
           {VOIVODESHIPS.map((v) => (
-            <option key={v} value={v} className="bg-slate-900">
+            <option key={v} value={v}>
               {v}
             </option>
           ))}
@@ -257,17 +250,13 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
 
       <ServerError message={serverError} />
       {saved && (
-        <p className="flex items-center gap-2 rounded-lg border border-green-400/30 bg-green-400/10 px-3 py-2 text-sm text-green-200">
+        <p className="flex items-center gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-2 text-sm text-green-900">
           <CircleCheck className="size-4 shrink-0" />
           Zapisano profil
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
-      >
+      <button type="submit" disabled={saving} className="btn-primary w-full">
         {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
         {saving ? "Zapisywanie…" : "Zapisz"}
       </button>
@@ -279,12 +268,7 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
         onClick={() => {
           void togglePublish();
         }}
-        className={cn(
-          "flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-3 font-medium transition-colors disabled:opacity-50",
-          isPublished
-            ? "border-white/20 bg-white/10 text-blue-100/90 hover:bg-white/20"
-            : "border-green-400/40 bg-green-500/20 text-green-200 hover:bg-green-500/30",
-        )}
+        className={cn(isPublished ? "btn-secondary" : "btn-primary", "w-full disabled:opacity-50")}
       >
         {publishing ? (
           <Loader2 className="size-4 animate-spin" />
@@ -295,7 +279,7 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
         )}
         {isPublished ? "Cofnij publikację" : "Opublikuj"}
       </button>
-      {!profileExists && <p className="text-center text-xs text-blue-100/50">Zapisz profil, aby móc go opublikować.</p>}
+      {!profileExists && <p className="text-ink-muted text-center text-xs">Zapisz profil, aby móc go opublikować.</p>}
     </form>
   );
 }

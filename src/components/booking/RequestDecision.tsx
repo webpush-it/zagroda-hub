@@ -79,37 +79,37 @@ export default function RequestDecision({ id, initialStatus }: Props) {
       </div>
 
       {notice?.kind === "accepted" && (
-        <p className="flex items-start gap-2 rounded-lg border border-green-400/30 bg-green-400/10 px-3 py-3 text-sm text-green-200">
+        <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
           <CircleCheck className="mt-0.5 size-4 shrink-0" />
           Zaakceptowano — nauczyciel dostanie e-mail
         </p>
       )}
       {notice?.kind === "rejected" && (
-        <p className="flex items-start gap-2 rounded-lg border border-green-400/30 bg-green-400/10 px-3 py-3 text-sm text-green-200">
+        <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
           <CircleCheck className="mt-0.5 size-4 shrink-0" />
           Odrzucono — nauczyciel dostanie e-mail
         </p>
       )}
       {notice?.kind === "withdrawn" && (
-        <p className="flex items-start gap-2 rounded-lg border border-green-400/30 bg-green-400/10 px-3 py-3 text-sm text-green-200">
+        <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
           <CircleCheck className="mt-0.5 size-4 shrink-0" />
           Wycofano — nauczyciel dostanie e-mail
         </p>
       )}
       {notice?.kind === "blocked" && (
-        <p className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-3 text-sm text-red-300">
+        <p className="flex items-start gap-2 rounded-lg border border-red-300 bg-red-100 px-3 py-3 text-sm text-red-900">
           <CircleAlert className="mt-0.5 size-4 shrink-0" />
           {notice.message}
         </p>
       )}
       {notice?.kind === "stale" && (
-        <p className="flex items-start gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-3 text-sm text-amber-200">
+        <p className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-100 px-3 py-3 text-sm text-amber-900">
           <TriangleAlert className="mt-0.5 size-4 shrink-0" />
           {notice.message}
         </p>
       )}
       {notice?.kind === "error" && (
-        <p className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-3 text-sm text-red-300">
+        <p className="flex items-start gap-2 rounded-lg border border-red-300 bg-red-100 px-3 py-3 text-sm text-red-900">
           <CircleAlert className="mt-0.5 size-4 shrink-0" />
           {notice.message}
         </p>
@@ -121,21 +121,21 @@ export default function RequestDecision({ id, initialStatus }: Props) {
             type="button"
             onClick={() => void decide("accept")}
             disabled={submitting !== null}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+            className="btn-primary w-full"
           >
             {submitting === "accept" ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
             {submitting === "accept" ? "Akceptowanie…" : "Akceptuj"}
           </button>
 
           {confirmingReject ? (
-            <div className="space-y-2 rounded-lg border border-red-500/30 bg-red-900/20 p-3">
-              <p className="text-sm text-red-200">Na pewno odrzucić? Tej decyzji nie można cofnąć.</p>
+            <div className="space-y-2 rounded-lg border border-red-300 bg-red-100 p-3">
+              <p className="text-sm text-red-900">Na pewno odrzucić? Tej decyzji nie można cofnąć.</p>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => void decide("reject")}
                   disabled={submitting !== null}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+                  className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
                 >
                   {submitting === "reject" ? <Loader2 className="size-4 animate-spin" /> : <X className="size-4" />}
                   {submitting === "reject" ? "Odrzucanie…" : "Tak, odrzuć"}
@@ -146,7 +146,7 @@ export default function RequestDecision({ id, initialStatus }: Props) {
                     setConfirmingReject(false);
                   }}
                   disabled={submitting !== null}
-                  className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-3 font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50"
+                  className="btn-secondary flex-1 disabled:opacity-50"
                 >
                   Anuluj
                 </button>
@@ -159,7 +159,7 @@ export default function RequestDecision({ id, initialStatus }: Props) {
                 setConfirmingReject(true);
               }}
               disabled={submitting !== null}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-4 py-3 font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50"
+              className="btn-secondary w-full disabled:opacity-50"
             >
               <X className="size-4" />
               Odrzuć
@@ -170,8 +170,8 @@ export default function RequestDecision({ id, initialStatus }: Props) {
 
       {showWithdrawButton &&
         (confirmingWithdraw ? (
-          <div className="space-y-2 rounded-lg border border-red-500/30 bg-red-900/20 p-3">
-            <p className="text-sm text-red-200">
+          <div className="space-y-2 rounded-lg border border-red-300 bg-red-100 p-3">
+            <p className="text-sm text-red-900">
               Na pewno cofnąć akceptację? Zapytania nie będzie można ponownie zaakceptować.
             </p>
             <div className="flex gap-2">
@@ -179,7 +179,7 @@ export default function RequestDecision({ id, initialStatus }: Props) {
                 type="button"
                 onClick={() => void decide("withdraw")}
                 disabled={submitting !== null}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+                className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
               >
                 {submitting === "withdraw" ? <Loader2 className="size-4 animate-spin" /> : <Undo2 className="size-4" />}
                 {submitting === "withdraw" ? "Wycofywanie…" : "Tak, cofnij"}
@@ -190,7 +190,7 @@ export default function RequestDecision({ id, initialStatus }: Props) {
                   setConfirmingWithdraw(false);
                 }}
                 disabled={submitting !== null}
-                className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-3 font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50"
+                className="btn-secondary flex-1 disabled:opacity-50"
               >
                 Anuluj
               </button>
@@ -203,7 +203,7 @@ export default function RequestDecision({ id, initialStatus }: Props) {
               setConfirmingWithdraw(true);
             }}
             disabled={submitting !== null}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-4 py-3 font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50"
+            className="btn-secondary w-full disabled:opacity-50"
           >
             <Undo2 className="size-4" />
             Cofnij akceptację

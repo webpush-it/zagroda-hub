@@ -3,11 +3,11 @@ import React from "react";
 export type RequestStatus = "pending" | "accepted" | "rejected" | "cancelled_by_guest" | "withdrawn_by_owner";
 
 export const STATUS_META: Record<RequestStatus, { label: string; className: string }> = {
-  pending: { label: "Oczekujące", className: "border-amber-400/30 bg-amber-400/10 text-amber-200" },
-  accepted: { label: "Zaakceptowane", className: "border-green-400/30 bg-green-400/10 text-green-200" },
-  rejected: { label: "Odrzucone", className: "border-red-400/30 bg-red-400/10 text-red-300" },
-  cancelled_by_guest: { label: "Anulowane", className: "border-white/20 bg-white/5 text-blue-100/70" },
-  withdrawn_by_owner: { label: "Wycofane", className: "border-white/20 bg-white/5 text-blue-100/70" },
+  pending: { label: "Oczekujące", className: "border-amber-300 bg-amber-100 text-amber-900" },
+  accepted: { label: "Zaakceptowane", className: "border-green-300 bg-green-100 text-green-900" },
+  rejected: { label: "Odrzucone", className: "border-red-300 bg-red-100 text-red-900" },
+  cancelled_by_guest: { label: "Anulowane", className: "border-edge bg-surface text-ink-muted" },
+  withdrawn_by_owner: { label: "Wycofane", className: "border-edge bg-surface text-ink-muted" },
 };
 
 export function StatusBadge({ status }: { status: RequestStatus }) {
