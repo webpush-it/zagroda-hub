@@ -1,10 +1,10 @@
 ---
 change_id: new-user-interface
 title: Dostosowanie designu UI do tematyki aplikacji zamiast wyglądu startera
-status: impl_reviewed
+status: archived
 created: 2026-07-12
 updated: 2026-07-12
-archived_at: null
+archived_at: 2026-07-12T13:13:42Z
 ---
 
 ## Notes
