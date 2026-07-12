@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import Topbar from "@/components/Topbar.astro";
 import BookingRequestForm from "@/components/booking/BookingRequestForm";
+import ZagrodaPlaceholder from "@/components/brand/ZagrodaPlaceholder.astro";
 import { createClient } from "@/lib/supabase";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -61,11 +62,11 @@ if (!profile) {
 ---
 
 <Layout title={profile ? profile.name : "Nie znaleziono zagrody"}>
-  <div class="bg-cosmic min-h-screen p-4">
+  <div class="bg-meadow min-h-screen p-4">
     <div class="mx-auto w-full max-w-md">
       <Topbar />
-      <main class="rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl">
-        <a href="/katalog" class="mb-4 inline-block text-sm text-purple-300 transition-colors hover:text-purple-100">
+      <main class="card-surface">
+        <a href="/katalog" class="text-link hover:text-link-hover mb-4 inline-block text-sm transition-colors">
           ← Wróć do katalogu
         </a>
 
@@ -75,42 +76,35 @@ if (!profile) {
               {profile.photoUrl ? (
                 <img src={profile.photoUrl} alt="" class="mb-4 aspect-video w-full rounded-xl object-cover" />
               ) : (
-                <div
-                  class="mb-4 flex aspect-video w-full items-center justify-center rounded-xl bg-white/10 text-5xl"
-                  aria-hidden="true"
-                >
-                  🏡
+                <div class="mb-4 aspect-video w-full overflow-hidden rounded-xl">
+                  <ZagrodaPlaceholder />
                 </div>
               )}
 
-              <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
-                {profile.name}
-              </h1>
-              {profile.lokalizacja && <p class="mt-1 text-sm text-blue-100/70">{profile.lokalizacja}</p>}
+              <h1 class="text-brand-700 text-2xl font-bold">{profile.name}</h1>
+              {profile.lokalizacja && <p class="text-ink-muted mt-1 text-sm">{profile.lokalizacja}</p>}
 
-              {profile.description && (
-                <p class="mt-4 text-sm whitespace-pre-line text-blue-100/80">{profile.description}</p>
-              )}
+              {profile.description && <p class="text-ink mt-4 text-sm whitespace-pre-line">{profile.description}</p>}
 
-              <p class="mt-4 text-sm text-blue-100/70">
-                Dzienny limit osób: <span class="font-semibold text-white">{profile.dailyLimit}</span>
+              <p class="text-ink-muted mt-4 text-sm">
+                Dzienny limit osób: <span class="text-ink font-semibold">{profile.dailyLimit}</span>
               </p>
 
               {profile.turnusy.length > 0 && (
                 <section class="mt-6">
-                  <h2 class="mb-2 text-base font-semibold text-white">Turnusy</h2>
+                  <h2 class="text-ink mb-2 text-base font-semibold">Turnusy</h2>
                   <ul class="flex flex-col gap-2">
                     {profile.turnusy.map((t) => (
-                      <li class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
-                        <span class="text-white">{t.label}</span>
-                        <span class="text-blue-100/70">{t.time}</span>
+                      <li class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+                        <span class="text-ink">{t.label}</span>
+                        <span class="text-ink-muted">{t.time}</span>
                       </li>
                     ))}
                   </ul>
                 </section>
               )}
 
-              <section class="mt-6 border-t border-white/10 pt-6">
+              <section class="border-edge mt-6 border-t pt-6">
                 <BookingRequestForm
                   client:load
                   zagrodaId={profile.id}
@@ -120,11 +114,11 @@ if (!profile) {
               </section>
             </article>
           ) : (
-            <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-              <p class="font-medium text-white">Nie znaleziono zagrody</p>
-              <p class="mt-1 text-sm text-blue-100/60">
+            <div class="border-edge bg-surface rounded-xl border p-6 text-center">
+              <p class="text-ink font-medium">Nie znaleziono zagrody</p>
+              <p class="text-ink-muted mt-1 text-sm">
                 Zagroda nie istnieje lub nie jest opublikowana.{" "}
-                <a href="/katalog" class="text-purple-300 hover:text-purple-100 hover:underline">
+                <a href="/katalog" class="text-link hover:text-link-hover hover:underline">
                   Przejdź do katalogu
                 </a>
                 .

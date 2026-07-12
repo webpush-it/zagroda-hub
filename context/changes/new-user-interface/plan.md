@@ -411,35 +411,35 @@ Usunięcie starego motywu i plików startera, restyle Banner, uzgodnienie palety
 
 #### Automated
 
-- [x] 1.1 Build przechodzi: `npm run build`
-- [x] 1.2 Lint przechodzi: `npm run lint`
-- [x] 1.3 Vitest bez regresu: `npm test`
-- [x] 1.4 `lang="pl"` w Layout, brak `lang="en"` w src/
-- [x] 1.5 Assety istnieją: fonts/, favicon.svg, og-image.png, Logo.astro, ZagrodaPlaceholder.astro
-- [x] 1.6 `bg-cosmic` nadal zdefiniowane; `/` i `/katalog` zwracają 200
+- [x] 1.1 Build przechodzi: `npm run build` — 45e1a63
+- [x] 1.2 Lint przechodzi: `npm run lint` — 45e1a63
+- [x] 1.3 Vitest bez regresu: `npm test` — 45e1a63
+- [x] 1.4 `lang="pl"` w Layout, brak `lang="en"` w src/ — 45e1a63
+- [x] 1.5 Assety istnieją: fonts/, favicon.svg, og-image.png, Logo.astro, ZagrodaPlaceholder.astro — 45e1a63
+- [x] 1.6 `bg-cosmic` nadal zdefiniowane; `/` i `/katalog` zwracają 200 — 45e1a63
 
 #### Manual
 
-- [x] 1.7 Nowy favicon w karcie przeglądarki
-- [x] 1.8 Nunito renderuje się z polskimi diakrytykami, bez FOIT
-- [x] 1.9 og-image.png czytelny (logomark + wordmark)
-- [x] 1.10 Kontrasty AA z komentarza w global.css spot-checked
-- [x] 1.11 Strony ciemne bez regresu po przekolorowaniu `:root` (spot-check /katalog, /auth/forgot-password)
+- [x] 1.7 Nowy favicon w karcie przeglądarki — 45e1a63
+- [x] 1.8 Nunito renderuje się z polskimi diakrytykami, bez FOIT — 45e1a63
+- [x] 1.9 og-image.png czytelny (logomark + wordmark) — 45e1a63
+- [x] 1.10 Kontrasty AA z komentarza w global.css spot-checked — 45e1a63
+- [x] 1.11 Strony ciemne bez regresu po przekolorowaniu `:root` (spot-check /katalog, /auth/forgot-password) — 45e1a63
 
 ### Phase 2: Powierzchnie publiczne
 
 #### Automated
 
-- [ ] 2.1 Build + lint przechodzą
-- [ ] 2.2 Grep starych idiomów w plikach publicznych nic nie zwraca
-- [ ] 2.3 Smoke e2e przechodzi: `npm run test:e2e -- e2e/smoke.spec.ts`
+- [x] 2.1 Build + lint przechodzą
+- [x] 2.2 Grep starych idiomów w plikach publicznych nic nie zwraca
+- [x] 2.3 Smoke e2e przechodzi: `npm run test:e2e -- e2e/smoke.spec.ts`
 
 #### Manual
 
-- [ ] 2.4 Strony publiczne + 404 obejrzane na Pixel 5, czytelne jednoręcznie
-- [ ] 2.5 Ilustracja-placeholder zamiast emoji; jasne kontrolki filtrów
-- [ ] 2.6 Formularz rezerwacji działa end-to-end na dev
-- [ ] 2.7 Strony panelu/auth (ciemne) nadal działają
+- [x] 2.4 Strony publiczne + 404 obejrzane na Pixel 5, czytelne jednoręcznie
+- [x] 2.5 Ilustracja-placeholder zamiast emoji; jasne kontrolki filtrów
+- [x] 2.6 Formularz rezerwacji działa end-to-end na dev
+- [x] 2.7 Strony panelu/auth (ciemne) nadal działają
 
 ### Phase 3: Auth — restyle, pełna polonizacja i aktualizacja e2e
 

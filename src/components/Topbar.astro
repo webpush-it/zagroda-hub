@@ -1,49 +1,48 @@
 ---
+import Logo from "@/components/brand/Logo.astro";
+
 const { user } = Astro.locals;
+
+// Tap-target ≥44px na mobile (guardrail jednoręczności): py-2.5 + text-sm ≈ 44px.
+const navLink = "inline-flex items-center py-2.5 text-link transition-colors hover:text-link-hover hover:underline";
 ---
 
 <div
-  class="mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80"
+  class="border-edge text-ink-muted mb-4 flex items-center justify-between gap-3 rounded-xl border bg-white px-4 py-2 text-sm"
 >
+  <a href="/" class="inline-flex items-center" aria-label="Zagroda Hub — strona główna">
+    <Logo variant="full" size={28} />
+  </a>
   {
     user ? (
-      <>
-        <span class="text-blue-100/70">{user.email}</span>
-        <div class="flex items-center gap-3">
-          <a href="/katalog" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Katalog
-          </a>
-          <a href="/dashboard" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Panel
-          </a>
-          <a
-            href="/dashboard/zapytania"
-            class="text-purple-300 transition-colors hover:text-purple-100 hover:underline"
-          >
-            Zapytania
-          </a>
-          <form method="POST" action="/api/auth/signout">
-            <button type="submit" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-              Wyloguj
-            </button>
-          </form>
-        </div>
-      </>
+      <div class="flex items-center gap-4">
+        <a href="/katalog" class:list={navLink}>
+          Katalog
+        </a>
+        <a href="/dashboard" class:list={navLink}>
+          Panel
+        </a>
+        <a href="/dashboard/zapytania" class:list={navLink}>
+          Zapytania
+        </a>
+        <form method="POST" action="/api/auth/signout">
+          <button type="submit" class:list={navLink}>
+            Wyloguj
+          </button>
+        </form>
+      </div>
     ) : (
-      <>
-        <span class="text-blue-100/70">Niezalogowany</span>
-        <div class="flex gap-3">
-          <a href="/katalog" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Katalog
-          </a>
-          <a href="/auth/signin" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Zaloguj się
-          </a>
-          <a href="/auth/signup" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Zarejestruj się
-          </a>
-        </div>
-      </>
+      <div class="flex items-center gap-4">
+        <a href="/katalog" class:list={navLink}>
+          Katalog
+        </a>
+        <a href="/auth/signin" class:list={navLink}>
+          Zaloguj się
+        </a>
+        <a href="/auth/signup" class:list={navLink}>
+          Zarejestruj się
+        </a>
+      </div>
     )
   }
 </div>

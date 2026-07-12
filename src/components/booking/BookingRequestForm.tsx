@@ -24,17 +24,14 @@ interface SubmitResponse {
   error?: string;
 }
 
-const inputBase =
-  "w-full rounded-lg border bg-white/10 px-3 py-2 text-white placeholder-white/40 transition-colors focus:outline-none focus:ring-2";
-
 function fieldClass(error?: string) {
-  return cn(inputBase, error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400");
+  return cn("input-field", error && "border-red-500 focus:border-red-500");
 }
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+    <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
       <CircleAlert className="size-3 shrink-0" />
       {message}
     </p>
@@ -108,7 +105,7 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
 
   if (sent) {
     return (
-      <p className="flex items-start gap-2 rounded-lg border border-green-400/30 bg-green-400/10 px-3 py-3 text-sm text-green-200">
+      <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
         <CircleCheck className="mt-0.5 size-4 shrink-0" />
         Zapytanie wysłane — sprawdź e-mail, znajdziesz tam link do anulowania.
       </p>
@@ -117,10 +114,10 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <h2 className="text-base font-semibold text-white">Wyślij zapytanie</h2>
+      <h2 className="text-ink text-base font-semibold">Wyślij zapytanie</h2>
 
       <div>
-        <label htmlFor="turnus_id" className="mb-1 block text-sm text-blue-100/80">
+        <label htmlFor="turnus_id" className="text-ink-muted mb-1 block text-sm">
           Turnus
         </label>
         <select
@@ -132,11 +129,9 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
           }}
           className={cn(fieldClass(fieldErrors.turnus_id || undefined), "appearance-none")}
         >
-          <option value="" className="bg-slate-900">
-            — wybierz turnus —
-          </option>
+          <option value="">— wybierz turnus —</option>
           {turnusy.map((t) => (
-            <option key={t.id} value={t.id} className="bg-slate-900">
+            <option key={t.id} value={t.id}>
               {t.label} ({t.time})
             </option>
           ))}
@@ -145,11 +140,11 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
       </div>
 
       <div>
-        <label htmlFor="trip_date" className="mb-1 block text-sm text-blue-100/80">
+        <label htmlFor="trip_date" className="text-ink-muted mb-1 block text-sm">
           Data pobytu
         </label>
         <div className="relative">
-          <span className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/40">
+          <span className="text-ink-muted absolute top-1/2 left-3 size-4 -translate-y-1/2">
             <Calendar className="size-4" />
           </span>
           <input
@@ -161,7 +156,7 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
               setTripDate(e.target.value);
               clearError("trip_date");
             }}
-            className={cn(fieldClass(fieldErrors.trip_date || undefined), "pl-10")}
+            className={cn(fieldClass(fieldErrors.trip_date || undefined), "pl-10!")}
           />
         </div>
         <FieldError message={fieldErrors.trip_date || undefined} />
@@ -180,9 +175,7 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
         error={fieldErrors.participants_count || undefined}
         icon={<Users className="size-4" />}
         hint={
-          dailyLimit ? (
-            <p className="mt-1 text-xs text-blue-100/50">Dzienny limit gospodarza: {dailyLimit}</p>
-          ) : undefined
+          dailyLimit ? <p className="text-ink-muted mt-1 text-xs">Dzienny limit gospodarza: {dailyLimit}</p> : undefined
         }
       />
 
@@ -229,11 +222,7 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
 
       <ServerError message={serverError} />
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
-      >
+      <button type="submit" disabled={submitting} className="btn-primary w-full">
         {submitting ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
         {submitting ? "Wysyłanie…" : "Wyślij zapytanie"}
       </button>

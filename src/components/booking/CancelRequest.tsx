@@ -43,9 +43,9 @@ const OUTCOMES: Record<CancelStatus, { tone: "ok" | "info" | "error"; title: str
 };
 
 const TONE_CLASS: Record<"ok" | "info" | "error", string> = {
-  ok: "border-green-400/30 bg-green-400/10 text-green-200",
-  info: "border-blue-400/30 bg-blue-400/10 text-blue-100",
-  error: "border-red-400/30 bg-red-900/30 text-red-300",
+  ok: "border-green-300 bg-green-100 text-green-900",
+  info: "border-brand-200 bg-brand-50 text-brand-800",
+  error: "border-red-300 bg-red-100 text-red-900",
 };
 
 function OutcomeIcon({ tone }: { tone: "ok" | "info" | "error" }) {
@@ -97,21 +97,16 @@ export default function CancelRequest({ token }: Props) {
   return (
     <div className="space-y-4">
       {serverError && (
-        <p className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+        <p className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-100 px-3 py-2 text-sm text-red-900">
           <CircleAlert className="size-4 shrink-0" />
           {serverError}
         </p>
       )}
-      <button
-        type="button"
-        onClick={() => void confirm()}
-        disabled={submitting}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
-      >
+      <button type="button" onClick={() => void confirm()} disabled={submitting} className="btn-primary w-full">
         {submitting ? <Loader2 className="size-4 animate-spin" /> : <X className="size-4" />}
         {submitting ? "Anulowanie…" : "Tak, anuluj zapytanie"}
       </button>
-      <a href="/katalog" className="block text-center text-sm text-purple-300 transition-colors hover:text-purple-100">
+      <a href="/katalog" className="text-link hover:text-link-hover block text-center text-sm transition-colors">
         Nie, wróć do katalogu
       </a>
     </div>

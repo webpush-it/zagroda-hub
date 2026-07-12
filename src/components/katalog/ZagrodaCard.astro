@@ -1,4 +1,6 @@
 ---
+import ZagrodaPlaceholder from "@/components/brand/ZagrodaPlaceholder.astro";
+
 interface Props {
   id: string;
   name: string;
@@ -22,24 +24,21 @@ const excerpt = description.length > 120 ? `${description.slice(0, 120).trimEnd(
 
 <article
   class:list={[
-    "relative flex gap-3 rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-colors",
-    unavailable ? "opacity-60" : "hover:bg-white/10",
+    "border-edge relative flex gap-3 rounded-xl border bg-white p-3 shadow-sm transition-colors",
+    unavailable ? "opacity-60" : "hover:border-brand-200",
   ]}
 >
   {
     photoUrl ? (
       <img src={photoUrl} alt="" class="h-20 w-20 shrink-0 rounded-lg object-cover" loading="lazy" />
     ) : (
-      <div
-        class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-white/10 text-2xl"
-        aria-hidden="true"
-      >
-        🏡
+      <div class="h-20 w-20 shrink-0 overflow-hidden rounded-lg">
+        <ZagrodaPlaceholder />
       </div>
     )
   }
   <div class="min-w-0">
-    <h2 class="truncate text-base font-semibold text-white">
+    <h2 class="text-ink truncate text-base font-semibold">
       {
         unavailable ? (
           zagrodaName
@@ -50,11 +49,11 @@ const excerpt = description.length > 120 ? `${description.slice(0, 120).trimEnd(
         )
       }
     </h2>
-    {lokalizacja && <p class="truncate text-sm text-blue-100/70">{lokalizacja}</p>}
-    {excerpt && <p class="mt-1 line-clamp-2 text-sm text-blue-100/60">{excerpt}</p>}
+    {lokalizacja && <p class="text-ink-muted truncate text-sm">{lokalizacja}</p>}
+    {excerpt && <p class="text-ink-muted mt-1 line-clamp-2 text-sm">{excerpt}</p>}
     {
       unavailable && (
-        <span class="mt-2 inline-block rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-200">
+        <span class="mt-2 inline-block rounded-full border border-red-300 bg-red-100 px-2 py-0.5 text-xs font-medium text-red-900">
           Brak wolnych miejsc
         </span>
       )

@@ -14,27 +14,25 @@ const token = UUID_RE.test(rawToken) ? rawToken : null;
 ---
 
 <Layout title="Anuluj zapytanie">
-  <div class="bg-cosmic min-h-screen p-4">
+  <div class="bg-meadow min-h-screen p-4">
     <div class="mx-auto w-full max-w-md">
       <Topbar />
-      <main class="rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl">
+      <main class="card-surface">
         {
           token ? (
             <div>
-              <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
-                Anulowanie zapytania
-              </h1>
-              <p class="mt-4 text-sm text-blue-100/80">Czy na pewno chcesz anulować to zapytanie?</p>
+              <h1 class="text-brand-700 text-2xl font-bold">Anulowanie zapytania</h1>
+              <p class="text-ink mt-4 text-sm">Czy na pewno chcesz anulować to zapytanie?</p>
               <div class="mt-6">
                 <CancelRequest client:load token={token} />
               </div>
             </div>
           ) : (
-            <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-              <p class="font-medium text-white">Nieprawidłowy link</p>
-              <p class="mt-1 text-sm text-blue-100/60">
+            <div class="border-edge bg-surface rounded-xl border p-6 text-center">
+              <p class="text-ink font-medium">Nieprawidłowy link</p>
+              <p class="text-ink-muted mt-1 text-sm">
                 Link do anulowania jest nieprawidłowy lub niekompletny.{" "}
-                <a href="/katalog" class="text-purple-300 hover:text-purple-100 hover:underline">
+                <a href="/katalog" class="text-link hover:text-link-hover hover:underline">
                   Przejdź do katalogu
                 </a>
                 .
