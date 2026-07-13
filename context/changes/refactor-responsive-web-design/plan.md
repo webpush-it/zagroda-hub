@@ -341,32 +341,32 @@ Brak migracji danych. Migracja kodu strona-po-stronie; każda faza niezależnie 
 
 #### Automated
 
-- [x] 2.1 Lint: `npm run lint`
-- [x] 2.2 Build: `npm run build`
-- [x] 2.3 `grep -rn "import Topbar" src/pages` nie zwraca tych 6 stron
-- [x] 2.4 `grep` braku `min-h-screen`/`max-w-md` w zmigrowanych stronach
+- [x] 2.1 Lint: `npm run lint` — 83abec3
+- [x] 2.2 Build: `npm run build` — 83abec3
+- [x] 2.3 `grep -rn "import Topbar" src/pages` nie zwraca tych 6 stron — 83abec3
+- [x] 2.4 `grep` braku `min-h-screen`/`max-w-md` w zmigrowanych stronach — 83abec3
 
 #### Manual
 
-- [x] 2.5 6 stron renderuje Topbar i treść identycznie @320/@393 vs baseline
-- [x] 2.6 Katalog: filtr/lista/karty bez regresji
-- [x] 2.7 Szczegóły zagrody: formularz rezerwacji działa, brak overflow @320
-- [x] 2.8 @≥1024px kolumny poszerzają się spójnie do `max-w-2xl`
+- [x] 2.5 6 stron renderuje Topbar i treść identycznie @320/@393 vs baseline — 83abec3
+- [x] 2.6 Katalog: filtr/lista/karty bez regresji — 83abec3
+- [x] 2.7 Szczegóły zagrody: formularz rezerwacji działa, brak overflow @320 — 83abec3
+- [x] 2.8 @≥1024px kolumny poszerzają się spójnie do `max-w-2xl` — 83abec3
 
 ### Phase 3: Migracja Home (wide) + Auth (narrow/center)
 
 #### Automated
 
-- [ ] 3.1 Lint: `npm run lint`
-- [ ] 3.2 Build: `npm run build`
-- [ ] 3.3 `grep` braku `import Layout`/`import Topbar` w `index.astro` i `src/pages/auth`
-- [ ] 3.4 `grep -rn "min-h-screen" src/pages` — brak trafień
+- [x] 3.1 Lint: `npm run lint`
+- [x] 3.2 Build: `npm run build`
+- [x] 3.3 `grep` braku `import Layout`/`import Topbar` w `index.astro` i `src/pages/auth`
+- [x] 3.4 `grep -rn "min-h-screen" src/pages` — brak trafień
 
 #### Manual
 
-- [ ] 3.5 Home: Topbar/hero/gridy jak przed zmianą @320/@393; @≥1280px poszerza się do `max-w-6xl`
-- [ ] 3.6 Auth ×5: karta wyśrodkowana, `max-w-sm`, bez Topbara; formularze/OAuth działają; @320 brak overflow
-- [ ] 3.7 Banner błędu nadal nad treścią na home i auth
+- [x] 3.5 Home: Topbar/hero/gridy jak przed zmianą @320/@393; @≥1280px poszerza się do `max-w-6xl`
+- [x] 3.6 Auth ×5: karta wyśrodkowana, `max-w-sm`, bez Topbara; formularze/OAuth działają; @320 brak overflow
+- [x] 3.7 Banner błędu nadal nad treścią na home i auth
 
 ### Phase 4: E2E + consistency sweep
 

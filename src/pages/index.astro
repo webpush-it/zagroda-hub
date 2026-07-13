@@ -1,6 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Topbar from "@/components/Topbar.astro";
+import PageShell from "@/components/PageShell.astro";
 
 const { user } = Astro.locals;
 const year = new Date().getFullYear();
@@ -25,101 +24,96 @@ const steps = [
 ];
 ---
 
-<Layout
+<PageShell
   title="Zagroda Hub — rezerwacje wycieczek do zagród edukacyjnych"
   description="Znajdź zagrodę edukacyjną na wycieczkę albo zarządzaj rezerwacjami swojej zagrody z telefonu — z gwarancją braku podwójnej rezerwacji."
+  width="wide"
 >
-  <div class="bg-meadow min-h-screen p-4 sm:p-8">
-    <div class="mx-auto w-full max-w-4xl">
-      <Topbar />
-
-      <!-- Hero -->
-      <section class="px-2 py-16 text-center sm:py-24">
-        <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">Zagroda Hub</h1>
-        <p class="text-ink mx-auto mb-4 max-w-2xl text-lg sm:text-xl">
-          Telefon dzwoni, gdy karmisz zwierzęta. Nauczyciel obdzwania pół województwa, żeby zarezerwować wycieczkę.
-        </p>
-        <p class="text-ink-muted mx-auto mb-10 max-w-2xl text-base sm:text-lg">
-          Zagroda Hub przenosi rezerwacje wycieczek do zagród edukacyjnych do sieci — mobilnie, z telefonu i z
-          gwarancją, że ten sam termin nie zostanie zarezerwowany dwa razy.
-        </p>
-        <div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
-          {
-            user ? (
-              <>
-                <a href="/dashboard" class:list={primaryBtn}>
-                  Przejdź do panelu
-                </a>
-                <a href="/dashboard/zapytania" class:list={secondaryBtn}>
-                  Zobacz zapytania
-                </a>
-              </>
-            ) : (
-              <>
-                <a href="/katalog" class:list={primaryBtn}>
-                  Przeglądaj zagrody
-                </a>
-                <a href="/auth/signup" class:list={secondaryBtn}>
-                  Dodaj swoją zagrodę
-                </a>
-              </>
-            )
-          }
-        </div>
-      </section>
-
-      <!-- Jak to działa -->
-      <section class="py-12">
-        <h2 class="text-ink mb-8 text-center text-2xl font-bold sm:text-3xl">Jak to działa</h2>
-        <ol class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          {
-            steps.map((step, i) => (
-              <li class:list={card}>
-                <span class="bg-brand-600 mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full font-semibold text-white">
-                  {i + 1}
-                </span>
-                <h3 class="text-ink mb-2 text-lg font-semibold">{step.title}</h3>
-                <p class="text-ink-muted text-sm leading-relaxed">{step.body}</p>
-              </li>
-            ))
-          }
-        </ol>
-      </section>
-
-      <!-- Persony -->
-      <section class="grid grid-cols-1 gap-6 py-12 md:grid-cols-2">
-        <div class:list={card}>
-          <h2 class="text-ink mb-2 text-xl font-bold">Szukasz zagrody na wycieczkę?</h2>
-          <p class="text-ink-muted mb-6 text-sm leading-relaxed">
-            Przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie
-            — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
-          </p>
-          <a href="/katalog" class:list={primaryBtn}>Przeglądaj zagrody</a>
-        </div>
-        <div class:list={card}>
-          <h2 class="text-ink mb-2 text-xl font-bold">Prowadzisz zagrodę?</h2>
-          <p class="text-ink-muted mb-6 text-sm leading-relaxed">
-            Zarządzaj zapytaniami z telefonu, jedną ręką, w terenie. Akceptuj lub odrzucaj rezerwacje, a system pilnuje
-            limitu miejsc — zero ryzyka podwójnej rezerwacji na ten sam termin.
-          </p>
-          {
-            user ? (
-              <a href="/dashboard" class:list={primaryBtn}>
-                Przejdź do panelu
-              </a>
-            ) : (
-              <a href="/auth/signup" class:list={primaryBtn}>
-                Dodaj swoją zagrodę
-              </a>
-            )
-          }
-        </div>
-      </section>
-
-      <!-- Stopka -->
-      <footer class="border-edge text-ink-muted border-t py-8 text-center text-sm">
-        Zagroda Hub © {year}
-      </footer>
+  <!-- Hero -->
+  <section class="px-2 py-16 text-center sm:py-24">
+    <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">Zagroda Hub</h1>
+    <p class="text-ink mx-auto mb-4 max-w-2xl text-lg sm:text-xl">
+      Telefon dzwoni, gdy karmisz zwierzęta. Nauczyciel obdzwania pół województwa, żeby zarezerwować wycieczkę.
+    </p>
+    <p class="text-ink-muted mx-auto mb-10 max-w-2xl text-base sm:text-lg">
+      Zagroda Hub przenosi rezerwacje wycieczek do zagród edukacyjnych do sieci — mobilnie, z telefonu i z gwarancją, że
+      ten sam termin nie zostanie zarezerwowany dwa razy.
+    </p>
+    <div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
+      {
+        user ? (
+          <>
+            <a href="/dashboard" class:list={primaryBtn}>
+              Przejdź do panelu
+            </a>
+            <a href="/dashboard/zapytania" class:list={secondaryBtn}>
+              Zobacz zapytania
+            </a>
+          </>
+        ) : (
+          <>
+            <a href="/katalog" class:list={primaryBtn}>
+              Przeglądaj zagrody
+            </a>
+            <a href="/auth/signup" class:list={secondaryBtn}>
+              Dodaj swoją zagrodę
+            </a>
+          </>
+        )
+      }
     </div>
-  </div>
-</Layout>
+  </section>
+
+  <!-- Jak to działa -->
+  <section class="py-12">
+    <h2 class="text-ink mb-8 text-center text-2xl font-bold sm:text-3xl">Jak to działa</h2>
+    <ol class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      {
+        steps.map((step, i) => (
+          <li class:list={card}>
+            <span class="bg-brand-600 mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full font-semibold text-white">
+              {i + 1}
+            </span>
+            <h3 class="text-ink mb-2 text-lg font-semibold">{step.title}</h3>
+            <p class="text-ink-muted text-sm leading-relaxed">{step.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- Persony -->
+  <section class="grid grid-cols-1 gap-6 py-12 md:grid-cols-2">
+    <div class:list={card}>
+      <h2 class="text-ink mb-2 text-xl font-bold">Szukasz zagrody na wycieczkę?</h2>
+      <p class="text-ink-muted mb-6 text-sm leading-relaxed">
+        Przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie —
+        bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
+      </p>
+      <a href="/katalog" class:list={primaryBtn}>Przeglądaj zagrody</a>
+    </div>
+    <div class:list={card}>
+      <h2 class="text-ink mb-2 text-xl font-bold">Prowadzisz zagrodę?</h2>
+      <p class="text-ink-muted mb-6 text-sm leading-relaxed">
+        Zarządzaj zapytaniami z telefonu, jedną ręką, w terenie. Akceptuj lub odrzucaj rezerwacje, a system pilnuje
+        limitu miejsc — zero ryzyka podwójnej rezerwacji na ten sam termin.
+      </p>
+      {
+        user ? (
+          <a href="/dashboard" class:list={primaryBtn}>
+            Przejdź do panelu
+          </a>
+        ) : (
+          <a href="/auth/signup" class:list={primaryBtn}>
+            Dodaj swoją zagrodę
+          </a>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Stopka -->
+  <footer class="border-edge text-ink-muted border-t py-8 text-center text-sm">
+    Zagroda Hub © {year}
+  </footer>
+</PageShell>

@@ -1,24 +1,20 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import PageShell from "@/components/PageShell.astro";
 import SignInForm from "@/components/auth/SignInForm";
 import OAuthButtons from "@/components/auth/OAuthButtons";
 
 const error = Astro.url.searchParams.get("error");
 ---
 
-<Layout title="Zaloguj się">
-  <div class="bg-meadow flex min-h-screen items-center justify-center p-4">
-    <div class="card-surface w-full max-w-sm">
-      <h1 class="text-brand-700 mb-6 text-center text-2xl font-bold">Zaloguj się</h1>
-      <SignInForm serverError={error} client:load />
-      <div class="mt-4">
-        <OAuthButtons client:load />
-      </div>
-      <p class="text-ink-muted mt-4 text-center text-sm">
-        Nie masz konta? <a href="/auth/signup" class="text-link hover:text-link-hover hover:underline"
-          >Zarejestruj się</a
-        >
-      </p>
+<PageShell title="Zaloguj się" width="narrow" align="center" showTopbar={false}>
+  <div class="card-surface">
+    <h1 class="text-brand-700 mb-6 text-center text-2xl font-bold">Zaloguj się</h1>
+    <SignInForm serverError={error} client:load />
+    <div class="mt-4">
+      <OAuthButtons client:load />
     </div>
+    <p class="text-ink-muted mt-4 text-center text-sm">
+      Nie masz konta? <a href="/auth/signup" class="text-link hover:text-link-hover hover:underline">Zarejestruj się</a>
+    </p>
   </div>
-</Layout>
+</PageShell>
