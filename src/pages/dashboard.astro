@@ -1,6 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Topbar from "@/components/Topbar.astro";
+import PageShell from "@/components/PageShell.astro";
 import ZagrodaProfileForm, { type ZagrodaInitialData } from "@/components/zagroda/ZagrodaProfileForm";
 import { createClient } from "@/lib/supabase";
 
@@ -43,21 +42,16 @@ if (supabase && user) {
 }
 ---
 
-<Layout title="Panel zagrody">
-  <div class="bg-meadow min-h-screen p-4">
-    <div class="mx-auto w-full max-w-md">
-      <Topbar />
-      <main class="card-surface">
-        <h1 class="text-brand-700 mb-6 text-2xl font-bold">Panel zagrody</h1>
-        <a
-          href="/dashboard/zapytania"
-          class="border-edge bg-surface text-ink hover:bg-brand-50 mb-6 flex items-center justify-between rounded-xl border px-4 py-3 text-sm font-medium transition-colors"
-        >
-          Zapytania o rezerwację
-          <span class="text-link" aria-hidden="true">→</span>
-        </a>
-        <ZagrodaProfileForm client:load initialData={initialData} photoUrl={photoUrl} />
-      </main>
-    </div>
-  </div>
-</Layout>
+<PageShell title="Panel zagrody">
+  <main class="card-surface">
+    <h1 class="text-brand-700 mb-6 text-2xl font-bold">Panel zagrody</h1>
+    <a
+      href="/dashboard/zapytania"
+      class="border-edge bg-surface text-ink hover:bg-brand-50 mb-6 flex items-center justify-between rounded-xl border px-4 py-3 text-sm font-medium transition-colors"
+    >
+      Zapytania o rezerwację
+      <span class="text-link" aria-hidden="true">→</span>
+    </a>
+    <ZagrodaProfileForm client:load initialData={initialData} photoUrl={photoUrl} />
+  </main>
+</PageShell>

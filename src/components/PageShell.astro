@@ -1,0 +1,29 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  title?: string;
+  description?: string;
+  width?: "narrow" | "default" | "wide";
+  align?: "top" | "center";
+  showTopbar?: boolean;
+}
+const { title, description, width = "default", align = "top", showTopbar = true } = Astro.props;
+
+const widthClass = { narrow: "max-w-sm", default: "max-w-md lg:max-w-2xl", wide: "max-w-4xl xl:max-w-6xl" }[width];
+const outer = cn(
+  "bg-meadow min-h-screen px-4 py-4 sm:px-6 lg:px-8",
+  align === "center" && "flex items-center justify-center",
+);
+---
+
+<Layout {title} {description}>
+  <div class:list={outer}>
+    <div class:list={cn("mx-auto w-full", widthClass)}>
+      {showTopbar && <Topbar />}
+      <slot />
+    </div>
+  </div>
+</Layout>
