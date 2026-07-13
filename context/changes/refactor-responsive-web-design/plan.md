@@ -372,15 +372,15 @@ Brak migracji danych. Migracja kodu strona-po-stronie; każda faza niezależnie 
 
 #### Automated
 
-- [x] 4.1 `npm run test:e2e` — `mobile-320.spec.ts` zielony
-- [x] 4.2 `npm run test:e2e` — `desktop-width.spec.ts` zielony
-- [x] 4.3 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data włącznie)
-- [x] 4.4 `grep -rn "min-h-screen" src/pages` — 0 trafień
-- [x] 4.5 `grep -rnE "import (Layout|Topbar)" src/pages` — 0 trafień
-- [x] 4.6 Lint + build: `npm run lint && npm run build`
+- [x] 4.1 `npm run test:e2e` — `mobile-320.spec.ts` zielony — 4979440
+- [x] 4.2 `npm run test:e2e` — `desktop-width.spec.ts` zielony — 4979440
+- [x] 4.3 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data włącznie) — 4979440
+- [x] 4.4 `grep -rn "min-h-screen" src/pages` — 0 trafień — 4979440
+- [x] 4.5 `grep -rnE "import (Layout|Topbar)" src/pages` — 0 trafień — 4979440
+- [x] 4.6 Lint + build: `npm run lint && npm run build` — 4979440
 
 #### Manual
 
-- [x] 4.7 Przegląd ~13 stron @320/@768/@1280 — spójne szerokości/gutter, brak regresji
-- [x] 4.8 Topbar wszędzie poza auth; auth wyśrodkowane bez Topbara
-- [x] 4.9 Poszerzanie lg/xl dla `default`/`wide`, `narrow` stałe
+- [x] 4.7 Przegląd ~13 stron @320/@768/@1280 — spójne szerokości/gutter, brak regresji — 4979440
+- [x] 4.8 Topbar wszędzie poza auth; auth wyśrodkowane bez Topbara — 4979440
+- [x] 4.9 Poszerzanie lg/xl dla `default`/`wide`, `narrow` stałe — 4979440
