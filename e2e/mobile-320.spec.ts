@@ -55,7 +55,7 @@ test("@320 tap-targets: hamburger button and a drawer nav link are ≥44px", asy
   // then assert the same tap-target floor on a real standalone link.
   await waitForIslandHydrated(hamburger);
   await hamburger.click();
-  const drawer = page.locator("#topbar-mobile-drawer");
+  const drawer = page.getByRole("dialog", { name: "Menu nawigacji" });
   await expect(drawer).toBeVisible();
   const navLink = drawer.getByRole("link").first();
   await expect(navLink).toBeVisible();

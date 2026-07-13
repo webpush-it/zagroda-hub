@@ -1,9 +1,9 @@
 ---
 change_id: fix-mobile-ui-bugs
 title: Poprawa błędów UI na mobile od szerokości 320px
-status: implemented
+status: impl_reviewed
 created: 2026-07-12
-updated: 2026-07-12
+updated: 2026-07-13
 archived_at: null
 ---
 
