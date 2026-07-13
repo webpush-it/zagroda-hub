@@ -357,30 +357,30 @@ Brak migracji danych. Migracja kodu strona-po-stronie; każda faza niezależnie 
 
 #### Automated
 
-- [x] 3.1 Lint: `npm run lint`
-- [x] 3.2 Build: `npm run build`
-- [x] 3.3 `grep` braku `import Layout`/`import Topbar` w `index.astro` i `src/pages/auth`
-- [x] 3.4 `grep -rn "min-h-screen" src/pages` — brak trafień
+- [x] 3.1 Lint: `npm run lint` — 08bb569
+- [x] 3.2 Build: `npm run build` — 08bb569
+- [x] 3.3 `grep` braku `import Layout`/`import Topbar` w `index.astro` i `src/pages/auth` — 08bb569
+- [x] 3.4 `grep -rn "min-h-screen" src/pages` — brak trafień — 08bb569
 
 #### Manual
 
-- [x] 3.5 Home: Topbar/hero/gridy jak przed zmianą @320/@393; @≥1280px poszerza się do `max-w-6xl`
-- [x] 3.6 Auth ×5: karta wyśrodkowana, `max-w-sm`, bez Topbara; formularze/OAuth działają; @320 brak overflow
-- [x] 3.7 Banner błędu nadal nad treścią na home i auth
+- [x] 3.5 Home: Topbar/hero/gridy jak przed zmianą @320/@393; @≥1280px poszerza się do `max-w-6xl` — 08bb569
+- [x] 3.6 Auth ×5: karta wyśrodkowana, `max-w-sm`, bez Topbara; formularze/OAuth działają; @320 brak overflow — 08bb569
+- [x] 3.7 Banner błędu nadal nad treścią na home i auth — 08bb569
 
 ### Phase 4: E2E + consistency sweep
 
 #### Automated
 
-- [ ] 4.1 `npm run test:e2e` — `mobile-320.spec.ts` zielony
-- [ ] 4.2 `npm run test:e2e` — `desktop-width.spec.ts` zielony
-- [ ] 4.3 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data włącznie)
-- [ ] 4.4 `grep -rn "min-h-screen" src/pages` — 0 trafień
-- [ ] 4.5 `grep -rnE "import (Layout|Topbar)" src/pages` — 0 trafień
-- [ ] 4.6 Lint + build: `npm run lint && npm run build`
+- [x] 4.1 `npm run test:e2e` — `mobile-320.spec.ts` zielony
+- [x] 4.2 `npm run test:e2e` — `desktop-width.spec.ts` zielony
+- [x] 4.3 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data włącznie)
+- [x] 4.4 `grep -rn "min-h-screen" src/pages` — 0 trafień
+- [x] 4.5 `grep -rnE "import (Layout|Topbar)" src/pages` — 0 trafień
+- [x] 4.6 Lint + build: `npm run lint && npm run build`
 
 #### Manual
 
-- [ ] 4.7 Przegląd ~13 stron @320/@768/@1280 — spójne szerokości/gutter, brak regresji
-- [ ] 4.8 Topbar wszędzie poza auth; auth wyśrodkowane bez Topbara
-- [ ] 4.9 Poszerzanie lg/xl dla `default`/`wide`, `narrow` stałe
+- [x] 4.7 Przegląd ~13 stron @320/@768/@1280 — spójne szerokości/gutter, brak regresji
+- [x] 4.8 Topbar wszędzie poza auth; auth wyśrodkowane bez Topbara
+- [x] 4.9 Poszerzanie lg/xl dla `default`/`wide`, `narrow` stałe
