@@ -1,6 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Topbar from "@/components/Topbar.astro";
+import PageShell from "@/components/PageShell.astro";
 import RequestDecision from "@/components/booking/RequestDecision";
 import { StatusBadge, type RequestStatus } from "@/components/booking/StatusBadge";
 import { createClient } from "@/lib/supabase";
@@ -66,100 +65,92 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
 };
 ---
 
-<Layout title={request ? "Szczegóły zapytania" : "Nie znaleziono zapytania"}>
-  <div class="bg-meadow min-h-screen p-4">
-    <div class="mx-auto w-full max-w-md">
-      <Topbar />
-      <main class="card-surface">
-        <a
-          href="/dashboard/zapytania"
-          class="text-link hover:text-link-hover tap-target mb-4 text-sm transition-colors"
-        >
-          ← Wróć do zapytań
-        </a>
+<PageShell title={request ? "Szczegóły zapytania" : "Nie znaleziono zapytania"}>
+  <main class="card-surface">
+    <a href="/dashboard/zapytania" class="text-link hover:text-link-hover tap-target mb-4 text-sm transition-colors">
+      ← Wróć do zapytań
+    </a>
 
-        {
-          request ? (
-            <article>
-              <h1 class="text-brand-700 text-2xl font-bold">Szczegóły zapytania</h1>
-              <p class="text-ink-muted mt-1 text-xs">Wysłano {request.created_at}</p>
+    {
+      request ? (
+        <article>
+          <h1 class="text-brand-700 text-2xl font-bold">Szczegóły zapytania</h1>
+          <p class="text-ink-muted mt-1 text-xs">Wysłano {request.created_at}</p>
 
-              <dl class="mt-6 flex flex-col gap-2">
-                <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                  <dt class="text-ink-muted">Data pobytu</dt>
-                  <dd class="text-ink font-medium">{request.trip_date}</dd>
-                </div>
-                <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
-                  <dt class="text-ink-muted shrink-0">Turnus</dt>
-                  <dd class="text-ink min-w-0 text-right font-medium break-words">
-                    {request.turnus_label} <span class="text-ink-muted">({request.turnus_time})</span>
-                  </dd>
-                </div>
-                <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                  <dt class="text-ink-muted">Liczba uczestników</dt>
-                  <dd class="text-ink font-medium">{request.participants_count}</dd>
-                </div>
-              </dl>
-
-              <section class="mt-6">
-                <h2 class="text-ink mb-2 text-base font-semibold">Kontakt do nauczyciela</h2>
-                <dl class="flex flex-col gap-2">
-                  <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
-                    <dt class="text-ink-muted shrink-0">Imię i nazwisko</dt>
-                    <dd class="text-ink min-w-0 text-right font-medium break-words">{request.guest_name}</dd>
-                  </div>
-                  <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
-                    <dt class="text-ink-muted">E-mail</dt>
-                    <dd class="min-w-0">
-                      <a
-                        href={`mailto:${request.guest_email}`}
-                        class="text-link hover:text-link-hover block truncate font-medium hover:underline"
-                      >
-                        {request.guest_email}
-                      </a>
-                    </dd>
-                  </div>
-                  <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                    <dt class="text-ink-muted">Telefon</dt>
-                    <dd>
-                      <a
-                        href={`tel:${request.guest_phone}`}
-                        class="text-link hover:text-link-hover font-medium hover:underline"
-                      >
-                        {request.guest_phone}
-                      </a>
-                    </dd>
-                  </div>
-                </dl>
-              </section>
-
-              <section class="border-edge mt-6 border-t pt-6">
-                {request.status === "pending" || request.status === "accepted" ? (
-                  <RequestDecision client:load id={request.id} initialStatus={request.status} />
-                ) : (
-                  <div class="space-y-3">
-                    <StatusBadge status={request.status} />
-                    <p class="border-edge bg-surface text-ink-muted rounded-lg border px-3 py-3 text-sm">
-                      {TERMINAL_COPY[request.status]}
-                    </p>
-                  </div>
-                )}
-              </section>
-            </article>
-          ) : (
-            <div class="border-edge bg-surface rounded-xl border p-6 text-center">
-              <p class="text-ink font-medium">Nie znaleziono zapytania</p>
-              <p class="text-ink-muted mt-1 text-sm">
-                Zapytanie nie istnieje lub nie masz do niego dostępu.{" "}
-                <a href="/dashboard/zapytania" class="text-link hover:text-link-hover hover:underline">
-                  Wróć do listy
-                </a>
-                .
-              </p>
+          <dl class="mt-6 flex flex-col gap-2">
+            <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+              <dt class="text-ink-muted">Data pobytu</dt>
+              <dd class="text-ink font-medium">{request.trip_date}</dd>
             </div>
-          )
-        }
-      </main>
-    </div>
-  </div>
-</Layout>
+            <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+              <dt class="text-ink-muted shrink-0">Turnus</dt>
+              <dd class="text-ink min-w-0 text-right font-medium break-words">
+                {request.turnus_label} <span class="text-ink-muted">({request.turnus_time})</span>
+              </dd>
+            </div>
+            <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+              <dt class="text-ink-muted">Liczba uczestników</dt>
+              <dd class="text-ink font-medium">{request.participants_count}</dd>
+            </div>
+          </dl>
+
+          <section class="mt-6">
+            <h2 class="text-ink mb-2 text-base font-semibold">Kontakt do nauczyciela</h2>
+            <dl class="flex flex-col gap-2">
+              <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+                <dt class="text-ink-muted shrink-0">Imię i nazwisko</dt>
+                <dd class="text-ink min-w-0 text-right font-medium break-words">{request.guest_name}</dd>
+              </div>
+              <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+                <dt class="text-ink-muted">E-mail</dt>
+                <dd class="min-w-0">
+                  <a
+                    href={`mailto:${request.guest_email}`}
+                    class="text-link hover:text-link-hover block truncate font-medium hover:underline"
+                  >
+                    {request.guest_email}
+                  </a>
+                </dd>
+              </div>
+              <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+                <dt class="text-ink-muted">Telefon</dt>
+                <dd>
+                  <a
+                    href={`tel:${request.guest_phone}`}
+                    class="text-link hover:text-link-hover font-medium hover:underline"
+                  >
+                    {request.guest_phone}
+                  </a>
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="border-edge mt-6 border-t pt-6">
+            {request.status === "pending" || request.status === "accepted" ? (
+              <RequestDecision client:load id={request.id} initialStatus={request.status} />
+            ) : (
+              <div class="space-y-3">
+                <StatusBadge status={request.status} />
+                <p class="border-edge bg-surface text-ink-muted rounded-lg border px-3 py-3 text-sm">
+                  {TERMINAL_COPY[request.status]}
+                </p>
+              </div>
+            )}
+          </section>
+        </article>
+      ) : (
+        <div class="border-edge bg-surface rounded-xl border p-6 text-center">
+          <p class="text-ink font-medium">Nie znaleziono zapytania</p>
+          <p class="text-ink-muted mt-1 text-sm">
+            Zapytanie nie istnieje lub nie masz do niego dostępu.{" "}
+            <a href="/dashboard/zapytania" class="text-link hover:text-link-hover hover:underline">
+              Wróć do listy
+            </a>
+            .
+          </p>
+        </div>
+      )
+    }
+  </main>
+</PageShell>

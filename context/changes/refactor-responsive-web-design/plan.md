@@ -326,32 +326,32 @@ Brak migracji danych. Migracja kodu strona-po-stronie; każda faza niezależnie 
 
 #### Automated
 
-- [x] 1.1 Type checking + lint: `npm run lint`
-- [x] 1.2 Build przechodzi (adapter Cloudflare): `npm run build`
-- [x] 1.3 `astro check` bez błędów typów Props PageShell
+- [x] 1.1 Type checking + lint: `npm run lint` — 9fa13d5
+- [x] 1.2 Build przechodzi (adapter Cloudflare): `npm run build` — 9fa13d5
+- [x] 1.3 `astro check` bez błędów typów Props PageShell — 9fa13d5
 
 #### Manual
 
-- [x] 1.4 `/dashboard` renderuje Topbar poprawnie dla zalogowanego i gościa (dowód `Astro.locals.user` z wnętrza PageShell)
-- [x] 1.5 Layout identyczny @320/@393 vs baseline (brak overflow, `card-surface` bez zmian)
-- [x] 1.6 @≥1024px kolumna poszerza się do `max-w-2xl`, wyśrodkowana
-- [x] 1.7 Banner konfiguracyjny nadal nad treścią
+- [x] 1.4 `/dashboard` renderuje Topbar poprawnie dla zalogowanego i gościa (dowód `Astro.locals.user` z wnętrza PageShell) — 9fa13d5
+- [x] 1.5 Layout identyczny @320/@393 vs baseline (brak overflow, `card-surface` bez zmian) — 9fa13d5
+- [x] 1.6 @≥1024px kolumna poszerza się do `max-w-2xl`, wyśrodkowana — 9fa13d5
+- [x] 1.7 Banner konfiguracyjny nadal nad treścią — 9fa13d5
 
 ### Phase 2: Migracja stron top-align (app)
 
 #### Automated
 
-- [ ] 2.1 Lint: `npm run lint`
-- [ ] 2.2 Build: `npm run build`
-- [ ] 2.3 `grep -rn "import Topbar" src/pages` nie zwraca tych 6 stron
-- [ ] 2.4 `grep` braku `min-h-screen`/`max-w-md` w zmigrowanych stronach
+- [x] 2.1 Lint: `npm run lint`
+- [x] 2.2 Build: `npm run build`
+- [x] 2.3 `grep -rn "import Topbar" src/pages` nie zwraca tych 6 stron
+- [x] 2.4 `grep` braku `min-h-screen`/`max-w-md` w zmigrowanych stronach
 
 #### Manual
 
-- [ ] 2.5 6 stron renderuje Topbar i treść identycznie @320/@393 vs baseline
-- [ ] 2.6 Katalog: filtr/lista/karty bez regresji
-- [ ] 2.7 Szczegóły zagrody: formularz rezerwacji działa, brak overflow @320
-- [ ] 2.8 @≥1024px kolumny poszerzają się spójnie do `max-w-2xl`
+- [x] 2.5 6 stron renderuje Topbar i treść identycznie @320/@393 vs baseline
+- [x] 2.6 Katalog: filtr/lista/karty bez regresji
+- [x] 2.7 Szczegóły zagrody: formularz rezerwacji działa, brak overflow @320
+- [x] 2.8 @≥1024px kolumny poszerzają się spójnie do `max-w-2xl`
 
 ### Phase 3: Migracja Home (wide) + Auth (narrow/center)
 

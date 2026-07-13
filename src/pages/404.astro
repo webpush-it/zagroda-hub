@@ -1,27 +1,21 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Topbar from "@/components/Topbar.astro";
+import PageShell from "@/components/PageShell.astro";
 import ZagrodaPlaceholder from "@/components/brand/ZagrodaPlaceholder.astro";
 ---
 
-<Layout title="Nie znaleziono strony">
-  <div class="bg-meadow min-h-screen p-4">
-    <div class="mx-auto w-full max-w-md">
-      <Topbar />
-      <main class="card-surface text-center">
-        <div class="mx-auto mb-6 aspect-video w-full max-w-xs overflow-hidden rounded-xl">
-          <ZagrodaPlaceholder />
-        </div>
-        <p class="text-accent-700 text-sm font-semibold">Błąd 404</p>
-        <h1 class="text-brand-700 mt-1 text-2xl font-bold">Nie znaleziono strony</h1>
-        <p class="text-ink-muted mt-3 text-sm">
-          Ta ścieżka nie prowadzi do żadnej zagrody. Być może link jest nieaktualny albo wpisano zły adres.
-        </p>
-        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <a href="/" class="btn-primary">Strona główna</a>
-          <a href="/katalog" class="btn-secondary">Przeglądaj katalog</a>
-        </div>
-      </main>
+<PageShell title="Nie znaleziono strony">
+  <main class="card-surface text-center">
+    <div class="mx-auto mb-6 aspect-video w-full max-w-xs overflow-hidden rounded-xl">
+      <ZagrodaPlaceholder />
     </div>
-  </div>
-</Layout>
+    <p class="text-accent-700 text-sm font-semibold">Błąd 404</p>
+    <h1 class="text-brand-700 mt-1 text-2xl font-bold">Nie znaleziono strony</h1>
+    <p class="text-ink-muted mt-3 text-sm">
+      Ta ścieżka nie prowadzi do żadnej zagrody. Być może link jest nieaktualny albo wpisano zły adres.
+    </p>
+    <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+      <a href="/" class="btn-primary">Strona główna</a>
+      <a href="/katalog" class="btn-secondary">Przeglądaj katalog</a>
+    </div>
+  </main>
+</PageShell>

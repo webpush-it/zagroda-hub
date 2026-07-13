@@ -1,6 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Topbar from "@/components/Topbar.astro";
+import PageShell from "@/components/PageShell.astro";
 import CancelRequest from "@/components/booking/CancelRequest";
 
 export const prerender = false;
@@ -13,34 +12,29 @@ const rawToken = Astro.url.searchParams.get("token") ?? "";
 const token = UUID_RE.test(rawToken) ? rawToken : null;
 ---
 
-<Layout title="Anuluj zapytanie">
-  <div class="bg-meadow min-h-screen p-4">
-    <div class="mx-auto w-full max-w-md">
-      <Topbar />
-      <main class="card-surface">
-        {
-          token ? (
-            <div>
-              <h1 class="text-brand-700 text-2xl font-bold">Anulowanie zapytania</h1>
-              <p class="text-ink mt-4 text-sm">Czy na pewno chcesz anulować to zapytanie?</p>
-              <div class="mt-6">
-                <CancelRequest client:load token={token} />
-              </div>
-            </div>
-          ) : (
-            <div class="border-edge bg-surface rounded-xl border p-6 text-center">
-              <p class="text-ink font-medium">Nieprawidłowy link</p>
-              <p class="text-ink-muted mt-1 text-sm">
-                Link do anulowania jest nieprawidłowy lub niekompletny.{" "}
-                <a href="/katalog" class="text-link hover:text-link-hover hover:underline">
-                  Przejdź do katalogu
-                </a>
-                .
-              </p>
-            </div>
-          )
-        }
-      </main>
-    </div>
-  </div>
-</Layout>
+<PageShell title="Anuluj zapytanie">
+  <main class="card-surface">
+    {
+      token ? (
+        <div>
+          <h1 class="text-brand-700 text-2xl font-bold">Anulowanie zapytania</h1>
+          <p class="text-ink mt-4 text-sm">Czy na pewno chcesz anulować to zapytanie?</p>
+          <div class="mt-6">
+            <CancelRequest client:load token={token} />
+          </div>
+        </div>
+      ) : (
+        <div class="border-edge bg-surface rounded-xl border p-6 text-center">
+          <p class="text-ink font-medium">Nieprawidłowy link</p>
+          <p class="text-ink-muted mt-1 text-sm">
+            Link do anulowania jest nieprawidłowy lub niekompletny.{" "}
+            <a href="/katalog" class="text-link hover:text-link-hover hover:underline">
+              Przejdź do katalogu
+            </a>
+            .
+          </p>
+        </div>
+      )
+    }
+  </main>
+</PageShell>

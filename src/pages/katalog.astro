@@ -1,6 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Topbar from "@/components/Topbar.astro";
+import PageShell from "@/components/PageShell.astro";
 import ZagrodaCard from "@/components/katalog/ZagrodaCard.astro";
 import { createClient } from "@/lib/supabase";
 import { VOIVODESHIPS, type Voivodeship } from "@/lib/zagroda";
@@ -107,87 +106,80 @@ const inputClass = "input-field disabled:cursor-not-allowed disabled:opacity-50"
 const labelClass = "text-ink-muted mb-1 block text-sm";
 ---
 
-<Layout title="Katalog zagród">
-  <div class="bg-meadow min-h-screen p-4">
-    <div class="mx-auto w-full max-w-md">
-      <Topbar />
-      <main class="card-surface">
-        <h1 class="text-brand-700 mb-6 text-2xl font-bold">Katalog zagród</h1>
+<PageShell title="Katalog zagród">
+  <main class="card-surface">
+    <h1 class="text-brand-700 mb-6 text-2xl font-bold">Katalog zagród</h1>
 
-        <form method="GET" action="/katalog" id="filter-form" class="mb-6 flex flex-col gap-4">
-          <div>
-            <label for="filter-wojewodztwo" class:list={labelClass}>Województwo</label>
-            <select id="filter-wojewodztwo" name="wojewodztwo" class:list={inputClass}>
-              <option value="">Wszystkie województwa</option>
-              {
-                VOIVODESHIPS.map((v) => (
-                  <option value={v} selected={v === wojewodztwo}>
-                    {v}
-                  </option>
-                ))
-              }
-            </select>
-          </div>
+    <form method="GET" action="/katalog" id="filter-form" class="mb-6 flex flex-col gap-4">
+      <div>
+        <label for="filter-wojewodztwo" class:list={labelClass}>Województwo</label>
+        <select id="filter-wojewodztwo" name="wojewodztwo" class:list={inputClass}>
+          <option value="">Wszystkie województwa</option>
+          {
+            VOIVODESHIPS.map((v) => (
+              <option value={v} selected={v === wojewodztwo}>
+                {v}
+              </option>
+            ))
+          }
+        </select>
+      </div>
 
-          <div>
-            <label for="filter-miasto" class:list={labelClass}>Miasto</label>
-            <select id="filter-miasto" name="miasto" class:list={inputClass}>
-              <option value="">Wszystkie miasta</option>
-              {
-                cities.map((c) => (
-                  <option value={c} selected={c === miasto}>
-                    {c}
-                  </option>
-                ))
-              }
-            </select>
-          </div>
+      <div>
+        <label for="filter-miasto" class:list={labelClass}>Miasto</label>
+        <select id="filter-miasto" name="miasto" class:list={inputClass}>
+          <option value="">Wszystkie miasta</option>
+          {
+            cities.map((c) => (
+              <option value={c} selected={c === miasto}>
+                {c}
+              </option>
+            ))
+          }
+        </select>
+      </div>
 
-          <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
-            <div class="flex-1">
-              <label for="filter-data" class:list={labelClass}>Data wycieczki</label>
-              <input type="date" id="filter-data" name="data" min={today} value={data ?? ""} class:list={inputClass} />
-            </div>
-            <div class="w-full sm:w-28">
-              <label for="filter-osoby" class:list={labelClass}>Liczba osób</label>
-              <input
-                type="number"
-                id="filter-osoby"
-                name="osoby"
-                min="1"
-                max="1000"
-                value={data ? String(osoby ?? 1) : ""}
-                disabled={!data}
-                class:list={inputClass}
-              />
-            </div>
-          </div>
+      <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
+        <div class="flex-1">
+          <label for="filter-data" class:list={labelClass}>Data wycieczki</label>
+          <input type="date" id="filter-data" name="data" min={today} value={data ?? ""} class:list={inputClass} />
+        </div>
+        <div class="w-full sm:w-28">
+          <label for="filter-osoby" class:list={labelClass}>Liczba osób</label>
+          <input
+            type="number"
+            id="filter-osoby"
+            name="osoby"
+            min="1"
+            max="1000"
+            value={data ? String(osoby ?? 1) : ""}
+            disabled={!data}
+            class:list={inputClass}
+          />
+        </div>
+      </div>
 
-          <button type="submit" class="btn-primary"> Filtruj </button>
-        </form>
+      <button type="submit" class="btn-primary"> Filtruj </button>
+    </form>
 
-        {
-          results.length === 0 ? (
-            <div class="border-edge bg-surface rounded-xl border p-6 text-center">
-              <p class="text-ink font-medium">Brak wyników</p>
-              <p class="text-ink-muted mt-1 text-sm">
-                Spróbuj poszerzyć kryteria — zmień województwo, miasto lub termin.
-              </p>
-            </div>
-          ) : (
-            <ul class="flex flex-col gap-3">
-              {results.map((r) => (
-                <li>
-                  <ZagrodaCard {...r} />
-                </li>
-              ))}
-            </ul>
-          )
-        }
-      </main>
-    </div>
-  </div>
-</Layout>
+    {
+      results.length === 0 ? (
+        <div class="border-edge bg-surface rounded-xl border p-6 text-center">
+          <p class="text-ink font-medium">Brak wyników</p>
+          <p class="text-ink-muted mt-1 text-sm">Spróbuj poszerzyć kryteria — zmień województwo, miasto lub termin.</p>
+        </div>
+      ) : (
+        <ul class="flex flex-col gap-3">
+          {results.map((r) => (
+            <li>
+              <ZagrodaCard {...r} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</PageShell>
 
 <script>
   // Progressive enhancement only — the form is fully functional without JS
