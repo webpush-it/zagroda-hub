@@ -63,6 +63,23 @@ test("@320 tap-targets: hamburger button and a drawer nav link are ≥44px", asy
   expect(navLinkBox?.height).toBeGreaterThanOrEqual(44);
 });
 
+test("@320 native date input has normalized appearance (iOS overflow/alignment fix)", async ({ page }) => {
+  await page.goto("/katalog");
+
+  // On iOS Safari a native date control with default `-webkit-appearance`
+  // ignores width/text-align and breaks out of the page grid. We normalize it
+  // to `appearance: none` in global.css; assert the normalization is present so
+  // the iOS regression can't silently return. (WebKit-native rendering itself
+  // stays a manual on-device check — this locks the CSS contract.)
+  const dateInput = page.locator('input[type="date"]');
+  await expect(dateInput).toBeVisible();
+  const appearance = await dateInput.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return cs.getPropertyValue("-webkit-appearance") || cs.appearance;
+  });
+  expect(appearance).toBe("none");
+});
+
 test("@320 password field reserves right padding for the toggle", async ({ page }) => {
   await page.goto("/auth/signin");
 

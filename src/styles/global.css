@@ -255,6 +255,27 @@
   }
 }
 
+/* Natywne kontrolki daty/czasu: na iOS Safari domyślne -webkit-appearance
+   sprawia, że pole ignoruje width/display/text-align — data wychodzi poza siatkę
+   strony i nie jest wyrównana do lewej jak pola tekstowe. appearance:none
+   normalizuje kontrolkę do zwykłego, stylowalnego boxa (tap wciąż otwiera natywny
+   picker); left-align edytora wartości domyka wyrównanie. */
+@layer base {
+  input[type="date"],
+  input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+    /* iOS z appearance:none potrafi zwinąć wysokość — utrzymaj tap-target 44px. */
+    min-height: 2.75rem;
+  }
+  input[type="date"]::-webkit-date-and-time-value,
+  input[type="time"]::-webkit-date-and-time-value,
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="time"]::-webkit-datetime-edit {
+    text-align: left;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
