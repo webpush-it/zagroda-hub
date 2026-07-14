@@ -199,13 +199,13 @@ Brak migracji danych. Rollback = revert commitu. Zmiana addytywna i warunkowa (t
 
 #### Automated
 
-- [x] 2.1 `npm run test:e2e` — nowy test widoczności e-maila zielony
-- [x] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony
-- [x] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony
-- [x] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data)
-- [x] 2.5 Lint + build: `npm run lint && npm run build`
+- [x] 2.1 `npm run test:e2e` — nowy test widoczności e-maila zielony — e548b55
+- [x] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony — e548b55
+- [x] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony — e548b55
+- [x] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data) — e548b55
+- [x] 2.5 Lint + build: `npm run lint && npm run build` — e548b55
 
 #### Manual
 
-- [x] 2.6 Zalogowany: e-mail @1280 (inline) i @320 (drawer); gość — brak
-- [x] 2.7 Brak horizontal scroll @320 z długim e-mailem
+- [x] 2.6 Zalogowany: e-mail @1280 (inline) i @320 (drawer); gość — brak — e548b55
+- [x] 2.7 Brak horizontal scroll @320 z długim e-mailem — e548b55

@@ -1,7 +1,7 @@
 ---
 change_id: topbar-user-email
 title: Przywrócić wyświetlanie e-maila zalogowanego użytkownika w Topbarze
-status: implementing
+status: implemented
 created: 2026-07-14
 updated: 2026-07-14
 archived_at: null
