@@ -1,6 +1,7 @@
 ---
 import Logo from "@/components/brand/Logo.astro";
 import TopbarMobileMenu, { type NavLink } from "@/components/TopbarMobileMenu";
+import AccountMenu from "@/components/AccountMenu";
 
 const { user } = Astro.locals;
 
@@ -38,22 +39,7 @@ const signOutAction = user ? "/api/auth/signout" : undefined;
         </a>
       ))
     }
-    {
-      user?.email && (
-        <span class="text-ink-muted max-w-[12rem] min-w-0 shrink truncate" title={user.email}>
-          {user.email}
-        </span>
-      )
-    }
-    {
-      signOutAction && (
-        <form method="POST" action={signOutAction}>
-          <button type="submit" class:list={navLink}>
-            Wyloguj
-          </button>
-        </form>
-      )
-    }
+    {signOutAction && <AccountMenu client:idle userEmail={user?.email} signOutAction={signOutAction} />}
   </div>
 
   <TopbarMobileMenu client:idle links={links} signOutAction={signOutAction} userEmail={user?.email} />
