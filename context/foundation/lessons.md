@@ -22,3 +22,10 @@
 - **Problem**: Piping with PowerShell `"value" | npx wrangler secret put NAME` appends a trailing newline to the stored value. The secret is non-empty (so `wrangler secret list` shows it and null-guards pass), but the value is corrupted. Discovered in F-02 prod smoke: `SUPABASE_SERVICE_ROLE_KEY` with `\n` made the admin-client JWT invalid → enqueue 401 (silent `enqueued:false`); `BREVO_API_KEY` with `\n` → Brevo 401 "Key not found". Hours lost because the failure looked like a code/no-op-mode bug, not a corrupted secret.
 - **Rule**: On Windows, never set wrangler secrets with PowerShell `"value" | npx wrangler secret put`. Pipe from a newline-free source — `printf '%s' 'value' | npx wrangler secret put NAME` (bash) — and verify the runtime actually reads the value, not just that `wrangler secret list` names it.
 - **Applies to**: implement, impl-review
+
+## Truncate w kontenerze flex wymaga min-w-0 na kurczącym się dziecku
+
+- **Context**: Każdy komponent (`.astro`/`.tsx`) z wierszem `flex`, w którym tekst o zmiennej długości ma się skracać (`truncate`/`max-w-*`) — zwłaszcza paski/nagłówki jak Topbar zawierające pojedynczy długi token (e-mail, nazwa, URL) bez spacji.
+- **Problem**: Flex-child bez `min-w-0` nie zwęża się poniżej swojej min-content. Pojedynczy długi token (np. e-mail bez spacji) ma min-content = pełna szerokość, więc `truncate`/`max-w-*` nie tną — element rozpycha layout lub wylewa się poza kontener. Wystąpiło przy `fix-mobile-ui-bugs` i ponownie przy `topbar-user-email` (inline e-mail wylewał się poza nagłówek @640–900px; fix `76a1d6b`).
+- **Rule**: Gdy flex-child ma się skracać, dodaj `min-w-0` do tego dziecka (i w razie potrzeby do jego flex-kontenera). Samo `truncate`/`max-w-*` nie zadziała w wierszu flex — bez `min-w-0` próg min-content blokuje zwężanie.
+- **Applies to**: plan, implement, impl-review
