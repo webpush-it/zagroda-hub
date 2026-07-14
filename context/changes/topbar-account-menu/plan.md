@@ -197,9 +197,9 @@ None — no data or schema changes. Purely presentational/interaction.
 
 #### Automated
 
-- [x] 2.1 New spec passes: `npm run test:e2e`
-- [x] 2.2 Full E2E suite still green (no regressions)
+- [x] 2.1 New spec passes: `npm run test:e2e` — 22e78de
+- [x] 2.2 Full E2E suite still green (no regressions) — 22e78de
 
 #### Manual
 
-- [x] 2.3 Spec meaningfully fails when a behavior is broken (optional sanity check)
+- [x] 2.3 Spec meaningfully fails when a behavior is broken (optional sanity check) — 22e78de
