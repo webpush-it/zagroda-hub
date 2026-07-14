@@ -1,10 +1,10 @@
 ---
 change_id: auth-brand-header
 title: Opcjonalny brand-header (logo) nad kartą na odsłonach auth
-status: implemented
+status: archived
 created: 2026-07-14
 updated: 2026-07-14
-archived_at: null
+archived_at: 2026-07-14T07:16:36Z
 ---
 
 ## Notes
