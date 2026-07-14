@@ -1,10 +1,10 @@
 ---
 change_id: topbar-account-menu
 title: Menu konta w Topbarze zamiast inline e-maila
-status: implemented
+status: archived
 created: 2026-07-15
 updated: 2026-07-15
-archived_at: null
+archived_at: 2026-07-14T23:14:35Z
 ---
 
 ## Notes
