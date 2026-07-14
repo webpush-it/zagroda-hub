@@ -190,13 +190,13 @@ Brak migracji danych. Rollback = revert commitu. Prop `brand` jest addytywny i d
 
 #### Automated
 
-- [x] 2.1 `npm run test:e2e` — asercja brand/no-nav zielona
-- [x] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony
-- [x] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony
-- [x] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data)
-- [x] 2.5 Lint + build: `npm run lint && npm run build`
+- [x] 2.1 `npm run test:e2e` — asercja brand/no-nav zielona — e0690ab
+- [x] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony — e0690ab
+- [x] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony — e0690ab
+- [x] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data) — e0690ab
+- [x] 2.5 Lint + build: `npm run lint && npm run build` — e0690ab
 
 #### Manual
 
-- [x] 2.6 Klik w logo na 5 stronach auth → `/`
-- [x] 2.7 @320/@1280 auth: logo + karta wyśrodkowane, brak overflow, brak nav
+- [x] 2.6 Klik w logo na 5 stronach auth → `/` — e0690ab
+- [x] 2.7 @320/@1280 auth: logo + karta wyśrodkowane, brak overflow, brak nav — e0690ab
