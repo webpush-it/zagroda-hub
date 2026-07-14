@@ -183,29 +183,29 @@ Brak migracji danych. Rollback = revert commitu. Zmiana addytywna i warunkowa (t
 
 #### Automated
 
-- [x] 1.1 Type checking + lint: `npm run lint`
-- [x] 1.2 `astro check` — brak błędów typów (nowy prop `userEmail`, opcjonalny `email`)
-- [x] 1.3 Build przechodzi (adapter Cloudflare): `npm run build`
-- [x] 1.4 `grep -c "user?.email\|user.email" src/components/Topbar.astro` ≥ 1
+- [x] 1.1 Type checking + lint: `npm run lint` — 9735b65
+- [x] 1.2 `astro check` — brak błędów typów (nowy prop `userEmail`, opcjonalny `email`) — 9735b65
+- [x] 1.3 Build przechodzi (adapter Cloudflare): `npm run build` — 9735b65
+- [x] 1.4 `grep -c "user?.email\|user.email" src/components/Topbar.astro` ≥ 1 — 9735b65
 
 #### Manual
 
-- [x] 1.5 Zalogowany @1280 widzi e-mail (wyszarzony) przy „Wyloguj"; długi e-mail skrócony + tooltip
-- [x] 1.6 Zalogowany @320: e-mail w nagłówku drawera; brak horizontal scroll
-- [x] 1.7 Gość @1280/@320 — brak e-maila, nawigacja bez zmian
-- [x] 1.8 Drawer nadal działa (Escape/tło/link zamyka, focus wraca na hamburger)
+- [x] 1.5 Zalogowany @1280 widzi e-mail (wyszarzony) przy „Wyloguj"; długi e-mail skrócony + tooltip — 9735b65
+- [x] 1.6 Zalogowany @320: e-mail w nagłówku drawera; brak horizontal scroll — 9735b65
+- [x] 1.7 Gość @1280/@320 — brak e-maila, nawigacja bez zmian — 9735b65
+- [x] 1.8 Drawer nadal działa (Escape/tło/link zamyka, focus wraca na hamburger) — 9735b65
 
 ### Phase 2: E2E guard + weryfikacja
 
 #### Automated
 
-- [ ] 2.1 `npm run test:e2e` — nowy test widoczności e-maila zielony
-- [ ] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony
-- [ ] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony
-- [ ] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data)
-- [ ] 2.5 Lint + build: `npm run lint && npm run build`
+- [x] 2.1 `npm run test:e2e` — nowy test widoczności e-maila zielony
+- [x] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony
+- [x] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony
+- [x] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data)
+- [x] 2.5 Lint + build: `npm run lint && npm run build`
 
 #### Manual
 
-- [ ] 2.6 Zalogowany: e-mail @1280 (inline) i @320 (drawer); gość — brak
-- [ ] 2.7 Brak horizontal scroll @320 z długim e-mailem
+- [x] 2.6 Zalogowany: e-mail @1280 (inline) i @320 (drawer); gość — brak
+- [x] 2.7 Brak horizontal scroll @320 z długim e-mailem
