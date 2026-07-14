@@ -30,7 +30,7 @@ const signOutAction = user ? "/api/auth/signout" : undefined;
     <Logo variant="full" size={28} />
   </a>
 
-  <div class="hidden items-center gap-4 sm:flex">
+  <div class="hidden min-w-0 items-center gap-4 sm:flex">
     {
       links.map((link) => (
         <a href={link.href} class:list={navLink}>
@@ -40,7 +40,7 @@ const signOutAction = user ? "/api/auth/signout" : undefined;
     }
     {
       user?.email && (
-        <span class="text-ink-muted max-w-[12rem] truncate" title={user.email}>
+        <span class="text-ink-muted max-w-[12rem] min-w-0 shrink truncate" title={user.email}>
           {user.email}
         </span>
       )
