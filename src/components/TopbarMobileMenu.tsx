@@ -10,11 +10,13 @@ interface Props {
   links: NavLink[];
   /** Gdy przekazane, drawer renderuje formularz wylogowania (POST na tę akcję). */
   signOutAction?: string;
+  /** E-mail zalogowanego użytkownika; gdy brak (gość / konto bez e-maila) — nie renderowany. */
+  userEmail?: string;
 }
 
 // Mobilny drawer nawigacji (poniżej `sm`). Desktop renderuje linki inline w Topbar.astro.
 // Zamknięcie: Escape, wybór linku, klik w tło. Focus wraca na hamburger po zamknięciu.
-export default function TopbarMobileMenu({ links, signOutAction }: Props) {
+export default function TopbarMobileMenu({ links, signOutAction, userEmail }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -107,12 +109,19 @@ export default function TopbarMobileMenu({ links, signOutAction }: Props) {
             aria-label="Menu nawigacji"
             className="border-edge fixed inset-y-0 right-0 z-50 flex w-72 max-w-[85vw] flex-col gap-1 border-l bg-white p-4 shadow-xl"
           >
-            <div className="mb-2 flex justify-end">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              {userEmail ? (
+                <span className="text-ink-muted min-w-0 truncate text-sm" title={userEmail}>
+                  {userEmail}
+                </span>
+              ) : (
+                <span />
+              )}
               <button
                 type="button"
                 onClick={close}
                 aria-label="Zamknij menu"
-                className="tap-target text-ink-muted hover:text-link-hover justify-center px-2.5"
+                className="tap-target text-ink-muted hover:text-link-hover shrink-0 justify-center px-2.5"
               >
                 <X className="size-6" aria-hidden="true" />
               </button>

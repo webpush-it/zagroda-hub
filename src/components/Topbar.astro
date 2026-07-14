@@ -39,6 +39,13 @@ const signOutAction = user ? "/api/auth/signout" : undefined;
       ))
     }
     {
+      user?.email && (
+        <span class="text-ink-muted max-w-[12rem] truncate" title={user.email}>
+          {user.email}
+        </span>
+      )
+    }
+    {
       signOutAction && (
         <form method="POST" action={signOutAction}>
           <button type="submit" class:list={navLink}>
@@ -49,5 +56,5 @@ const signOutAction = user ? "/api/auth/signout" : undefined;
     }
   </div>
 
-  <TopbarMobileMenu client:idle links={links} signOutAction={signOutAction} />
+  <TopbarMobileMenu client:idle links={links} signOutAction={signOutAction} userEmail={user?.email} />
 </div>
