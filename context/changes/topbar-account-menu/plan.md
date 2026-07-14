@@ -180,26 +180,26 @@ None — no data or schema changes. Purely presentational/interaction.
 
 #### Automated
 
-- [x] 1.1 Type/contract check passes: `npm run build`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Existing E2E suite still passes: `npm run test:e2e`
+- [x] 1.1 Type/contract check passes: `npm run build` — 71aba37
+- [x] 1.2 Lint passes: `npm run lint` — 71aba37
+- [x] 1.3 Existing E2E suite still passes: `npm run test:e2e` — 71aba37
 
 #### Manual
 
-- [x] 1.4 Trigger (icon + chevron) replaces inline e-mail at ≥sm; nav links stay inline; no inline e-mail/standalone Wyloguj
-- [x] 1.5 Click opens popover with full (wrapping) e-mail + "Wyloguj"; chevron rotates
-- [x] 1.6 Escape closes + focus returns to trigger; click-outside closes; "Wyloguj" signs out to `/`
-- [x] 1.7 Trigger keyboard-operable (Enter/Space); Tab moves through popover contents
-- [x] 1.8 `<sm` hamburger drawer unchanged
-- [x] 1.9 E-mail-less account still shows trigger + can log out; guest sees no trigger
+- [x] 1.4 Trigger (icon + chevron) replaces inline e-mail at ≥sm; nav links stay inline; no inline e-mail/standalone Wyloguj — 71aba37
+- [x] 1.5 Click opens popover with full (wrapping) e-mail + "Wyloguj"; chevron rotates — 71aba37
+- [x] 1.6 Escape closes + focus returns to trigger; click-outside closes; "Wyloguj" signs out to `/` — 71aba37
+- [x] 1.7 Trigger keyboard-operable (Enter/Space); Tab moves through popover contents — 71aba37
+- [x] 1.8 `<sm` hamburger drawer unchanged — 71aba37
+- [x] 1.9 E-mail-less account still shows trigger + can log out; guest sees no trigger — 71aba37
 
 ### Phase 2: E2E coverage
 
 #### Automated
 
-- [ ] 2.1 New spec passes: `npm run test:e2e`
-- [ ] 2.2 Full E2E suite still green (no regressions)
+- [x] 2.1 New spec passes: `npm run test:e2e`
+- [x] 2.2 Full E2E suite still green (no regressions)
 
 #### Manual
 
-- [ ] 2.3 Spec meaningfully fails when a behavior is broken (optional sanity check)
+- [x] 2.3 Spec meaningfully fails when a behavior is broken (optional sanity check)
