@@ -6,7 +6,7 @@ import OAuthButtons from "@/components/auth/OAuthButtons";
 const error = Astro.url.searchParams.get("error");
 ---
 
-<PageShell title="Zarejestruj się" width="narrow" align="center" showTopbar={false}>
+<PageShell title="Zarejestruj się" width="narrow" align="center" showTopbar={false} brand>
   <div class="card-surface">
     <h1 class="text-brand-700 mb-6 text-center text-2xl font-bold">Zarejestruj się</h1>
     <SignUpForm serverError={error} client:load />

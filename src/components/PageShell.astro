@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import Topbar from "@/components/Topbar.astro";
+import Logo from "@/components/brand/Logo.astro";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -9,8 +10,9 @@ interface Props {
   width?: "narrow" | "default" | "wide";
   align?: "top" | "center";
   showTopbar?: boolean;
+  brand?: boolean;
 }
-const { title, description, width = "default", align = "top", showTopbar = true } = Astro.props;
+const { title, description, width = "default", align = "top", showTopbar = true, brand = false } = Astro.props;
 
 const widthClass = { narrow: "max-w-sm", default: "max-w-md lg:max-w-2xl", wide: "max-w-4xl xl:max-w-6xl" }[width];
 const outer = cn(
@@ -23,6 +25,13 @@ const outer = cn(
   <div class:list={outer}>
     <div class:list={cn("mx-auto w-full", widthClass)}>
       {showTopbar && <Topbar />}
+      {
+        brand && (
+          <a href="/" class="tap-target mb-6 flex justify-center" aria-label="Zagroda Hub — strona główna">
+            <Logo variant="full" />
+          </a>
+        )
+      }
       <slot />
     </div>
   </div>

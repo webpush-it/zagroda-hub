@@ -6,7 +6,7 @@ const sent = Astro.url.searchParams.get("sent") === "1";
 const error = Astro.url.searchParams.get("error");
 ---
 
-<PageShell title="Sprawdź skrzynkę" width="narrow" align="center" showTopbar={false}>
+<PageShell title="Sprawdź skrzynkę" width="narrow" align="center" showTopbar={false} brand>
   <div class="card-surface text-center">
     <div class="mb-4 text-5xl" aria-hidden="true">📧</div>
     <h1 class="text-brand-700 mb-3 text-2xl font-bold">Sprawdź skrzynkę</h1>
