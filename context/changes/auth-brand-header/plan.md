@@ -174,29 +174,29 @@ Brak migracji danych. Rollback = revert commitu. Prop `brand` jest addytywny i d
 
 #### Automated
 
-- [x] 1.1 Type checking + lint: `npm run lint`
-- [x] 1.2 Build przechodzi (adapter Cloudflare): `npm run build`
-- [x] 1.3 `astro check` — brak błędów typów (nowy prop `brand`)
-- [x] 1.4 `grep -lE "showTopbar=\{false\} brand" src/pages/auth/*.astro` zwraca wszystkie 5 stron
+- [x] 1.1 Type checking + lint: `npm run lint` — 418cd95
+- [x] 1.2 Build przechodzi (adapter Cloudflare): `npm run build` — 418cd95
+- [x] 1.3 `astro check` — brak błędów typów (nowy prop `brand`) — 418cd95
+- [x] 1.4 `grep -lE "showTopbar=\{false\} brand" src/pages/auth/*.astro` zwraca wszystkie 5 stron — 418cd95
 
 #### Manual
 
-- [x] 1.5 5 stron auth pokazuje wyśrodkowane logo nad kartą; klik → `/`
-- [x] 1.6 Auth nadal bez Topbara/nawigacji (tylko brand-link)
-- [x] 1.7 @320 brak overflow z logo; karta/formularze bez regresji; @393/@1280 wyśrodkowane
-- [x] 1.8 Strona top-align (katalog/dashboard) wizualnie identyczna (default-false)
+- [x] 1.5 5 stron auth pokazuje wyśrodkowane logo nad kartą; klik → `/` — 418cd95
+- [x] 1.6 Auth nadal bez Topbara/nawigacji (tylko brand-link) — 418cd95
+- [x] 1.7 @320 brak overflow z logo; karta/formularze bez regresji; @393/@1280 wyśrodkowane — 418cd95
+- [x] 1.8 Strona top-align (katalog/dashboard) wizualnie identyczna (default-false) — 418cd95
 
 ### Phase 2: E2E guard + weryfikacja
 
 #### Automated
 
-- [ ] 2.1 `npm run test:e2e` — asercja brand/no-nav zielona
-- [ ] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony
-- [ ] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony
-- [ ] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data)
-- [ ] 2.5 Lint + build: `npm run lint && npm run build`
+- [x] 2.1 `npm run test:e2e` — asercja brand/no-nav zielona
+- [x] 2.2 `npm run test:e2e` — `mobile-320.spec.ts` zielony
+- [x] 2.3 `npm run test:e2e` — `desktop-width.spec.ts` zielony
+- [x] 2.4 Pełny `npm run test:e2e` zielony (critical-flow, smoke, idor-contact-data)
+- [x] 2.5 Lint + build: `npm run lint && npm run build`
 
 #### Manual
 
-- [ ] 2.6 Klik w logo na 5 stronach auth → `/`
-- [ ] 2.7 @320/@1280 auth: logo + karta wyśrodkowane, brak overflow, brak nav
+- [x] 2.6 Klik w logo na 5 stronach auth → `/`
+- [x] 2.7 @320/@1280 auth: logo + karta wyśrodkowane, brak overflow, brak nav

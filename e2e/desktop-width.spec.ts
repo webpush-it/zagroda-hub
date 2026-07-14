@@ -75,3 +75,25 @@ for (const { path, heading, cap } of VARIANTS) {
     expect(Math.abs(rect.left - rightMargin)).toBeLessThanOrEqual(2);
   });
 }
+
+// Brand-header contract on auth (change: auth-brand-header). Auth pages carry no
+// Topbar, so PageShell's optional `brand` prop restores a single logo-link to `/`
+// (trust + escape hatch) WITHOUT bringing nav back. This locks both halves at
+// once so neither can silently regress: the brand-link must exist, and Topbar
+// nav must stay absent. `/auth/signin` stands in for all 5 auth surfaces (they
+// share the same PageShell contract).
+test("@1280 /auth/signin has the brand-link to / but no Topbar nav", async ({ page }) => {
+  await page.goto("/auth/signin");
+
+  // Brand-link: the logo wraps in an <a href="/"> mirroring Topbar's brand-link
+  // pattern (same aria-label). It must be visible and point at the home route.
+  const brandLink = page.getByRole("link", { name: "Zagroda Hub — strona główna" });
+  await expect(brandLink).toBeVisible();
+  await expect(brandLink).toHaveAttribute("href", "/");
+
+  // No Topbar nav. "Katalog" is the discriminator BECAUSE it is rendered ONLY by
+  // Topbar — "Zaloguj się"/"Zarejestruj się" also appear as cross-links between
+  // auth pages, so they can't prove Topbar's absence. Zero "Katalog" links means
+  // no Topbar leaked back onto auth.
+  await expect(page.getByRole("link", { name: "Katalog" })).toHaveCount(0);
+});
