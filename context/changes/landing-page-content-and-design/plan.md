@@ -368,15 +368,15 @@ None — no data, schema, or route changes. Pure SSR copy/markup edit plus one t
 
 #### Automated
 
-- [x] 3.1 Build passes: `npm run build`
-- [x] 3.2 Lint passes: `npm run lint`
-- [x] 3.3 Format check clean on index.astro
-- [x] 3.4 Single H1 invariant still holds
-- [x] 3.5 Grep-gate clean on index.astro
-- [x] 3.6 Full e2e suite green
+- [x] 3.1 Build passes: `npm run build` — 6635b1e
+- [x] 3.2 Lint passes: `npm run lint` — 6635b1e
+- [x] 3.3 Format check clean on index.astro — 6635b1e
+- [x] 3.4 Single H1 invariant still holds — 6635b1e
+- [x] 3.5 Grep-gate clean on index.astro — 6635b1e
+- [x] 3.6 Full e2e suite green — 6635b1e
 
 #### Manual
 
-- [x] 3.7 Guarantee section concrete/credible, no Non-Goal claims leak
-- [x] 3.8 Repeated CTA state-aware, reachable on phone, no footer overlap
-- [x] 3.9 Whole page reads in one owner-first voice, one-handed on mobile
+- [x] 3.7 Guarantee section concrete/credible, no Non-Goal claims leak — 6635b1e
+- [x] 3.8 Repeated CTA state-aware, reachable on phone, no footer overlap — 6635b1e
+- [x] 3.9 Whole page reads in one owner-first voice, one-handed on mobile — 6635b1e
