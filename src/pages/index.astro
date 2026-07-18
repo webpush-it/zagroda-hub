@@ -6,6 +6,8 @@ const year = new Date().getFullYear();
 
 const primaryBtn = "btn-primary px-6 py-3 text-base";
 const secondaryBtn = "btn-secondary px-6 py-3 text-base";
+const teacherLink =
+  "tap-target text-link hover:text-link-hover inline-flex items-center justify-center px-4 text-base font-semibold underline-offset-4 hover:underline";
 const card = "card-surface";
 
 const steps = [
@@ -25,21 +27,23 @@ const steps = [
 ---
 
 <PageShell
-  title="Zagroda Hub — rezerwacje wycieczek do zagród edukacyjnych"
-  description="Znajdź zagrodę edukacyjną na wycieczkę albo zarządzaj rezerwacjami swojej zagrody z telefonu — z gwarancją braku podwójnej rezerwacji."
+  title="Zagroda Hub — rezerwacje wycieczek do Twojej zagrody z telefonu"
+  description="Prowadzisz zagrodę edukacyjną? Przyjmuj zapytania nauczycieli online i akceptuj je jednym tapnięciem — z gwarancją, że ten sam dzień nie zostanie zarezerwowany ponad Twój limit miejsc."
   width="wide"
 >
   <!-- Hero -->
   <section class="px-2 py-16 text-center sm:py-24">
-    <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">Zagroda Hub</h1>
+    <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">
+      Rezerwacje wycieczek do Twojej zagrody — w jednym miejscu, prosto z telefonu.
+    </h1>
     <p class="text-ink mx-auto mb-4 max-w-2xl text-lg sm:text-xl">
-      Telefon dzwoni, gdy karmisz zwierzęta. Nauczyciel obdzwania pół województwa, żeby zarezerwować wycieczkę.
+      Zamiast odbierać telefony w polu, dostajesz zapytania nauczycieli online i akceptujesz je jednym tapnięciem.
     </p>
     <p class="text-ink-muted mx-auto mb-10 max-w-2xl text-base sm:text-lg">
-      Zagroda Hub przenosi rezerwacje wycieczek do zagród edukacyjnych do sieci — mobilnie, z telefonu i z gwarancją, że
-      ten sam termin nie zostanie zarezerwowany dwa razy.
+      Zagroda Hub pilnuje, żeby ten sam dzień nie został zarezerwowany ponad Twój limit miejsc — koniec z podwójnymi
+      rezerwacjami z kartki.
     </p>
-    <div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
+    <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
       {
         user ? (
           <>
@@ -52,11 +56,11 @@ const steps = [
           </>
         ) : (
           <>
-            <a href="/katalog" class:list={primaryBtn}>
-              Przeglądaj zagrody
+            <a href="/auth/signup" class:list={primaryBtn}>
+              Załóż konto zagrody
             </a>
-            <a href="/auth/signup" class:list={secondaryBtn}>
-              Dodaj swoją zagrodę
+            <a href="/katalog" class:list={teacherLink}>
+              Szukasz zagrody na wycieczkę? →
             </a>
           </>
         )
