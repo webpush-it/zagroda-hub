@@ -1,10 +1,10 @@
 ---
 change_id: landing-page-content-and-design
 title: Landing page content and design — communicate the app's core idea
-status: impl_reviewed
+status: archived
 created: 2026-07-18
 updated: 2026-07-18
-archived_at: null
+archived_at: 2026-07-18T10:42:39Z
 ---
 
 ## Notes
