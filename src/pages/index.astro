@@ -12,16 +12,16 @@ const card = "card-surface";
 
 const steps = [
   {
-    title: "Znajdź zagrodę",
-    body: "Filtruj katalog po województwie, mieście i terminie wycieczki — bez zakładania konta.",
+    title: "Opublikuj swoją zagrodę",
+    body: "Dodaj ofertę i ustaw dzienny limit miejsc. Nauczyciele znajdą Twoją zagrodę w katalogu, filtrując po województwie i terminie.",
   },
   {
-    title: "Wyślij zapytanie",
-    body: "Wybierz zagrodę i termin, podaj liczbę osób. Zapytanie trafia prosto do właściciela.",
+    title: "Odbieraj zapytania online",
+    body: "Zamiast telefonów w polu dostajesz zapytania nauczycieli w jednym miejscu — z terminem wycieczki i liczbą osób.",
   },
   {
-    title: "Właściciel akceptuje",
-    body: "Potwierdzenie przychodzi bez ryzyka podwójnej rezerwacji — system pilnuje limitu miejsc.",
+    title: "Akceptuj bez ryzyka",
+    body: "Potwierdzasz termin jednym tapnięciem, a system pilnuje, żeby ten sam dzień nie został zarezerwowany ponad Twój limit miejsc.",
   },
 ];
 ---
@@ -89,18 +89,10 @@ const steps = [
   <!-- Persony -->
   <section class="grid grid-cols-1 gap-6 py-12 md:grid-cols-2">
     <div class:list={card}>
-      <h2 class="text-ink mb-2 text-xl font-bold">Szukasz zagrody na wycieczkę?</h2>
-      <p class="text-ink-muted mb-6 text-sm leading-relaxed">
-        Przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie —
-        bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
-      </p>
-      <a href="/katalog" class:list={primaryBtn}>Przeglądaj zagrody</a>
-    </div>
-    <div class:list={card}>
       <h2 class="text-ink mb-2 text-xl font-bold">Prowadzisz zagrodę?</h2>
       <p class="text-ink-muted mb-6 text-sm leading-relaxed">
-        Zarządzaj zapytaniami z telefonu, jedną ręką, w terenie. Akceptuj lub odrzucaj rezerwacje, a system pilnuje
-        limitu miejsc — zero ryzyka podwójnej rezerwacji na ten sam termin.
+        Przyjmuj zapytania i zarządzaj rezerwacjami z telefonu, jedną ręką, prosto z terenu. Akceptuj lub odrzucaj
+        zgłoszenia, a system pilnuje dziennego limitu miejsc — bez ryzyka podwójnej rezerwacji na ten sam dzień.
       </p>
       {
         user ? (
@@ -113,6 +105,14 @@ const steps = [
           </a>
         )
       }
+    </div>
+    <div class:list={card}>
+      <h2 class="text-ink mb-2 text-xl font-bold">Szukasz zagrody na wycieczkę?</h2>
+      <p class="text-ink-muted mb-6 text-sm leading-relaxed">
+        Przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie —
+        bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
+      </p>
+      <a href="/katalog" class:list={primaryBtn}>Przeglądaj zagrody</a>
     </div>
   </section>
 

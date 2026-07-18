@@ -336,33 +336,33 @@ None — no data, schema, or route changes. Pure SSR copy/markup edit plus one t
 
 #### Automated
 
-- [x] 1.1 Build passes: `npm run build`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Format check clean on index.astro + desktop-width.spec.ts
-- [x] 1.4 Grep-gate clean on index.astro
-- [x] 1.5 Single H1 invariant (`grep -c "<h1"` = 1)
-- [x] 1.6 No `min-h-screen` in `src/pages`
-- [x] 1.7 Desktop width e2e passes
+- [x] 1.1 Build passes: `npm run build` — f3f67a3
+- [x] 1.2 Lint passes: `npm run lint` — f3f67a3
+- [x] 1.3 Format check clean on index.astro + desktop-width.spec.ts — f3f67a3
+- [x] 1.4 Grep-gate clean on index.astro — f3f67a3
+- [x] 1.5 Single H1 invariant (`grep -c "<h1"` = 1) — f3f67a3
+- [x] 1.6 No `min-h-screen` in `src/pages` — f3f67a3
+- [x] 1.7 Desktop width e2e passes — f3f67a3
 
 #### Manual
 
-- [x] 1.8 Hero reads as one owner-primary thesis on mobile portrait
-- [x] 1.9 Logged-in owner sees panel CTAs, not signup CTA
-- [x] 1.10 Tab title + preview description reflect new positioning
+- [x] 1.8 Hero reads as one owner-primary thesis on mobile portrait — f3f67a3
+- [x] 1.9 Logged-in owner sees panel CTAs, not signup CTA — f3f67a3
+- [x] 1.10 Tab title + preview description reflect new positioning — f3f67a3
 
 ### Phase 2: Owner-first supporting copy
 
 #### Automated
 
-- [ ] 2.1 Build passes: `npm run build`
-- [ ] 2.2 Lint passes: `npm run lint`
-- [ ] 2.3 Format check clean on index.astro
-- [ ] 2.4 Full e2e suite green
+- [x] 2.1 Build passes: `npm run build`
+- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.3 Format check clean on index.astro
+- [x] 2.4 Full e2e suite green
 
 #### Manual
 
-- [ ] 2.5 "Jak to działa" reads owner-first and matches hero voice
-- [ ] 2.6 Owner card first on mobile + desktop; teacher CTA still reaches `/katalog`
+- [x] 2.5 "Jak to działa" reads owner-first and matches hero voice
+- [x] 2.6 Owner card first on mobile + desktop; teacher CTA still reaches `/katalog`
 
 ### Phase 3: Guarantee/benefits section + repeated CTA
 
