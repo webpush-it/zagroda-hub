@@ -86,6 +86,38 @@ const steps = [
     </ol>
   </section>
 
+  <!-- Gwarancja i korzyści -->
+  <section class="py-12">
+    <div class="mx-auto mb-8 max-w-3xl text-center">
+      <h2 class="text-ink mb-3 text-2xl font-bold sm:text-3xl">Bez podwójnych rezerwacji — gwarantowane</h2>
+      <p class="text-ink-muted mx-auto max-w-2xl text-base sm:text-lg">
+        System liczy zajęte miejsca na każdy dzień i nie pozwoli przyjąć więcej zapytań, niż wynosi Twój dzienny limit.
+        Ten sam dzień nie zostanie zarezerwowany ponad limit — nawet jeśli kilku nauczycieli pisze naraz.
+      </p>
+    </div>
+    <ul class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <li class:list={card}>
+        <h3 class="text-ink mb-2 text-lg font-semibold">Wszystko z telefonu</h3>
+        <p class="text-ink-muted text-sm leading-relaxed">
+          Zarządzasz rezerwacjami jedną ręką, prosto z pola — bez komputera i bez papierowego kalendarza.
+        </p>
+      </li>
+      <li class:list={card}>
+        <h3 class="text-ink mb-2 text-lg font-semibold">Jeden kalendarz na wszystko</h3>
+        <p class="text-ink-muted text-sm leading-relaxed">
+          Zapytania od nauczycieli trafiają w jedno miejsce — z terminem i liczbą osób — zamiast rozsypywać się po
+          telefonach i karteczkach.
+        </p>
+      </li>
+      <li class:list={card}>
+        <h3 class="text-ink mb-2 text-lg font-semibold">Akceptacja jednym tapnięciem</h3>
+        <p class="text-ink-muted text-sm leading-relaxed">
+          Potwierdzasz albo odrzucasz zapytanie od razu, a nauczyciel dostaje odpowiedź bez kolejnego telefonu.
+        </p>
+      </li>
+    </ul>
+  </section>
+
   <!-- Persony -->
   <section class="grid grid-cols-1 gap-6 py-12 md:grid-cols-2">
     <div class:list={card}>
@@ -113,6 +145,24 @@ const steps = [
         bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
       </p>
       <a href="/katalog" class:list={primaryBtn}>Przeglądaj zagrody</a>
+    </div>
+  </section>
+
+  <!-- Powtórzone CTA -->
+  <section class="py-12 text-center">
+    <h2 class="text-ink mb-6 text-2xl font-bold sm:text-3xl">Gotowy, żeby przyjmować rezerwacje online?</h2>
+    <div class="flex justify-center">
+      {
+        user ? (
+          <a href="/dashboard" class:list={primaryBtn}>
+            Przejdź do panelu
+          </a>
+        ) : (
+          <a href="/auth/signup" class:list={primaryBtn}>
+            Załóż konto zagrody
+          </a>
+        )
+      }
     </div>
   </section>
 

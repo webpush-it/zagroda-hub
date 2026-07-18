@@ -354,29 +354,29 @@ None — no data, schema, or route changes. Pure SSR copy/markup edit plus one t
 
 #### Automated
 
-- [x] 2.1 Build passes: `npm run build`
-- [x] 2.2 Lint passes: `npm run lint`
-- [x] 2.3 Format check clean on index.astro
-- [x] 2.4 Full e2e suite green
+- [x] 2.1 Build passes: `npm run build` — 57abf8e
+- [x] 2.2 Lint passes: `npm run lint` — 57abf8e
+- [x] 2.3 Format check clean on index.astro — 57abf8e
+- [x] 2.4 Full e2e suite green — 57abf8e
 
 #### Manual
 
-- [x] 2.5 "Jak to działa" reads owner-first and matches hero voice
-- [x] 2.6 Owner card first on mobile + desktop; teacher CTA still reaches `/katalog`
+- [x] 2.5 "Jak to działa" reads owner-first and matches hero voice — 57abf8e
+- [x] 2.6 Owner card first on mobile + desktop; teacher CTA still reaches `/katalog` — 57abf8e
 
 ### Phase 3: Guarantee/benefits section + repeated CTA
 
 #### Automated
 
-- [ ] 3.1 Build passes: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
-- [ ] 3.3 Format check clean on index.astro
-- [ ] 3.4 Single H1 invariant still holds
-- [ ] 3.5 Grep-gate clean on index.astro
-- [ ] 3.6 Full e2e suite green
+- [x] 3.1 Build passes: `npm run build`
+- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.3 Format check clean on index.astro
+- [x] 3.4 Single H1 invariant still holds
+- [x] 3.5 Grep-gate clean on index.astro
+- [x] 3.6 Full e2e suite green
 
 #### Manual
 
-- [ ] 3.7 Guarantee section concrete/credible, no Non-Goal claims leak
-- [ ] 3.8 Repeated CTA state-aware, reachable on phone, no footer overlap
-- [ ] 3.9 Whole page reads in one owner-first voice, one-handed on mobile
+- [x] 3.7 Guarantee section concrete/credible, no Non-Goal claims leak
+- [x] 3.8 Repeated CTA state-aware, reachable on phone, no footer overlap
+- [x] 3.9 Whole page reads in one owner-first voice, one-handed on mobile
