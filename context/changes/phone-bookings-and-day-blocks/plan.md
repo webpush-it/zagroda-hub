@@ -341,15 +341,15 @@ Single additive migration; ships via `npm run deploy` (db push **before** worker
 
 #### Automated
 
-- [x] 3.1 Full test suite passes: `npm test`
-- [x] 3.2 Typecheck passes: `npx astro check`
-- [x] 3.3 Lint passes: `npm run lint`
-- [x] 3.4 Production build succeeds: `npm run build`
+- [x] 3.1 Full test suite passes: `npm test` — d67c363
+- [x] 3.2 Typecheck passes: `npx astro check` — d67c363
+- [x] 3.3 Lint passes: `npm run lint` — d67c363
+- [x] 3.4 Production build succeeds: `npm run build` — d67c363
 
 #### Manual
 
-- [x] 3.5 Manual entry one-handed < 15 s on mobile viewport, "Telefon" badge visible
-- [x] 3.6 US-03 walkthrough: colliding acceptance refused with exact FR-014 copy
-- [x] 3.7 Block/unblock round-trip: guest form refusal, catalog availability, recovery after unblock
-- [x] 3.8 Entry removal frees capacity instantly, no e-mail sent
-- [x] 3.9 FR-029 regression spot-check of untouched guest flow
+- [x] 3.5 Manual entry one-handed < 15 s on mobile viewport, "Telefon" badge visible — d67c363
+- [x] 3.6 US-03 walkthrough: colliding acceptance refused with exact FR-014 copy — d67c363
+- [x] 3.7 Block/unblock round-trip: guest form refusal, catalog availability, recovery after unblock — d67c363
+- [x] 3.8 Entry removal frees capacity instantly, no e-mail sent — d67c363
+- [x] 3.9 FR-029 regression spot-check of untouched guest flow — d67c363
