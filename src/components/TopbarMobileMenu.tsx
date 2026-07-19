@@ -4,6 +4,8 @@ import { Menu, X } from "lucide-react";
 export interface NavLink {
   href: string;
   label: string;
+  /** Gdy true, link jest renderowany jako wyróżniony przycisk CTA zamiast zwykłego linku tekstowego. */
+  cta?: boolean;
 }
 
 interface Props {
@@ -75,6 +77,8 @@ export default function TopbarMobileMenu({ links, signOutAction, userEmail }: Pr
   }, [open]);
 
   const drawerLink = "tap-target text-link hover:bg-brand-50 rounded-lg px-3 transition-colors hover:text-link-hover";
+  // CTA klient-first („Znajdź zagrodę") — pełna szerokość, wyśrodkowany przycisk marki w drawerze.
+  const drawerCta = "btn-primary w-full";
 
   return (
     <div className="sm:hidden">
@@ -127,7 +131,7 @@ export default function TopbarMobileMenu({ links, signOutAction, userEmail }: Pr
               </button>
             </div>
             {links.map((link) => (
-              <a key={link.href} href={link.href} onClick={close} className={drawerLink}>
+              <a key={link.href} href={link.href} onClick={close} className={link.cta ? drawerCta : drawerLink}>
                 {link.label}
               </a>
             ))}

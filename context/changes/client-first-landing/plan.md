@@ -172,29 +172,29 @@ No schema or data changes. Ships via the standard worker deploy (`npm run deploy
 
 #### Automated
 
-- [x] 1.1 Typecheck passes: `npx astro check`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Production build succeeds: `npm run build`
-- [x] 1.4 Full test suite passes: `npm test`
+- [x] 1.1 Typecheck passes: `npx astro check` — dbf5563
+- [x] 1.2 Lint passes: `npm run lint` — dbf5563
+- [x] 1.3 Production build succeeds: `npm run build` — dbf5563
+- [x] 1.4 Full test suite passes: `npm test` — dbf5563
 
 #### Manual
 
-- [x] 1.5 Guest `/` on mobile: client-first order, catalog one tap from top
-- [x] 1.6 „Znajdź zagrodę" → `/katalog`; „Załóż konto zagrody" → `/auth/signup`
-- [x] 1.7 Logged-in owner: client-first hero + panel path; bottom login/register hidden
-- [x] 1.8 Polish copy throughout; no owner-voice hero at the top
+- [x] 1.5 Guest `/` on mobile: client-first order, catalog one tap from top — dbf5563
+- [x] 1.6 „Znajdź zagrodę" → `/katalog`; „Załóż konto zagrody" → `/auth/signup` — dbf5563
+- [x] 1.7 Logged-in owner: client-first hero + panel path; bottom login/register hidden — dbf5563
+- [x] 1.8 Polish copy throughout; no owner-voice hero at the top — dbf5563
 
 ### Phase 2: Topbar „Znajdź zagrodę" CTA
 
 #### Automated
 
-- [ ] 2.1 Typecheck passes: `npx astro check`
-- [ ] 2.2 Lint passes: `npm run lint`
-- [ ] 2.3 Production build succeeds: `npm run build`
-- [ ] 2.4 Full test suite passes: `npm test`
+- [x] 2.1 Typecheck passes: `npx astro check`
+- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.3 Production build succeeds: `npm run build`
+- [x] 2.4 Full test suite passes: `npm test`
 
 #### Manual
 
-- [ ] 2.5 Guest topbar: „Znajdź zagrodę" button (desktop + full-width mobile drawer) → `/katalog`; login/register plain links
-- [ ] 2.6 Logged-in owner topbar unchanged
-- [ ] 2.7 CTA is a 44 px tap target; no layout breakage at 320–414 px or desktop
+- [x] 2.5 Guest topbar: „Znajdź zagrodę" button (desktop + full-width mobile drawer) → `/katalog`; login/register plain links
+- [x] 2.6 Logged-in owner topbar unchanged
+- [x] 2.7 CTA is a 44 px tap target; no layout breakage at 320–414 px or desktop

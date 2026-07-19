@@ -7,6 +7,8 @@ const { user } = Astro.locals;
 
 // Tap-target ≥44px na mobile (guardrail jednoręczności).
 const navLink = "tap-target text-link transition-colors hover:text-link-hover hover:underline";
+// CTA klient-first („Znajdź zagrodę") — wyróżniony przycisk marki, sizing dopasowany do niskiego paska.
+const navCta = "btn-primary px-4 text-sm";
 
 // Payload linków budowany raz — współdzielony przez wariant desktop (inline) i mobile (drawer),
 // by stan gość/zalogowany nie rozjechał się między powierzchniami.
@@ -17,7 +19,7 @@ const links: NavLink[] = user
       { href: "/dashboard/zapytania", label: "Zapytania" },
     ]
   : [
-      { href: "/katalog", label: "Katalog" },
+      { href: "/katalog", label: "Znajdź zagrodę", cta: true },
       { href: "/auth/signin", label: "Zaloguj się" },
       { href: "/auth/signup", label: "Zarejestruj się" },
     ];
@@ -34,7 +36,7 @@ const signOutAction = user ? "/api/auth/signout" : undefined;
   <div class="hidden min-w-0 items-center gap-4 sm:flex">
     {
       links.map((link) => (
-        <a href={link.href} class:list={navLink}>
+        <a href={link.href} class:list={link.cta ? navCta : navLink}>
           {link.label}
         </a>
       ))
