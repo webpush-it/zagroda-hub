@@ -25,7 +25,9 @@ if (supabase && user) {
       trip_date: r.trip_date,
       turnus_label: r.turnusy.label,
       participants_count: r.participants_count,
-      guest_name: r.guest_name,
+      // Phone entries (S-08) have no guest contact; Phase 3 adds the source
+      // badge — until then a placeholder label stands in for the name.
+      guest_name: r.guest_name ?? "Wpis telefoniczny",
       status: r.status,
       created_at: r.created_at,
     }));

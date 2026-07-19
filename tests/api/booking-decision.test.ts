@@ -4,6 +4,7 @@ import type { APIRoute } from "astro";
 import { POST as acceptPost } from "../../src/pages/api/booking-request/accept";
 import { POST as rejectPost } from "../../src/pages/api/booking-request/reject";
 import { POST as withdrawPost } from "../../src/pages/api/booking-request/withdraw";
+import { POST as dayBlockPost } from "../../src/pages/api/day-block/index";
 import { assertNoContactData, CookieJar, createApiContext, runRoute, signInOwnerHttp } from "../helpers/api";
 import {
   createAdminClient,
@@ -317,6 +318,41 @@ describe("booking decision lifecycle — HTTP surface", () => {
       notified: true,
     });
     expect(await requestStatus(requestSmall)).toBe("accepted");
+  });
+
+  it("accept on a blocked day → 409 { code: 'day_blocked' }, request stays pending, no email (S-08)", async () => {
+    const fixture = await createOwnerFixture();
+    const guest = uniqueGuest("blocked-day");
+    const tripDate = "2026-10-10";
+    // Seeding order matters: the day-block guard trigger rejects PENDING
+    // inserts on blocked days (service_role bypasses RLS but not the trigger),
+    // so the request must exist BEFORE the block.
+    const requestId = await seedBookingRequest(admin, {
+      zagrodaId: fixture.zagrodaId,
+      turnusId: fixture.turnusId,
+      tripDate,
+      participants: 10,
+      ...guest,
+    });
+
+    const block = await runRoute(
+      dayBlockPost,
+      createApiContext({
+        jar: fixture.jar,
+        path: "/api/day-block",
+        body: { zagroda_id: fixture.zagrodaId, blocked_date: tripDate },
+      }),
+    );
+    expect(block.status).toBe(200);
+
+    const response = await postDecision(acceptPost, "/api/booking-request/accept", fixture.jar, { id: requestId });
+    expect(response.status).toBe(409);
+    expect(await readBody(response, [guest])).toEqual({
+      code: "day_blocked",
+      error: "Dzień jest zablokowany — odblokuj go, aby zaakceptować.",
+    });
+    expect(await requestStatus(requestId)).toBe("pending");
+    expect(await outboxCountFor(guest.guestEmail)).toBe(0);
   });
 
   it("withdraw of a pending request → 409 with the current status", async () => {

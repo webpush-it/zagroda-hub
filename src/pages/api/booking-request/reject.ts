@@ -69,17 +69,23 @@ export const POST: APIRoute = async (context) => {
     return json({ error: "To zapytanie nie jest już oczekujące — odśwież stronę", status: row.status }, 409);
   }
 
-  const notified = await enqueueDecisionEmail(
-    context,
-    buildRejectionEmail({
-      guest_name: request.guest_name,
-      guest_email: request.guest_email,
-      zagroda_name: request.turnusy.zagrody.name,
-      trip_date: request.trip_date,
-      turnus_label: request.turnusy.label,
-      participants_count: request.participants_count,
-    }),
-  );
+  // Phone entries carry no guest contact (S-08); the pending-only gate means
+  // the RPC never rejects one at runtime, but the columns are `string | null`
+  // now — guard the whole e-mail block so the builder never sees a null.
+  const notified =
+    request.guest_email !== null && request.guest_name !== null
+      ? await enqueueDecisionEmail(
+          context,
+          buildRejectionEmail({
+            guest_name: request.guest_name,
+            guest_email: request.guest_email,
+            zagroda_name: request.turnusy.zagrody.name,
+            trip_date: request.trip_date,
+            turnus_label: request.turnusy.label,
+            participants_count: request.participants_count,
+          }),
+        )
+      : false;
 
   return json({ ok: true, status: "rejected", notified });
 };

@@ -66,6 +66,39 @@ export const bookingRequestSchema = z.object({
 
 export type BookingRequestInput = z.infer<typeof bookingRequestSchema>;
 
+// S-08: owner-side payloads. Same client+server sharing contract as
+// bookingRequestSchema; the SQL functions re-check ownership/date only as
+// defense in depth.
+
+export const manualBookingSchema = z.object({
+  zagroda_id: z.uuid("Nieprawidłowy identyfikator zagrody"),
+  turnus_id: z.uuid("Wybierz turnus"),
+  trip_date: z
+    .string("Podaj datę")
+    .regex(DATE_RE, "Podaj datę w formacie RRRR-MM-DD")
+    .refine(isRealDate, "Nieprawidłowa data")
+    .refine(isTodayOrFuture, "Data nie może być w przeszłości"),
+  participants_count: z.coerce
+    .number("Podaj liczbę uczestników")
+    .int("Liczba uczestników musi być liczbą całkowitą")
+    .min(1, "Co najmniej 1 uczestnik")
+    .max(1000, "Maksymalnie 1000 uczestników"),
+  note: z.string().trim().max(500, "Maksymalnie 500 znaków").optional(),
+});
+
+export type ManualBookingInput = z.infer<typeof manualBookingSchema>;
+
+export const dayBlockSchema = z.object({
+  zagroda_id: z.uuid("Nieprawidłowy identyfikator zagrody"),
+  blocked_date: z
+    .string("Podaj datę")
+    .regex(DATE_RE, "Podaj datę w formacie RRRR-MM-DD")
+    .refine(isRealDate, "Nieprawidłowa data")
+    .refine(isTodayOrFuture, "Data nie może być w przeszłości"),
+});
+
+export type DayBlockInput = z.infer<typeof dayBlockSchema>;
+
 export interface BookingEmailContext {
   /** Site origin, e.g. `https://zagroda.example` — used to build the cancel link. */
   origin: string;

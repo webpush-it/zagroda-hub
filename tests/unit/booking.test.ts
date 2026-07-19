@@ -5,7 +5,9 @@ import {
   buildBookingEmails,
   buildRejectionEmail,
   buildWithdrawalEmail,
+  dayBlockSchema,
   isValidPlPhone,
+  manualBookingSchema,
   normalizePhone,
 } from "@/lib/booking";
 
@@ -86,6 +88,61 @@ describe("bookingRequestSchema — other fields", () => {
   it("rejects an empty name and a non-uuid turnus", () => {
     expect(bookingRequestSchema.safeParse({ ...VALID, guest_name: "   " }).success).toBe(false);
     expect(bookingRequestSchema.safeParse({ ...VALID, turnus_id: "nope" }).success).toBe(false);
+  });
+});
+
+describe("manualBookingSchema (S-08)", () => {
+  const VALID_MANUAL = {
+    zagroda_id: "11111111-1111-4111-8111-111111111111",
+    turnus_id: "22222222-2222-4222-8222-222222222222",
+    trip_date: "2999-12-31",
+    participants_count: 5,
+  };
+
+  it("accepts a valid payload without a note (note optional)", () => {
+    expect(manualBookingSchema.safeParse(VALID_MANUAL).success).toBe(true);
+  });
+
+  it("accepts a note up to 500 chars, rejects 501", () => {
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, note: "x".repeat(500) }).success).toBe(true);
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, note: "x".repeat(501) }).success).toBe(false);
+  });
+
+  it("rejects a past and a malformed date", () => {
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, trip_date: "2000-01-01" }).success).toBe(false);
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, trip_date: "31-12-2999" }).success).toBe(false);
+  });
+
+  it("rejects participants 0 and 1001, accepts boundary 1 and 1000", () => {
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, participants_count: 0 }).success).toBe(false);
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, participants_count: 1001 }).success).toBe(false);
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, participants_count: 1 }).success).toBe(true);
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, participants_count: 1000 }).success).toBe(true);
+  });
+
+  it("rejects a non-uuid zagroda or turnus", () => {
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, zagroda_id: "nope" }).success).toBe(false);
+    expect(manualBookingSchema.safeParse({ ...VALID_MANUAL, turnus_id: "nope" }).success).toBe(false);
+  });
+});
+
+describe("dayBlockSchema (S-08)", () => {
+  const VALID_BLOCK = {
+    zagroda_id: "11111111-1111-4111-8111-111111111111",
+    blocked_date: "2999-12-31",
+  };
+
+  it("accepts a valid future date", () => {
+    expect(dayBlockSchema.safeParse(VALID_BLOCK).success).toBe(true);
+  });
+
+  it("rejects a past and a malformed date", () => {
+    expect(dayBlockSchema.safeParse({ ...VALID_BLOCK, blocked_date: "2000-01-01" }).success).toBe(false);
+    expect(dayBlockSchema.safeParse({ ...VALID_BLOCK, blocked_date: "2999-13-40" }).success).toBe(false);
+  });
+
+  it("rejects a non-uuid zagroda", () => {
+    expect(dayBlockSchema.safeParse({ ...VALID_BLOCK, zagroda_id: "nope" }).success).toBe(false);
   });
 });
 

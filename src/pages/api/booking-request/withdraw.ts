@@ -69,17 +69,24 @@ export const POST: APIRoute = async (context) => {
     return json({ error: "To zapytanie nie jest już zaakceptowane — odśwież stronę", status: row.status }, 409);
   }
 
-  const notified = await enqueueDecisionEmail(
-    context,
-    buildWithdrawalEmail({
-      guest_name: request.guest_name,
-      guest_email: request.guest_email,
-      zagroda_name: request.turnusy.zagrody.name,
-      trip_date: request.trip_date,
-      turnus_label: request.turnusy.label,
-      participants_count: request.participants_count,
-    }),
-  );
+  // S-08: withdraw doubles as phone-entry removal — a phone row has no guest
+  // contact, so the entire e-mail block (builder + enqueue) is skipped. The
+  // builder runs OUTSIDE enqueueDecisionEmail's try/catch, so an unguarded
+  // null would 500 AFTER the withdraw already committed.
+  const notified =
+    request.guest_email !== null && request.guest_name !== null
+      ? await enqueueDecisionEmail(
+          context,
+          buildWithdrawalEmail({
+            guest_name: request.guest_name,
+            guest_email: request.guest_email,
+            zagroda_name: request.turnusy.zagrody.name,
+            trip_date: request.trip_date,
+            turnus_label: request.turnusy.label,
+            participants_count: request.participants_count,
+          }),
+        )
+      : false;
 
   return json({ ok: true, status: "withdrawn_by_owner", notified });
 };

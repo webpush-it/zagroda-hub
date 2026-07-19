@@ -317,25 +317,25 @@ Single additive migration; ships via `npm run deploy` (db push **before** worker
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly on a fresh local DB: `npm run db:reset`
-- [x] 1.2 Full test suite passes (incl. extended concurrency + 2 new suites): `npm test`
-- [x] 1.3 Lint passes: `npm run lint`
+- [x] 1.1 Migration applies cleanly on a fresh local DB: `npm run db:reset` — 54b5983
+- [x] 1.2 Full test suite passes (incl. extended concurrency + 2 new suites): `npm test` — 54b5983
+- [x] 1.3 Lint passes: `npm run lint` — 54b5983
 
 #### Manual
 
-- [x] 1.4 Studio sanity check: phone row shape, day_blocks row, `day_blocked=true` from SQL accept on a blocked day
+- [x] 1.4 Studio sanity check: phone row shape, day_blocks row, `day_blocked=true` from SQL accept on a blocked day — 54b5983
 
 ### Phase 2: API routes + types
 
 #### Automated
 
-- [ ] 2.1 Types regenerate cleanly and typecheck passes: `npm run db:types && npx astro check`
-- [ ] 2.2 Full test suite passes: `npm test`
-- [ ] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 Types regenerate cleanly and typecheck passes: `npm run db:types && npx astro check`
+- [x] 2.2 Full test suite passes: `npm test`
+- [x] 2.3 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.4 Local REST smoke: manual entry consumes capacity; blocked day rejects guest POST with Polish message
+- [x] 2.4 Local REST smoke: manual entry consumes capacity; blocked day rejects guest POST with Polish message
 
 ### Phase 3: Panel + guest-facing UI
 

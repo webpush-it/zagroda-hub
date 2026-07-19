@@ -2,7 +2,8 @@ import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import { POST as bookingPost } from "../../src/pages/api/booking-request/index";
 import { POST as cancelPost } from "../../src/pages/api/booking-request/cancel";
-import { assertNoContactData, createApiContext, runRoute } from "../helpers/api";
+import { POST as dayBlockPost } from "../../src/pages/api/day-block/index";
+import { assertNoContactData, CookieJar, createApiContext, runRoute, signInOwnerHttp } from "../helpers/api";
 import {
   createAdminClient,
   createOwnerClient,
@@ -210,6 +211,47 @@ describe("POST /api/booking-request — hostile guest input (risk #5)", () => {
     const response = await postCreate("to nie json{{");
     expect(response.status).toBe(400);
     expect(await readJson(response, [guest])).toEqual({ error: "Nieprawidłowe dane żądania" });
+  });
+
+  it("blocked day → 409 { code: 'day_blocked' }, no row created, no email (S-08)", async () => {
+    // Own published zagroda — blocking a day must not affect the shared fixture.
+    const target = await seedPublishedZagroda("create-blocked");
+    const blockedDate = "2026-10-20";
+    const ownerJar = new CookieJar();
+    await signInOwnerHttp(ownerJar, target.ownerEmail, PASSWORD);
+    const block = await runRoute(
+      dayBlockPost,
+      createApiContext({
+        jar: ownerJar,
+        path: "/api/day-block",
+        body: { zagroda_id: target.zagrodaId, blocked_date: blockedDate },
+      }),
+    );
+    expect(block.status).toBe(200);
+
+    const guest = uniqueGuest("create-blocked");
+    const response = await postCreate({
+      zagroda_id: target.zagrodaId,
+      turnus_id: target.turnusId,
+      trip_date: blockedDate,
+      participants_count: 10,
+      guest_name: guest.guestName,
+      guest_email: guest.guestEmail,
+      guest_phone: guest.guestPhone,
+    });
+    expect(response.status).toBe(409);
+    expect(await readJson(response, [guest])).toEqual({
+      code: "day_blocked",
+      error: "Ten dzień jest niedostępny — zagroda nie przyjmuje zapytań na tę datę.",
+    });
+
+    // The trigger refused the insert — no row, no emails.
+    const { count } = await admin
+      .from("booking_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("zagroda_id", target.zagrodaId);
+    expect(count).toBe(0);
+    expect(await outboxCountFor(guest.guestEmail)).toBe(0);
   });
 });
 

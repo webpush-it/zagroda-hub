@@ -69,6 +69,10 @@ export const POST: APIRoute = async (context) => {
   if (!row) {
     return json({ error: "Nie udało się zaakceptować zapytania" }, 500);
   }
+  if (row.day_blocked) {
+    // S-08: blocked day — the request stays pending until the owner unblocks.
+    return json({ code: "day_blocked", error: "Dzień jest zablokowany — odblokuj go, aby zaakceptować." }, 409);
+  }
   if (!row.accepted) {
     // FR-014 blocked outcome — the request stays pending; exact PRD copy.
     return json(
@@ -82,17 +86,23 @@ export const POST: APIRoute = async (context) => {
     );
   }
 
-  const notified = await enqueueDecisionEmail(
-    context,
-    buildAcceptanceEmail({
-      guest_name: request.guest_name,
-      guest_email: request.guest_email,
-      zagroda_name: request.turnusy.zagrody.name,
-      trip_date: request.trip_date,
-      turnus_label: request.turnusy.label,
-      participants_count: request.participants_count,
-    }),
-  );
+  // Phone entries carry no guest contact (S-08); the status gate means the RPC
+  // never accepts one at runtime, but the columns are `string | null` now —
+  // guard the whole e-mail block so the builder never sees a null.
+  const notified =
+    request.guest_email !== null && request.guest_name !== null
+      ? await enqueueDecisionEmail(
+          context,
+          buildAcceptanceEmail({
+            guest_name: request.guest_name,
+            guest_email: request.guest_email,
+            zagroda_name: request.turnusy.zagrody.name,
+            trip_date: request.trip_date,
+            turnus_label: request.turnusy.label,
+            participants_count: request.participants_count,
+          }),
+        )
+      : false;
 
   return json({ ok: true, status: "accepted", notified });
 };

@@ -44,9 +44,11 @@ if (supabase && user && id) {
       turnus_label: data.turnusy.label,
       turnus_time: `${data.turnusy.start_time.slice(0, 5)}–${data.turnusy.end_time.slice(0, 5)}`,
       participants_count: data.participants_count,
-      guest_name: data.guest_name,
-      guest_email: data.guest_email,
-      guest_phone: data.guest_phone,
+      // Phone entries (S-08) have no guest contact; Phase 3 restructures this
+      // section — until then placeholders keep the render null-safe.
+      guest_name: data.guest_name ?? "Wpis telefoniczny",
+      guest_email: data.guest_email ?? "",
+      guest_phone: data.guest_phone ?? "",
       status: data.status,
       created_at: data.created_at.slice(0, 10),
     };

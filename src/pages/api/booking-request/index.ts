@@ -57,6 +57,15 @@ export const POST: APIRoute = async (context) => {
   const cancel_token = crypto.randomUUID();
   const { error: insertError } = await supabase.from("booking_requests").insert({ ...data, id, cancel_token });
   if (insertError) {
+    // S-08: the day-block guard trigger rejects pending inserts on blocked
+    // days with errcode 55000 / message 'day_blocked' — a domain refusal the
+    // guest should understand, not a generic failure.
+    if (insertError.code === "55000" && insertError.message.includes("day_blocked")) {
+      return json(
+        { code: "day_blocked", error: "Ten dzień jest niedostępny — zagroda nie przyjmuje zapytań na tę datę." },
+        409,
+      );
+    }
     // FK mismatch (turnus not on this zagroda) or RLS rejection — never leak.
     return json({ error: "Nie udało się utworzyć zapytania. Sprawdź wybrany turnus i spróbuj ponownie." }, 422);
   }
