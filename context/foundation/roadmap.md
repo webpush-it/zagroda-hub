@@ -11,7 +11,7 @@ top_blocker: time
 
 # Roadmap: Zagroda Hub
 
-> Wyprowadzona z `context/foundation/prd.md` (v2) + auto-zbadany baseline kodu (potwierdzony przez użytkownika 2026-06-02).
+> Wyprowadzona z `context/foundation/prd-v1.md` (dawniej prd.md, v2) + auto-zbadany baseline kodu (potwierdzony przez użytkownika 2026-06-02).
 > Edytuj w miejscu; archiwizuj przy pełnej regeneracji.
 > Slice'y poniżej są w kolejności zależności. Tabela „At a glance" jest indeksem.
 

@@ -267,7 +267,7 @@ the relevant rollout phase ships; before that, the sub-section reads
   domain outcome (RPC `accepted=false`, status stays `pending`, surfaced as HTTP
   409 + red panel); assert the PRD-derived message
   "Limit dzienny przekroczony (1 z 1 zajęte, 1 wymaga miejsca)" (FR-014,
-  `prd.md:57,131`), matching the stable substring. The foreign-owner IDOR case
+  `prd-v1.md:57,131`), matching the stable substring. The foreign-owner IDOR case
   is **404, not 403** — the cookie-scoped RLS pre-SELECT hides the row before any
   owner re-check ("Nie znaleziono zapytania"); the anonymous case redirects to
   `/auth/signin` via middleware.
