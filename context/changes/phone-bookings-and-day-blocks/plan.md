@@ -329,27 +329,27 @@ Single additive migration; ships via `npm run deploy` (db push **before** worker
 
 #### Automated
 
-- [x] 2.1 Types regenerate cleanly and typecheck passes: `npm run db:types && npx astro check`
-- [x] 2.2 Full test suite passes: `npm test`
-- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 Types regenerate cleanly and typecheck passes: `npm run db:types && npx astro check` — 0f1bce3
+- [x] 2.2 Full test suite passes: `npm test` — 0f1bce3
+- [x] 2.3 Lint passes: `npm run lint` — 0f1bce3
 
 #### Manual
 
-- [x] 2.4 Local REST smoke: manual entry consumes capacity; blocked day rejects guest POST with Polish message
+- [x] 2.4 Local REST smoke: manual entry consumes capacity; blocked day rejects guest POST with Polish message — 0f1bce3
 
 ### Phase 3: Panel + guest-facing UI
 
 #### Automated
 
-- [ ] 3.1 Full test suite passes: `npm test`
-- [ ] 3.2 Typecheck passes: `npx astro check`
-- [ ] 3.3 Lint passes: `npm run lint`
-- [ ] 3.4 Production build succeeds: `npm run build`
+- [x] 3.1 Full test suite passes: `npm test`
+- [x] 3.2 Typecheck passes: `npx astro check`
+- [x] 3.3 Lint passes: `npm run lint`
+- [x] 3.4 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 3.5 Manual entry one-handed < 15 s on mobile viewport, "Telefon" badge visible
-- [ ] 3.6 US-03 walkthrough: colliding acceptance refused with exact FR-014 copy
-- [ ] 3.7 Block/unblock round-trip: guest form refusal, catalog availability, recovery after unblock
-- [ ] 3.8 Entry removal frees capacity instantly, no e-mail sent
-- [ ] 3.9 FR-029 regression spot-check of untouched guest flow
+- [x] 3.5 Manual entry one-handed < 15 s on mobile viewport, "Telefon" badge visible
+- [x] 3.6 US-03 walkthrough: colliding acceptance refused with exact FR-014 copy
+- [x] 3.7 Block/unblock round-trip: guest form refusal, catalog availability, recovery after unblock
+- [x] 3.8 Entry removal frees capacity instantly, no e-mail sent
+- [x] 3.9 FR-029 regression spot-check of untouched guest flow

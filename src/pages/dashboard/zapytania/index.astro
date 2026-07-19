@@ -1,5 +1,7 @@
 ---
 import PageShell from "@/components/PageShell.astro";
+import DayBlocks from "@/components/booking/DayBlocks";
+import ManualBookingForm from "@/components/booking/ManualBookingForm";
 import RequestsList, { type RequestRow } from "@/components/booking/RequestsList";
 import { createClient } from "@/lib/supabase";
 
@@ -7,30 +9,57 @@ const { user } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
 let hasZagroda = false;
+let zagrodaId = "";
 let rows: RequestRow[] = [];
+let turnusy: { id: string; label: string; time: string }[] = [];
+let blocks: { blocked_date: string }[] = [];
 
 if (supabase && user) {
-  const { data: zagroda } = await supabase.from("zagrody").select("id").eq("owner_id", user.id).maybeSingle();
+  const { data: zagroda } = await supabase
+    .from("zagrody")
+    .select("id, turnusy(id, label, start_time, end_time)")
+    .eq("owner_id", user.id)
+    .maybeSingle();
 
   if (zagroda) {
     hasZagroda = true;
-    const { data } = await supabase
-      .from("booking_requests")
-      .select("id, trip_date, participants_count, guest_name, status, created_at, turnusy(label)")
-      .eq("zagroda_id", zagroda.id)
-      .order("created_at", { ascending: false });
+    zagrodaId = zagroda.id;
+    // Same option format as the guest form (zagrody/[id].astro).
+    turnusy = zagroda.turnusy
+      .map((t) => ({
+        id: t.id,
+        label: t.label,
+        time: `${t.start_time.slice(0, 5)}–${t.end_time.slice(0, 5)}`,
+      }))
+      .sort((a, b) => a.time.localeCompare(b.time));
 
-    rows = (data ?? []).map((r) => ({
+    const today = new Date().toISOString().slice(0, 10);
+    const [{ data: requestRows }, { data: blockRows }] = await Promise.all([
+      supabase
+        .from("booking_requests")
+        .select("id, trip_date, participants_count, guest_name, source, status, created_at, turnusy(label)")
+        .eq("zagroda_id", zagroda.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("day_blocks")
+        .select("blocked_date")
+        .eq("zagroda_id", zagroda.id)
+        .gte("blocked_date", today)
+        .order("blocked_date", { ascending: true }),
+    ]);
+
+    rows = (requestRows ?? []).map((r) => ({
       id: r.id,
       trip_date: r.trip_date,
       turnus_label: r.turnusy.label,
       participants_count: r.participants_count,
-      // Phone entries (S-08) have no guest contact; Phase 3 adds the source
-      // badge — until then a placeholder label stands in for the name.
+      // Phone entries (S-08) have no guest contact — a fixed label stands in.
       guest_name: r.guest_name ?? "Wpis telefoniczny",
+      source: r.source,
       status: r.status,
       created_at: r.created_at,
     }));
+    blocks = blockRows ?? [];
   }
 }
 ---
@@ -40,7 +69,11 @@ if (supabase && user) {
     <h1 class="text-brand-700 mb-6 text-2xl font-bold">Zapytania o rezerwację</h1>
     {
       hasZagroda ? (
-        <RequestsList client:load rows={rows} />
+        <div class="space-y-4">
+          <ManualBookingForm client:load zagrodaId={zagrodaId} turnusy={turnusy} />
+          <DayBlocks client:load zagrodaId={zagrodaId} blocks={blocks} />
+          <RequestsList client:load rows={rows} />
+        </div>
       ) : (
         <div class="border-edge bg-surface rounded-xl border p-6 text-center">
           <p class="text-ink font-medium">Brak profilu zagrody</p>

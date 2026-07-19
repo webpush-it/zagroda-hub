@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Calendar, ChevronRight, Clock, Inbox, User, Users } from "lucide-react";
+import { Calendar, ChevronRight, Clock, Inbox, Phone, User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StatusBadge, type RequestStatus } from "@/components/booking/StatusBadge";
+
+export type BookingSource = "app" | "phone";
 
 export interface RequestRow {
   id: string;
@@ -9,8 +11,19 @@ export interface RequestRow {
   turnus_label: string;
   participants_count: number;
   guest_name: string;
+  source: BookingSource;
   status: RequestStatus;
   created_at: string;
+}
+
+/** S-08 FR-028: phone entries carry a visible source chip next to the status. */
+function SourceBadge() {
+  return (
+    <span className="border-brand-200 bg-brand-50 text-brand-700 inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap">
+      <Phone className="size-3" aria-hidden="true" />
+      Telefon
+    </span>
+  );
 }
 
 type FilterKey = "pending" | "accepted" | "rejected" | "cancelled";
@@ -71,6 +84,7 @@ export default function RequestsList({ rows }: { rows: RequestRow[] }) {
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <StatusBadge status={r.status} />
+                    {r.source === "phone" && <SourceBadge />}
                     <span className="text-ink-muted shrink-0 text-xs whitespace-nowrap">
                       Wysłano {r.created_at.slice(0, 10)}
                     </span>

@@ -2,6 +2,7 @@
 import PageShell from "@/components/PageShell.astro";
 import RequestDecision from "@/components/booking/RequestDecision";
 import { StatusBadge, type RequestStatus } from "@/components/booking/StatusBadge";
+import type { BookingSource } from "@/components/booking/RequestsList";
 import { createClient } from "@/lib/supabase";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -14,9 +15,13 @@ interface RequestDetail {
   turnus_label: string;
   turnus_time: string;
   participants_count: number;
-  guest_name: string;
-  guest_email: string;
-  guest_phone: string;
+  // Phone entries (S-08) have no guest contact — the contact section renders
+  // only for app rows, so the nulls never reach the markup.
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
+  source: BookingSource;
+  note: string | null;
   status: RequestStatus;
   created_at: string;
 }
@@ -32,7 +37,7 @@ if (supabase && user && id) {
   const { data } = await supabase
     .from("booking_requests")
     .select(
-      "trip_date, participants_count, guest_name, guest_email, guest_phone, status, created_at, turnusy(label, start_time, end_time)",
+      "trip_date, participants_count, guest_name, guest_email, guest_phone, source, note, status, created_at, turnusy(label, start_time, end_time)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -44,11 +49,11 @@ if (supabase && user && id) {
       turnus_label: data.turnusy.label,
       turnus_time: `${data.turnusy.start_time.slice(0, 5)}–${data.turnusy.end_time.slice(0, 5)}`,
       participants_count: data.participants_count,
-      // Phone entries (S-08) have no guest contact; Phase 3 restructures this
-      // section — until then placeholders keep the render null-safe.
-      guest_name: data.guest_name ?? "Wpis telefoniczny",
-      guest_email: data.guest_email ?? "",
-      guest_phone: data.guest_phone ?? "",
+      guest_name: data.guest_name,
+      guest_email: data.guest_email,
+      guest_phone: data.guest_phone,
+      source: data.source,
+      note: data.note,
       status: data.status,
       created_at: data.created_at.slice(0, 10),
     };
@@ -65,6 +70,14 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
   cancelled_by_guest: "To zapytanie zostało anulowane przez nauczyciela.",
   withdrawn_by_owner: "Akceptacja tego zapytania została wycofana.",
 };
+
+const PHONE_TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
+  withdrawn_by_owner: "Ten wpis telefoniczny został usunięty.",
+};
+
+const terminalCopy = request
+  ? ((request.source === "phone" ? PHONE_TERMINAL_COPY[request.status] : undefined) ?? TERMINAL_COPY[request.status])
+  : undefined;
 ---
 
 <PageShell title={request ? "Szczegóły zapytania" : "Nie znaleziono zapytania"}>
@@ -76,8 +89,12 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
     {
       request ? (
         <article>
-          <h1 class="text-brand-700 text-2xl font-bold">Szczegóły zapytania</h1>
-          <p class="text-ink-muted mt-1 text-xs">Wysłano {request.created_at}</p>
+          <h1 class="text-brand-700 text-2xl font-bold">
+            {request.source === "phone" ? "Wpis telefoniczny" : "Szczegóły zapytania"}
+          </h1>
+          <p class="text-ink-muted mt-1 text-xs">
+            {request.source === "phone" ? "Dodano" : "Wysłano"} {request.created_at}
+          </p>
 
           <dl class="mt-6 flex flex-col gap-2">
             <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
@@ -94,49 +111,62 @@ const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
               <dt class="text-ink-muted">Liczba uczestników</dt>
               <dd class="text-ink font-medium">{request.participants_count}</dd>
             </div>
+            <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+              <dt class="text-ink-muted">Źródło</dt>
+              <dd class="text-ink font-medium">{request.source === "phone" ? "telefon" : "aplikacja"}</dd>
+            </div>
           </dl>
 
-          <section class="mt-6">
-            <h2 class="text-ink mb-2 text-base font-semibold">Kontakt do nauczyciela</h2>
-            <dl class="flex flex-col gap-2">
-              <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
-                <dt class="text-ink-muted shrink-0">Imię i nazwisko</dt>
-                <dd class="text-ink min-w-0 text-right font-medium break-words">{request.guest_name}</dd>
-              </div>
-              <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
-                <dt class="text-ink-muted">E-mail</dt>
-                <dd class="min-w-0">
-                  <a
-                    href={`mailto:${request.guest_email}`}
-                    class="text-link hover:text-link-hover block truncate font-medium hover:underline"
-                  >
-                    {request.guest_email}
-                  </a>
-                </dd>
-              </div>
-              <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                <dt class="text-ink-muted">Telefon</dt>
-                <dd>
-                  <a
-                    href={`tel:${request.guest_phone}`}
-                    class="text-link hover:text-link-hover font-medium hover:underline"
-                  >
-                    {request.guest_phone}
-                  </a>
-                </dd>
-              </div>
-            </dl>
-          </section>
+          {request.source === "phone" ? (
+            request.note && (
+              <section class="mt-6">
+                <h2 class="text-ink mb-2 text-base font-semibold">Notatka</h2>
+                <p class="border-edge bg-surface text-ink rounded-lg border px-3 py-3 text-sm break-words whitespace-pre-wrap">
+                  {request.note}
+                </p>
+              </section>
+            )
+          ) : (
+            <section class="mt-6">
+              <h2 class="text-ink mb-2 text-base font-semibold">Kontakt do nauczyciela</h2>
+              <dl class="flex flex-col gap-2">
+                <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+                  <dt class="text-ink-muted shrink-0">Imię i nazwisko</dt>
+                  <dd class="text-ink min-w-0 text-right font-medium break-words">{request.guest_name}</dd>
+                </div>
+                <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
+                  <dt class="text-ink-muted">E-mail</dt>
+                  <dd class="min-w-0">
+                    <a
+                      href={`mailto:${request.guest_email}`}
+                      class="text-link hover:text-link-hover block truncate font-medium hover:underline"
+                    >
+                      {request.guest_email}
+                    </a>
+                  </dd>
+                </div>
+                <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+                  <dt class="text-ink-muted">Telefon</dt>
+                  <dd>
+                    <a
+                      href={`tel:${request.guest_phone}`}
+                      class="text-link hover:text-link-hover font-medium hover:underline"
+                    >
+                      {request.guest_phone}
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          )}
 
           <section class="border-edge mt-6 border-t pt-6">
             {request.status === "pending" || request.status === "accepted" ? (
-              <RequestDecision client:load id={request.id} initialStatus={request.status} />
+              <RequestDecision client:load id={request.id} initialStatus={request.status} source={request.source} />
             ) : (
               <div class="space-y-3">
                 <StatusBadge status={request.status} />
-                <p class="border-edge bg-surface text-ink-muted rounded-lg border px-3 py-3 text-sm">
-                  {TERMINAL_COPY[request.status]}
-                </p>
+                <p class="border-edge bg-surface text-ink-muted rounded-lg border px-3 py-3 text-sm">{terminalCopy}</p>
               </div>
             )}
           </section>

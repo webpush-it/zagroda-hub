@@ -20,6 +20,7 @@ interface Props {
 
 interface SubmitResponse {
   ok?: boolean;
+  code?: string;
   fieldErrors?: Record<string, string>;
   error?: string;
 }
@@ -86,6 +87,9 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
       const data = (await res.json()) as SubmitResponse;
       if (res.status === 422 && data.fieldErrors) {
         setFieldErrors(data.fieldErrors);
+      } else if (res.status === 409 && data.code === "day_blocked") {
+        // S-08: the owner blocked this day — steer the guest to another date.
+        setFieldErrors({ trip_date: "Ten dzień jest niedostępny — wybierz inną datę." });
       } else if (!res.ok || !data.ok) {
         setServerError(data.error ?? "Nie udało się wysłać zapytania — spróbuj ponownie");
       } else {

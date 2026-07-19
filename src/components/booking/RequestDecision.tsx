@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { Check, CircleAlert, CircleCheck, Loader2, TriangleAlert, Undo2, X } from "lucide-react";
+import { Check, CircleAlert, CircleCheck, Loader2, Trash2, TriangleAlert, Undo2, X } from "lucide-react";
 import { StatusBadge, type RequestStatus } from "@/components/booking/StatusBadge";
+import type { BookingSource } from "@/components/booking/RequestsList";
 
 interface Props {
   id: string;
   initialStatus: RequestStatus;
+  source: BookingSource;
 }
 
 interface DecisionResponse {
   ok?: boolean;
+  code?: string;
   status?: string;
   error?: string;
   occupied?: number;
@@ -29,10 +32,11 @@ type Notice =
   | { kind: "rejected" }
   | { kind: "withdrawn" }
   | { kind: "blocked"; message: string } // over limit — request stays pending, buttons stay active
+  | { kind: "day_blocked"; message: string } // S-08 blocked day — pending too, buttons stay active
   | { kind: "stale"; message: string } // status changed elsewhere — prompt a refresh
   | { kind: "error"; message: string };
 
-export default function RequestDecision({ id, initialStatus }: Props) {
+export default function RequestDecision({ id, initialStatus, source }: Props) {
   const [status, setStatus] = useState<RequestStatus>(initialStatus);
   const [submitting, setSubmitting] = useState<Action | null>(null);
   const [confirmingReject, setConfirmingReject] = useState(false);
@@ -52,6 +56,12 @@ export default function RequestDecision({ id, initialStatus }: Props) {
       if (res.ok && data.ok) {
         setStatus(ACTION_RESULT[action].status);
         setNotice({ kind: ACTION_RESULT[action].notice });
+      } else if (res.status === 409 && data.code === "day_blocked") {
+        // S-08: the day is blocked — the request stays pending until unblocked.
+        setNotice({
+          kind: "day_blocked",
+          message: data.error ?? "Dzień jest zablokowany — odblokuj go, aby zaakceptować.",
+        });
       } else if (res.status === 409 && typeof data.occupied === "number") {
         // FR-014 blocked outcome — the server message carries the exact X/Y/Z copy.
         setNotice({ kind: "blocked", message: data.error ?? "Limit dzienny przekroczony" });
@@ -93,7 +103,13 @@ export default function RequestDecision({ id, initialStatus }: Props) {
       {notice?.kind === "withdrawn" && (
         <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
           <CircleCheck className="mt-0.5 size-4 shrink-0" />
-          Wycofano — nauczyciel dostanie e-mail
+          {source === "phone" ? "Usunięto wpis — miejsca zostały zwolnione" : "Wycofano — nauczyciel dostanie e-mail"}
+        </p>
+      )}
+      {notice?.kind === "day_blocked" && (
+        <p className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-100 px-3 py-3 text-sm text-amber-900">
+          <TriangleAlert className="mt-0.5 size-4 shrink-0" />
+          {notice.message}
         </p>
       )}
       {notice?.kind === "blocked" && (
@@ -172,7 +188,9 @@ export default function RequestDecision({ id, initialStatus }: Props) {
         (confirmingWithdraw ? (
           <div className="space-y-2 rounded-lg border border-red-300 bg-red-100 p-3">
             <p className="text-sm text-red-900">
-              Na pewno cofnąć akceptację? Zapytania nie będzie można ponownie zaakceptować.
+              {source === "phone"
+                ? "Na pewno usunąć wpis? Miejsca zostaną natychmiast zwolnione."
+                : "Na pewno cofnąć akceptację? Zapytania nie będzie można ponownie zaakceptować."}
             </p>
             <div className="flex gap-2">
               <button
@@ -181,8 +199,20 @@ export default function RequestDecision({ id, initialStatus }: Props) {
                 disabled={submitting !== null}
                 className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
               >
-                {submitting === "withdraw" ? <Loader2 className="size-4 animate-spin" /> : <Undo2 className="size-4" />}
-                {submitting === "withdraw" ? "Wycofywanie…" : "Tak, cofnij"}
+                {submitting === "withdraw" ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : source === "phone" ? (
+                  <Trash2 className="size-4" />
+                ) : (
+                  <Undo2 className="size-4" />
+                )}
+                {submitting === "withdraw"
+                  ? source === "phone"
+                    ? "Usuwanie…"
+                    : "Wycofywanie…"
+                  : source === "phone"
+                    ? "Tak, usuń"
+                    : "Tak, cofnij"}
               </button>
               <button
                 type="button"
@@ -205,8 +235,8 @@ export default function RequestDecision({ id, initialStatus }: Props) {
             disabled={submitting !== null}
             className="btn-secondary w-full disabled:opacity-50"
           >
-            <Undo2 className="size-4" />
-            Cofnij akceptację
+            {source === "phone" ? <Trash2 className="size-4" /> : <Undo2 className="size-4" />}
+            {source === "phone" ? "Usuń wpis" : "Cofnij akceptację"}
           </button>
         ))}
     </div>
