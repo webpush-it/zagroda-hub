@@ -188,13 +188,13 @@ No schema or data changes. Ships via the standard worker deploy (`npm run deploy
 
 #### Automated
 
-- [x] 2.1 Typecheck passes: `npx astro check`
-- [x] 2.2 Lint passes: `npm run lint`
-- [x] 2.3 Production build succeeds: `npm run build`
-- [x] 2.4 Full test suite passes: `npm test`
+- [x] 2.1 Typecheck passes: `npx astro check` — d53f72b
+- [x] 2.2 Lint passes: `npm run lint` — d53f72b
+- [x] 2.3 Production build succeeds: `npm run build` — d53f72b
+- [x] 2.4 Full test suite passes: `npm test` — d53f72b
 
 #### Manual
 
-- [x] 2.5 Guest topbar: „Znajdź zagrodę" button (desktop + full-width mobile drawer) → `/katalog`; login/register plain links
-- [x] 2.6 Logged-in owner topbar unchanged
-- [x] 2.7 CTA is a 44 px tap target; no layout breakage at 320–414 px or desktop
+- [x] 2.5 Guest topbar: „Znajdź zagrodę" button (desktop + full-width mobile drawer) → `/katalog`; login/register plain links — d53f72b
+- [x] 2.6 Logged-in owner topbar unchanged — d53f72b
+- [x] 2.7 CTA is a 44 px tap target; no layout breakage at 320–414 px or desktop — d53f72b
