@@ -6,125 +6,66 @@ const year = new Date().getFullYear();
 
 const primaryBtn = "btn-primary px-6 py-3 text-base";
 const secondaryBtn = "btn-secondary px-6 py-3 text-base";
-const teacherLink =
-  "tap-target text-link hover:text-link-hover inline-flex items-center justify-center px-4 text-base font-semibold underline-offset-4 hover:underline";
 const card = "card-surface";
 
-const steps = [
-  {
-    title: "Opublikuj swoją zagrodę",
-    body: "Dodaj ofertę i ustaw dzienny limit miejsc. Nauczyciele znajdą Twoją zagrodę w katalogu, filtrując po województwie i terminie.",
-  },
-  {
-    title: "Odbieraj zapytania online",
-    body: "Zamiast telefonów w polu dostajesz zapytania nauczycieli w jednym miejscu — z terminem wycieczki i liczbą osób.",
-  },
-  {
-    title: "Akceptuj bez ryzyka",
-    body: "Potwierdzasz termin jednym tapnięciem, a system pilnuje, żeby ten sam dzień nie został zarezerwowany ponad Twój limit miejsc.",
-  },
+const clientSteps = [
+  "Przeglądaj zagrody edukacyjne w swoim województwie.",
+  "Sprawdź dostępność na wybrany termin wycieczki.",
+  "Wyślij zapytanie — bez zakładania konta.",
 ];
 ---
 
 <PageShell
-  title="Zagroda Hub — rezerwacje wycieczek do Twojej zagrody z telefonu"
-  description="Prowadzisz zagrodę edukacyjną? Przyjmuj zapytania nauczycieli online i akceptuj je jednym tapnięciem — z gwarancją, że ten sam dzień nie zostanie zarezerwowany ponad Twój limit miejsc."
+  title="Zagroda Hub — znajdź zagrodę edukacyjną na wycieczkę"
+  description="Przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw."
   width="wide"
+  brand
 >
-  <!-- Hero -->
+  <!-- Hero klient-first -->
   <section class="px-2 py-16 text-center sm:py-24">
     <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">
-      Rezerwacje wycieczek do Twojej zagrody — w jednym miejscu, prosto z telefonu.
+      Znajdź zagrodę edukacyjną na wycieczkę — w swoim województwie.
     </h1>
-    <p class="text-ink mx-auto mb-4 max-w-2xl text-lg sm:text-xl">
-      Zamiast odbierać telefony w polu, dostajesz zapytania nauczycieli online i akceptujesz je jednym tapnięciem.
+    <p class="text-ink mx-auto mb-10 max-w-2xl text-lg sm:text-xl">
+      Przeglądaj zagrody, sprawdź dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez
+      obdzwaniania kolejnych gospodarstw.
     </p>
-    <p class="text-ink-muted mx-auto mb-10 max-w-2xl text-base sm:text-lg">
-      Zagroda Hub pilnuje, żeby ten sam dzień nie został zarezerwowany ponad Twój limit miejsc — koniec z podwójnymi
-      rezerwacjami z kartki.
-    </p>
-    <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+    <div class="flex flex-col items-center gap-4">
+      <a href="/katalog" class:list={primaryBtn}>Znajdź zagrodę</a>
       {
-        user ? (
-          <>
-            <a href="/dashboard" class:list={primaryBtn}>
-              Przejdź do panelu
-            </a>
-            <a href="/dashboard/zapytania" class:list={secondaryBtn}>
-              Zobacz zapytania
-            </a>
-          </>
-        ) : (
-          <>
-            <a href="/auth/signup" class:list={primaryBtn}>
-              Załóż konto zagrody
-            </a>
-            <a href="/katalog" class:list={teacherLink}>
-              Szukasz zagrody na wycieczkę? →
-            </a>
-          </>
+        user && (
+          <a href="/dashboard" class:list={secondaryBtn}>
+            Przejdź do panelu
+          </a>
         )
       }
     </div>
   </section>
 
-  <!-- Jak to działa -->
-  <section class="py-12">
-    <h2 class="text-ink mb-8 text-center text-2xl font-bold sm:text-3xl">Jak to działa</h2>
-    <ol class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+  <!-- Jak to działa (klient, kompaktowo) -->
+  <section class="py-8">
+    <ol class="mx-auto grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
       {
-        steps.map((step, i) => (
-          <li class:list={card}>
-            <span class="bg-brand-600 mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full font-semibold text-white">
+        clientSteps.map((step, i) => (
+          <li class="flex items-start gap-3">
+            <span class="bg-brand-600 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white">
               {i + 1}
             </span>
-            <h3 class="text-ink mb-2 text-lg font-semibold">{step.title}</h3>
-            <p class="text-ink-muted text-sm leading-relaxed">{step.body}</p>
+            <p class="text-ink-muted text-sm leading-relaxed">{step}</p>
           </li>
         ))
       }
     </ol>
   </section>
 
-  <!-- Gwarancja i korzyści -->
+  <!-- Skonsolidowana sekcja ownera -->
   <section class="py-12">
-    <div class="mx-auto mb-8 max-w-3xl text-center">
-      <h2 class="text-ink mb-3 text-2xl font-bold sm:text-3xl">Bez podwójnych rezerwacji — gwarantowane</h2>
-      <p class="text-ink-muted mx-auto max-w-2xl text-base sm:text-lg">
-        System liczy zajęte miejsca na każdy dzień i nie pozwoli przyjąć więcej zapytań, niż wynosi Twój dzienny limit.
-        Ten sam dzień nie zostanie zarezerwowany ponad limit — nawet jeśli kilku nauczycieli pisze naraz.
-      </p>
-    </div>
-    <ul class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-      <li class:list={card}>
-        <h3 class="text-ink mb-2 text-lg font-semibold">Wszystko z telefonu</h3>
-        <p class="text-ink-muted text-sm leading-relaxed">
-          Zarządzasz rezerwacjami jedną ręką, prosto z pola — bez komputera i bez papierowego kalendarza.
-        </p>
-      </li>
-      <li class:list={card}>
-        <h3 class="text-ink mb-2 text-lg font-semibold">Jeden kalendarz na wszystko</h3>
-        <p class="text-ink-muted text-sm leading-relaxed">
-          Zapytania od nauczycieli trafiają w jedno miejsce — z terminem i liczbą osób — zamiast rozsypywać się po
-          telefonach i karteczkach.
-        </p>
-      </li>
-      <li class:list={card}>
-        <h3 class="text-ink mb-2 text-lg font-semibold">Akceptacja jednym tapnięciem</h3>
-        <p class="text-ink-muted text-sm leading-relaxed">
-          Potwierdzasz albo odrzucasz zapytanie od razu, a nauczyciel dostaje odpowiedź bez kolejnego telefonu.
-        </p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- Persony -->
-  <section class="grid grid-cols-1 gap-6 py-12 md:grid-cols-2">
     <div class:list={card}>
-      <h2 class="text-ink mb-2 text-xl font-bold">Prowadzisz zagrodę?</h2>
-      <p class="text-ink-muted mb-6 text-sm leading-relaxed">
-        Przyjmuj zapytania i zarządzaj rezerwacjami z telefonu, jedną ręką, prosto z terenu. Akceptuj lub odrzucaj
-        zgłoszenia, a system pilnuje dziennego limitu miejsc — bez ryzyka podwójnej rezerwacji na ten sam dzień.
+      <h2 class="text-ink mb-3 text-2xl font-bold sm:text-3xl">Prowadzisz zagrodę?</h2>
+      <p class="text-ink-muted mb-6 max-w-2xl text-base leading-relaxed">
+        Przyjmuj zapytania nauczycieli online i zarządzaj rezerwacjami z telefonu, jedną ręką, prosto z terenu.
+        Akceptujesz lub odrzucasz zgłoszenia jednym tapnięciem, a system pilnuje dziennego limitu miejsc — ten sam dzień
+        nie zostanie zarezerwowany ponad limit, nawet jeśli kilku nauczycieli pisze naraz.
       </p>
       {
         user ? (
@@ -138,33 +79,24 @@ const steps = [
         )
       }
     </div>
-    <div class:list={card}>
-      <h2 class="text-ink mb-2 text-xl font-bold">Szukasz zagrody na wycieczkę?</h2>
-      <p class="text-ink-muted mb-6 text-sm leading-relaxed">
-        Przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie —
-        bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
-      </p>
-      <a href="/katalog" class:list={primaryBtn}>Przeglądaj zagrody</a>
-    </div>
   </section>
 
-  <!-- Powtórzone CTA -->
-  <section class="py-12 text-center">
-    <h2 class="text-ink mb-6 text-2xl font-bold sm:text-3xl">Gotowy, żeby przyjmować rezerwacje online?</h2>
-    <div class="flex justify-center">
-      {
-        user ? (
-          <a href="/dashboard" class:list={primaryBtn}>
-            Przejdź do panelu
+  <!-- Logowanie / rejestracja (tylko gość) -->
+  {
+    !user && (
+      <section class="border-edge border-t py-10 text-center">
+        <p class="text-ink-muted mb-4 text-base">Masz już konto zagrody?</p>
+        <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a href="/auth/signin" class:list={secondaryBtn}>
+            Zaloguj się
           </a>
-        ) : (
           <a href="/auth/signup" class:list={primaryBtn}>
-            Załóż konto zagrody
+            Zarejestruj się
           </a>
-        )
-      }
-    </div>
-  </section>
+        </div>
+      </section>
+    )
+  }
 
   <!-- Stopka -->
   <footer class="border-edge text-ink-muted border-t py-8 text-center text-sm">
