@@ -317,13 +317,13 @@ Single additive migration; ships via `npm run deploy` (db push **before** worker
 
 #### Automated
 
-- [ ] 1.1 Migration applies cleanly on a fresh local DB: `npm run db:reset`
-- [ ] 1.2 Full test suite passes (incl. extended concurrency + 2 new suites): `npm test`
-- [ ] 1.3 Lint passes: `npm run lint`
+- [x] 1.1 Migration applies cleanly on a fresh local DB: `npm run db:reset`
+- [x] 1.2 Full test suite passes (incl. extended concurrency + 2 new suites): `npm test`
+- [x] 1.3 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 1.4 Studio sanity check: phone row shape, day_blocks row, `day_blocked=true` from SQL accept on a blocked day
+- [x] 1.4 Studio sanity check: phone row shape, day_blocks row, `day_blocked=true` from SQL accept on a blocked day
 
 ### Phase 2: API routes + types
 

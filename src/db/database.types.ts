@@ -38,11 +38,13 @@ export type Database = {
         Row: {
           cancel_token: string
           created_at: string
-          guest_email: string
-          guest_name: string
-          guest_phone: string
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
           id: string
+          note: string | null
           participants_count: number
+          source: Database["public"]["Enums"]["booking_source"]
           status: Database["public"]["Enums"]["request_status"]
           trip_date: string
           turnus_id: string
@@ -52,11 +54,13 @@ export type Database = {
         Insert: {
           cancel_token?: string
           created_at?: string
-          guest_email: string
-          guest_name: string
-          guest_phone: string
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
           id?: string
+          note?: string | null
           participants_count: number
+          source?: Database["public"]["Enums"]["booking_source"]
           status?: Database["public"]["Enums"]["request_status"]
           trip_date: string
           turnus_id: string
@@ -66,11 +70,13 @@ export type Database = {
         Update: {
           cancel_token?: string
           created_at?: string
-          guest_email?: string
-          guest_name?: string
-          guest_phone?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
           id?: string
+          note?: string | null
           participants_count?: number
+          source?: Database["public"]["Enums"]["booking_source"]
           status?: Database["public"]["Enums"]["request_status"]
           trip_date?: string
           turnus_id?: string
@@ -84,6 +90,35 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "turnusy"
             referencedColumns: ["id", "zagroda_id"]
+          },
+        ]
+      }
+      day_blocks: {
+        Row: {
+          blocked_date: string
+          created_at: string
+          id: string
+          zagroda_id: string
+        }
+        Insert: {
+          blocked_date: string
+          created_at?: string
+          id?: string
+          zagroda_id: string
+        }
+        Update: {
+          blocked_date?: string
+          created_at?: string
+          id?: string
+          zagroda_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "day_blocks_zagroda_id_fkey"
+            columns: ["zagroda_id"]
+            isOneToOne: false
+            referencedRelation: "zagrody"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -216,8 +251,16 @@ export type Database = {
         Returns: {
           accepted: boolean
           daily_limit: number
+          day_blocked: boolean
           occupied: number
           requested: number
+        }[]
+      }
+      block_day: {
+        Args: { p_blocked_date: string; p_zagroda_id: string }
+        Returns: {
+          already_blocked: boolean
+          blocked: boolean
         }[]
       }
       cancel_booking_request: {
@@ -269,6 +312,23 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      create_manual_booking: {
+        Args: {
+          p_note?: string
+          p_participants: number
+          p_trip_date: string
+          p_turnus_id: string
+          p_zagroda_id: string
+        }
+        Returns: {
+          created: boolean
+          daily_limit: number
+          day_blocked: boolean
+          occupied: number
+          request_id: string
+          requested: number
+        }[]
+      }
       email_verified: { Args: never; Returns: boolean }
       password_account_exists: { Args: { p_email: string }; Returns: boolean }
       reject_booking_request: {
@@ -282,6 +342,12 @@ export type Database = {
         Args: { publish: boolean; target_zagroda_id: string }
         Returns: boolean
       }
+      unblock_day: {
+        Args: { p_blocked_date: string; p_zagroda_id: string }
+        Returns: {
+          unblocked: boolean
+        }[]
+      }
       withdraw_booking_request: {
         Args: { request_id: string }
         Returns: {
@@ -291,6 +357,7 @@ export type Database = {
       }
     }
     Enums: {
+      booking_source: "app" | "phone"
       request_status:
         | "pending"
         | "accepted"
@@ -444,6 +511,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      booking_source: ["app", "phone"],
       request_status: [
         "pending",
         "accepted",
