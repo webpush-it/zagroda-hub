@@ -3,6 +3,7 @@ import {
   createAdminClient,
   createOwnerClient,
   createSignedInClient,
+  isoDate,
   seedBookingRequest,
   seedZagroda,
   uniqueEmail,
@@ -103,7 +104,7 @@ describe("create_manual_booking × accept_booking_request — cross-channel conc
         const { zagrodaId, turnusIds } = await seedZagroda(admin, { ownerId: userId, dailyLimit: 30 });
 
         // Must be in the future: create_manual_booking hard-rejects past dates.
-        const tripDate = "2026-12-01";
+        const tripDate = isoDate(60);
         const pendingApp = await seedBookingRequest(admin, {
           zagrodaId,
           turnusId: turnusIds[0],

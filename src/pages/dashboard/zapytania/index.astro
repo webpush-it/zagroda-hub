@@ -39,7 +39,11 @@ if (supabase && user) {
         .from("booking_requests")
         .select("id, trip_date, participants_count, guest_name, source, status, created_at, turnusy(label)")
         .eq("zagroda_id", zagroda.id)
-        .order("created_at", { ascending: false }),
+        .order("created_at", { ascending: false })
+        // Bound the SSR payload — the list (incl. cancelled/withdrawn history) is
+        // filtered client-side across all statuses, so cap the most-recent rows
+        // rather than scope by status. Mirrors catalog_zagrody's limit posture.
+        .limit(200),
       supabase
         .from("day_blocks")
         .select("blocked_date")

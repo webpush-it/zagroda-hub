@@ -29,3 +29,10 @@
 - **Problem**: Flex-child bez `min-w-0` nie zwęża się poniżej swojej min-content. Pojedynczy długi token (np. e-mail bez spacji) ma min-content = pełna szerokość, więc `truncate`/`max-w-*` nie tną — element rozpycha layout lub wylewa się poza kontener. Wystąpiło przy `fix-mobile-ui-bugs` i ponownie przy `topbar-user-email` (inline e-mail wylewał się poza nagłówek @640–900px; fix `76a1d6b`).
 - **Rule**: Gdy flex-child ma się skracać, dodaj `min-w-0` do tego dziecka (i w razie potrzeby do jego flex-kontenera). Samo `truncate`/`max-w-*` nie zadziała w wierszu flex — bez `min-w-0` próg min-content blokuje zwężanie.
 - **Applies to**: plan, implement, impl-review
+
+## PGRST303 "JWT issued at future" in DB tests is an environmental clock-skew flake
+
+- **Context**: tests/db/*.test.ts (e.g. withdraw.test.ts) — DB suites that sign in via GoTrue (`signInWithPassword` in tests/helpers/supabase.ts) and hit PostgREST with the returned JWT.
+- **Problem**: A `npm test` run can intermittently fail a handful of tests with `PGRST303 "JWT issued at future"`; a clean re-run passes all. Root cause is clock skew between the GoTrue container (which mints the token's `iat`) and PostgREST (which validates it) — aggravated in fake-date/sandbox environments. Because the token is GoTrue-minted, the test helper cannot backdate `iat`; there is no clean source-level fix.
+- **Rule**: Treat a single red DB-test run whose only failures are PGRST303 "JWT issued at future" as an environmental flake, not a code regression — re-run before judging. Do NOT edit feature code to chase it. If it recurs persistently in CI, address it at the infra level (container time sync / a clock-leeway wrapper in the test helper), never in the reviewed change.
+- **Applies to**: implement, impl-review (whenever verifying `npm test`)

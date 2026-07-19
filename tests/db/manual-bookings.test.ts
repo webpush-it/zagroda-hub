@@ -3,6 +3,7 @@ import {
   createAdminClient,
   createAnonClient,
   createOwnerClient,
+  isoDate,
   seedBookingRequest,
   seedZagroda,
   uniqueEmail,
@@ -57,7 +58,7 @@ async function accept(client: TypedClient, requestId: string) {
 describe("create_manual_booking — manual phone entries", () => {
   it("(a) creates an accepted phone row with note and no guest contact", async () => {
     const { row, error } = await createManual(owner, {
-      tripDate: "2026-10-01",
+      tripDate: isoDate(30),
       participants: 10,
       note: "Pani Kasia, szkoła nr 5",
     });
@@ -84,7 +85,7 @@ describe("create_manual_booking — manual phone entries", () => {
   });
 
   it("(b) an entry consumes capacity: a colliding acceptance is refused with the entry's seats", async () => {
-    const tripDate = "2026-10-02";
+    const tripDate = isoDate(31);
     const { row: entry } = await createManual(owner, { tripDate, participants: 20 });
     expect(entry?.created).toBe(true);
 
@@ -98,7 +99,7 @@ describe("create_manual_booking — manual phone entries", () => {
   });
 
   it("(c) an over-limit entry is refused softly with honest numbers; no row is inserted", async () => {
-    const tripDate = "2026-10-03";
+    const tripDate = isoDate(32);
     await seedBookingRequest(admin, { zagrodaId, turnusId, tripDate, participants: 20, status: "accepted" });
 
     const { row, error } = await createManual(owner, { tripDate, participants: 15 });
@@ -117,7 +118,7 @@ describe("create_manual_booking — manual phone entries", () => {
   });
 
   it("(d) withdraw_booking_request works unchanged on a phone entry and frees the seats instantly", async () => {
-    const tripDate = "2026-10-04";
+    const tripDate = isoDate(33);
     const { row: entry } = await createManual(owner, { tripDate, participants: 25 });
     expect(entry?.created).toBe(true);
 
@@ -137,14 +138,14 @@ describe("create_manual_booking — manual phone entries", () => {
   it("(e) a foreign owner gets 42501 and no entry is created", async () => {
     const { client: stranger } = await createOwnerClient(uniqueEmail("manual-stranger"), PASSWORD);
 
-    const { row, error } = await createManual(stranger, { tripDate: "2026-10-05", participants: 5 });
+    const { row, error } = await createManual(stranger, { tripDate: isoDate(34), participants: 5 });
 
     expect(row).toBeUndefined();
     expect(error?.code).toBe("42501"); // insufficient_privilege
   });
 
   it("(f) a past trip date is a hard 55000", async () => {
-    const { row, error } = await createManual(owner, { tripDate: "2020-01-01", participants: 5 });
+    const { row, error } = await createManual(owner, { tripDate: isoDate(-30), participants: 5 });
 
     expect(row).toBeUndefined();
     expect(error?.code).toBe("55000"); // object_not_in_prerequisite_state
@@ -153,7 +154,7 @@ describe("create_manual_booking — manual phone entries", () => {
   it("(g) anon has no EXECUTE grant", async () => {
     const anon = createAnonClient();
 
-    const { row, error } = await createManual(anon, { tripDate: "2026-10-06", participants: 5 });
+    const { row, error } = await createManual(anon, { tripDate: isoDate(35), participants: 5 });
 
     expect(row).toBeUndefined();
     expect(error?.code).toBe("42501"); // permission denied for function
@@ -163,7 +164,7 @@ describe("create_manual_booking — manual phone entries", () => {
     const forged = {
       zagroda_id: zagrodaId,
       turnus_id: turnusId,
-      trip_date: "2026-10-07",
+      trip_date: isoDate(36),
       participants_count: 5,
       status: "pending",
       source: "phone",

@@ -4,6 +4,7 @@ import {
   createAdminClient,
   createAnonClient,
   createOwnerClient,
+  isoDate,
   seedBookingRequest,
   seedZagroda,
   uniqueEmail,
@@ -61,7 +62,7 @@ async function accept(client: TypedClient, requestId: string) {
 
 describe("block_day / unblock_day — semantics", () => {
   it("(a) owner blocks a day and can read the block; anon sees no day_blocks rows", async () => {
-    const date = "2026-11-01";
+    const date = isoDate(40);
     const { row, error } = await blockDay(owner, date);
 
     expect(error).toBeNull();
@@ -81,7 +82,7 @@ describe("block_day / unblock_day — semantics", () => {
   });
 
   it("(b) blocking is idempotent: re-blocking reports already_blocked", async () => {
-    const date = "2026-11-02";
+    const date = isoDate(41);
     await blockDay(owner, date);
 
     const { row, error } = await blockDay(owner, date);
@@ -91,14 +92,14 @@ describe("block_day / unblock_day — semantics", () => {
   });
 
   it("(c) unblocking a day that is not blocked is a soft outcome", async () => {
-    const { row, error } = await unblockDay(owner, "2026-11-03");
+    const { row, error } = await unblockDay(owner, isoDate(42));
 
     expect(error).toBeNull();
     expect(row).toMatchObject({ unblocked: false });
   });
 
   it("(d) a past date cannot be blocked (55000)", async () => {
-    const { row, error } = await blockDay(owner, "2020-01-01");
+    const { row, error } = await blockDay(owner, isoDate(-30));
 
     expect(row).toBeUndefined();
     expect(error?.code).toBe("55000"); // object_not_in_prerequisite_state
@@ -107,11 +108,11 @@ describe("block_day / unblock_day — semantics", () => {
   it("(e) a foreign owner gets 42501 from both block_day and unblock_day", async () => {
     const { client: stranger } = await createOwnerClient(uniqueEmail("blocks-stranger"), PASSWORD);
 
-    const blocked = await blockDay(stranger, "2026-11-04");
+    const blocked = await blockDay(stranger, isoDate(43));
     expect(blocked.row).toBeUndefined();
     expect(blocked.error?.code).toBe("42501"); // insufficient_privilege
 
-    const unblocked = await unblockDay(stranger, "2026-11-04");
+    const unblocked = await unblockDay(stranger, isoDate(43));
     expect(unblocked.row).toBeUndefined();
     expect(unblocked.error?.code).toBe("42501");
   });
@@ -119,17 +120,17 @@ describe("block_day / unblock_day — semantics", () => {
   it("(f) anon has no EXECUTE grant on block_day / unblock_day", async () => {
     const anon = createAnonClient();
 
-    const blocked = await blockDay(anon, "2026-11-05");
+    const blocked = await blockDay(anon, isoDate(44));
     expect(blocked.error?.code).toBe("42501"); // permission denied for function
 
-    const unblocked = await unblockDay(anon, "2026-11-05");
+    const unblocked = await unblockDay(anon, isoDate(44));
     expect(unblocked.error?.code).toBe("42501");
   });
 });
 
 describe("day blocks — new demand is refused on every surface", () => {
   it("(g) acceptance on a blocked day is a soft day_blocked outcome; unblock restores it", async () => {
-    const date = "2026-11-10";
+    const date = isoDate(50);
     // Seed the pending request BEFORE blocking (the trigger guards pending inserts).
     const pending = await seedBookingRequest(admin, { zagrodaId, turnusId, tripDate: date, participants: 5 });
     await blockDay(owner, date);
@@ -155,7 +156,7 @@ describe("day blocks — new demand is refused on every surface", () => {
   });
 
   it("(h) a manual entry on a blocked day is refused softly", async () => {
-    const date = "2026-11-11";
+    const date = isoDate(51);
     await blockDay(owner, date);
 
     const { data, error } = await owner.rpc("create_manual_booking", {
@@ -171,7 +172,7 @@ describe("day blocks — new demand is refused on every surface", () => {
   });
 
   it("(i) a pending INSERT on an already-blocked day is rejected by the trigger — even for service_role", async () => {
-    const date = "2026-11-12";
+    const date = isoDate(52);
     await blockDay(owner, date);
 
     // Guest path (anon, RLS-visible).
@@ -194,7 +195,7 @@ describe("day blocks — new demand is refused on every surface", () => {
   });
 
   it("(j) catalog_zagrody reports the blocked date unavailable and recovers after unblock", async () => {
-    const date = "2026-11-13";
+    const date = isoDate(53);
     const anon = createAnonClient();
     await blockDay(owner, date);
 
@@ -209,7 +210,7 @@ describe("day blocks — new demand is refused on every surface", () => {
   });
 
   it("(k) blocking a day with existing accepted bookings succeeds and leaves them untouched", async () => {
-    const date = "2026-11-14";
+    const date = isoDate(54);
     const acceptedId = await seedBookingRequest(admin, {
       zagrodaId,
       turnusId,

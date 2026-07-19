@@ -15,6 +15,18 @@ const clientOptions = {
   auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
 } as const;
 
+/**
+ * A YYYY-MM-DD date `offsetDays` from today (UTC): positive = future, negative = past.
+ * The S-08 RPCs (create_manual_booking / block_day) hard-reject past dates, so
+ * date-sensitive suites must anchor to "today" — hardcoded calendar dates rot into
+ * past-date failures once that day elapses.
+ */
+export function isoDate(offsetDays: number): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + offsetDays);
+  return d.toISOString().slice(0, 10);
+}
+
 export function createAdminClient(): TypedClient {
   return createClient<Database>(inject("supabaseUrl"), inject("supabaseServiceRoleKey"), clientOptions);
 }

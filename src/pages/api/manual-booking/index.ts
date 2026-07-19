@@ -49,9 +49,11 @@ export const POST: APIRoute = async (context) => {
         return json({ error: "Brak uprawnień do tej zagrody" }, 403);
       case "55000":
         return json({ error: "Data nie może być w przeszłości" }, 409);
+      case "23503":
+        // Composite-FK rejection of a turnus not on this zagroda — the UI
+        // select prevents it, but a crafted payload is a client error, not 500.
+        return json({ error: "Wybrany turnus nie należy do tej zagrody" }, 422);
       default:
-        // Includes the composite-FK rejection of a foreign turnus — the UI
-        // select prevents it, so no dedicated copy.
         return json({ error: "Nie udało się dodać rezerwacji" }, 500);
     }
   }

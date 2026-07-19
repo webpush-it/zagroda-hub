@@ -35,20 +35,21 @@ alter table public.booking_requests
     );
 
 -- ---------------------------------------------------------------------------
--- 3. Guest INSERT policies additionally pin source = 'app': a direct insert
---    (anon or authenticated) can never forge a phone entry. Owner phone
---    entries bypass RLS via the SECURITY DEFINER RPC below. BOTH policies are
---    recreated — recreating only one would leave the other role able to forge.
+-- 3. Guest INSERT policies additionally pin source = 'app' and note = null: a
+--    direct insert (anon or authenticated) can never forge a phone entry nor
+--    attach an owner-authored note. Owner phone entries bypass RLS via the
+--    SECURITY DEFINER RPC below. BOTH policies are recreated — recreating only
+--    one would leave the other role able to forge.
 drop policy "anyone can submit a pending booking request (anon)" on public.booking_requests;
 drop policy "anyone can submit a pending booking request (authenticated)" on public.booking_requests;
 
 create policy "anyone can submit a pending booking request (anon)"
   on public.booking_requests for insert to anon
-  with check (status = 'pending' and source = 'app');
+  with check (status = 'pending' and source = 'app' and note is null);
 
 create policy "anyone can submit a pending booking request (authenticated)"
   on public.booking_requests for insert to authenticated
-  with check (status = 'pending' and source = 'app');
+  with check (status = 'pending' and source = 'app' and note is null);
 
 -- ---------------------------------------------------------------------------
 -- 4. Day blocks. One row = one blocked day for one zagroda. Writes go
