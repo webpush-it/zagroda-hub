@@ -29,7 +29,7 @@ MVP Zagroda Hub działa na produkcji, a pierwszy strukturalny feedback od realne
 
 | ID   | Change ID                   | Outcome (user can …)                                                          | Prerequisites | PRD refs                                    | Status  |
 | ---- | --------------------------- | ------------------------------------------------------------------------------ | ------------- | -------------------------------------------- | ------- |
-| S-08 | phone-bookings-and-day-blocks | właściciel wpisuje rezerwację telefoniczną / blokuje dzień; gwarancja trzyma między kanałami; źródło widoczne | —             | FR-021, FR-022, FR-023, FR-028, FR-031, US-03 | ready   |
+| S-08 | phone-bookings-and-day-blocks | właściciel wpisuje rezerwację telefoniczną / blokuje dzień; gwarancja trzyma między kanałami; źródło widoczne | —             | FR-021, FR-022, FR-023, FR-028, FR-031, US-03 | done    |
 | S-09 | client-first-landing        | gość widzi stronę główną klient-first z centralnym CTA „Znajdź zagrodę"        | —             | FR-019, US-04                                | ready   |
 | S-10 | nearest-zagrody-sort        | gość po udostępnieniu lokalizacji widzi katalog od najbliższej zagrody         | —             | FR-020, FR-030, US-04                        | ready   |
 | S-11 | group-type-neutral-language | gość wybiera typ grupy w zapytaniu, formularz mówi neutralnym językiem         | —             | FR-027, FR-029, US-04                        | ready   |
@@ -65,7 +65,7 @@ Brak fundamentów w tym pakiecie. Baseline raportuje wszystkie warstwy jako obec
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Jedyny slice pakietu dotykający rdzenia reguły akceptacji — rozszerzenie sumy o wpisy ręczne i blokady nie może osłabić własności „dokładnie jeden sukces" (istniejący test współbieżności do rozszerzenia o mix wpis ręczny + akceptacja, nie do podmiany). Sekwencjonowany pierwszy, bo niesie kryterium sukcesu #1, największe ryzyko regresu i najgłośniejszy postulat feedbacku; musi być wycofywalny niezależnie (blast radius: panel + suma dostępności).
-- **Status:** ready
+- **Status:** done
 
 ### S-09: Landing klient-first
 
@@ -159,3 +159,5 @@ Brak fundamentów w tym pakiecie. Baseline raportuje wszystkie warstwy jako obec
 ## Done
 
 (Pusta przy pierwszej generacji. `/10x-archive` dopisuje wpis tutaj — i przełącza `Status` elementu na `done` — gdy zmiana o pasującym `Change ID` zostaje zarchiwizowana. NIE wypełniać ręcznie.)
+
+- **S-08: właściciel może dodać z telefonu ręczną rezerwację przyjętą telefonicznie (data, turnus, liczba uczestników, opcjonalna notatka) oraz zablokować i odblokować cały dzień; wpis konsumuje miejsca z dziennego limitu tą samą regułą co akceptacje z aplikacji („dokładnie jeden sukces" pod współbieżnością), zablokowany dzień nie przyjmuje zapytań ani akceptacji i znika z filtra dostępności, usunięcie wpisu/blokady natychmiast zwalnia miejsca, a każda rezerwacja pokazuje źródło (aplikacja / telefon).** — Archived 2026-07-19 → `context/archive/2026-07-19-phone-bookings-and-day-blocks/`. Lesson: —.

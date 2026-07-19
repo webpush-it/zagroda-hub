@@ -1,9 +1,10 @@
 ---
 change_id: phone-bookings-and-day-blocks
 title: Wpisy telefoniczne, blokady dni i źródło rezerwacji (S-08, gwiazda przewodnia)
-status: impl_reviewed
+status: archived
 created: 2026-07-19
 updated: 2026-07-19
+archived_at: 2026-07-19T21:34:26Z
 ---
 
 ## Notes
