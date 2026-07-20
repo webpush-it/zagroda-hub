@@ -1,5 +1,6 @@
 ---
 import PageShell from "@/components/PageShell.astro";
+import ZagrodaPlaceholder from "@/components/brand/ZagrodaPlaceholder.astro";
 
 const { user } = Astro.locals;
 const year = new Date().getFullYear();
@@ -8,10 +9,12 @@ const primaryBtn = "btn-primary px-6 py-3 text-base";
 const secondaryBtn = "btn-secondary px-6 py-3 text-base";
 const card = "card-surface";
 
+// Dokładnie 3 kroki (research §4). `icon` = klucz mapowany na inline-SVG w renderze
+// (dekoracyjny, aria-hidden); ścieżki lucide, bez set:html (guardrail lint).
 const clientSteps = [
-  "Przeglądaj zagrody edukacyjne w swoim województwie.",
-  "Sprawdź dostępność na wybrany termin wycieczki.",
-  "Wyślij zapytanie — bez zakładania konta.",
+  { icon: "search", title: "Znajdź zagrodę", body: "Filtruj po województwie, mieście i terminie." },
+  { icon: "calendar", title: "Sprawdź termin", body: "Zobacz, które zagrody są wolne w Twojej dacie." },
+  { icon: "send", title: "Wyślij zapytanie", body: "Bez konta — gospodarz potwierdza rezerwację." },
 ];
 ---
 
@@ -21,24 +24,34 @@ const clientSteps = [
   width="wide"
   brand
 >
-  <!-- Hero klient-first -->
-  <section class="px-2 py-16 text-center sm:py-24">
-    <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">
-      Znajdź zagrodę edukacyjną na wycieczkę — w swoim województwie.
-    </h1>
-    <p class="text-ink mx-auto mb-10 max-w-2xl text-lg sm:text-xl">
-      Dla szkół i przedszkoli — i dla rodzin szukających pomysłu na dzień z dziećmi. Przeglądaj zagrody, sprawdź
-      dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
-    </p>
-    <div class="flex flex-col items-center gap-4">
-      <a href="/katalog" class:list={primaryBtn}>Znajdź zagrodę</a>
-      {
-        user && (
-          <a href="/dashboard" class:list={secondaryBtn}>
-            Przejdź do panelu
-          </a>
-        )
-      }
+  <!-- Hero klient-first (dwukolumnowy: copy + ilustracja; na mobile ilustracja pod CTA) -->
+  <section class="grid grid-cols-1 items-center gap-8 px-2 py-16 sm:py-24 lg:grid-cols-2 lg:gap-12">
+    <div class="text-center lg:text-left">
+      <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">
+        Znajdź zagrodę edukacyjną na wycieczkę — w swoim województwie.
+      </h1>
+      <p class="text-ink mx-auto mb-6 max-w-2xl text-lg sm:text-xl lg:mx-0">
+        Dla szkół i przedszkoli — i dla rodzin szukających pomysłu na dzień z dziećmi. Przeglądaj zagrody, sprawdź
+        dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
+      </p>
+      <div class="flex flex-col items-center gap-4 lg:items-start">
+        <a href="/katalog" class:list={primaryBtn}>Znajdź zagrodę</a>
+        {
+          user && (
+            <a href="/dashboard" class:list={secondaryBtn}>
+              Przejdź do panelu
+            </a>
+          )
+        }
+      </div>
+      <p class="text-ink-muted mt-4 text-sm">
+        Przeglądanie i wysłanie zapytania są bezpłatne. Konto nie jest potrzebne.
+      </p>
+    </div>
+    <div class="border-edge overflow-hidden rounded-2xl border">
+      <div class="aspect-video">
+        <ZagrodaPlaceholder class="h-full w-full" />
+      </div>
     </div>
   </section>
 
@@ -201,20 +214,68 @@ const clientSteps = [
     </div>
   </section>
 
-  <!-- Jak to działa (klient, kompaktowo) -->
+  <!-- Jak to działa (3-krokowy wizual) -->
   <section class="py-8">
-    <ol class="mx-auto grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+    <h2 class="text-ink mb-8 text-center text-2xl font-bold sm:text-3xl">Jak to działa</h2>
+    <ol class="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
       {
         clientSteps.map((step, i) => (
-          <li class="flex items-start gap-3">
-            <span class="bg-brand-600 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white">
-              {i + 1}
-            </span>
-            <p class="text-ink-muted text-sm leading-relaxed">{step}</p>
+          <li class:list={[card, "text-center"]}>
+            <div class="mb-3 flex items-center justify-center gap-2">
+              <span class="bg-brand-600 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white">
+                {i + 1}
+              </span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-brand-600 h-8 w-8"
+                aria-hidden="true"
+              >
+                {step.icon === "search" && (
+                  <>
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </>
+                )}
+                {step.icon === "calendar" && (
+                  <>
+                    <path d="M8 2v4" />
+                    <path d="M16 2v4" />
+                    <rect width="18" height="18" x="3" y="4" rx="2" />
+                    <path d="M3 10h18" />
+                    <path d="m9 16 2 2 4-4" />
+                  </>
+                )}
+                {step.icon === "send" && (
+                  <>
+                    <line x1="22" x2="11" y1="2" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </>
+                )}
+              </svg>
+            </div>
+            <h3 class="text-ink mb-1 text-lg font-semibold">{step.title}</h3>
+            <p class="text-ink-muted text-sm leading-relaxed">{step.body}</p>
           </li>
         ))
       }
     </ol>
+  </section>
+
+  <!-- Domykające, powtórzone CTA -->
+  <section class="py-8">
+    <div class="bg-accent-100 flex flex-col items-center gap-4 rounded-2xl px-6 py-10 text-center">
+      <h2 class="text-accent-700 text-2xl font-bold sm:text-3xl">Gotowy, żeby znaleźć zagrodę?</h2>
+      <p class="text-ink max-w-xl text-base">
+        Przejrzyj oferty w swoim województwie i wyślij zapytanie — bez zakładania konta.
+      </p>
+      <a href="/katalog" class:list={primaryBtn}>Znajdź zagrodę</a>
+    </div>
   </section>
 
   <!-- Skonsolidowana sekcja ownera -->

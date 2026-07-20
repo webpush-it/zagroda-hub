@@ -285,38 +285,38 @@ Bez zmian schematu/danych. Ships standardową ścieżką (`npm run deploy` / CI 
 
 #### Automated
 
-- [x] 1.1 Typecheck: `npx astro check` (0 błędów)
-- [x] 1.2 Lint: `npm run lint`
-- [x] 1.3 Build: `npm run build`
-- [x] 1.4 Testy: `npm test`
-- [x] 1.5 Grep-gate motywu pusty
-- [x] 1.6 E2E desktop-width + mobile-320 zielony (jeśli uruchamiany lokalnie)
+- [x] 1.1 Typecheck: `npx astro check` (0 błędów) — a5e6894
+- [x] 1.2 Lint: `npm run lint` — a5e6894
+- [x] 1.3 Build: `npm run build` — a5e6894
+- [x] 1.4 Testy: `npm test` — a5e6894
+- [x] 1.5 Grep-gate motywu pusty — a5e6894
+- [x] 1.6 E2E desktop-width + mobile-320 zielony (jeśli uruchamiany lokalnie) — a5e6894
 
 #### Manual
 
-- [x] 1.7 320–414px: karty korzyści jednokolumnowo, pasek zaufania czytelny, tap-target ≥44px
-- [x] 1.8 Gwarancja anty-overbooking widoczna dla szukającego, jego językiem
-- [x] 1.9 Sub-headline wspomina rodziny i szkoły; H1 bez zmian; brak obietnic spoza dziś
-- [x] 1.10 Copy po polsku, ton rzeczowy; brak fałszywego social proof
+- [x] 1.7 320–414px: karty korzyści jednokolumnowo, pasek zaufania czytelny, tap-target ≥44px — a5e6894
+- [x] 1.8 Gwarancja anty-overbooking widoczna dla szukającego, jego językiem — a5e6894
+- [x] 1.9 Sub-headline wspomina rodziny i szkoły; H1 bez zmian; brak obietnic spoza dziś — a5e6894
+- [x] 1.10 Copy po polsku, ton rzeczowy; brak fałszywego social proof — a5e6894
 
 ### Phase 2: Hero i przepływ
 
 #### Automated
 
-- [ ] 2.1 Typecheck: `npx astro check` (0 błędów)
-- [ ] 2.2 Lint: `npm run lint`
-- [ ] 2.3 Build: `npm run build`
-- [ ] 2.4 Testy: `npm test`
-- [ ] 2.5 Dokładnie jeden `<h1>` w `index.astro`
-- [ ] 2.6 E2E desktop-width + mobile-320 zielony (jeśli uruchamiany lokalnie)
+- [x] 2.1 Typecheck: `npx astro check` (0 błędów)
+- [x] 2.2 Lint: `npm run lint`
+- [x] 2.3 Build: `npm run build`
+- [x] 2.4 Testy: `npm test`
+- [x] 2.5 Dokładnie jeden `<h1>` w `index.astro`
+- [x] 2.6 E2E desktop-width + mobile-320 zielony (jeśli uruchamiany lokalnie)
 
 #### Manual
 
-- [ ] 2.7 320–414px: CTA hero nad ilustracją, brak poziomego scrolla
-- [ ] 2.8 Ilustracja renderuje się ostro w hero; ramka spójna z marką
-- [ ] 2.9 3 kroki czytelne z ikonami (dokładnie 3)
-- [ ] 2.10 Powtórzone CTA → `/katalog`; pas accent-100 kontrastuje
-- [ ] 2.11 Desktop: hero dwukolumnowy nie łamie `width="wide"`
+- [x] 2.7 320–414px: CTA hero nad ilustracją, brak poziomego scrolla
+- [x] 2.8 Ilustracja renderuje się ostro w hero; ramka spójna z marką
+- [x] 2.9 3 kroki czytelne z ikonami (dokładnie 3)
+- [x] 2.10 Powtórzone CTA → `/katalog`; pas accent-100 kontrastuje
+- [x] 2.11 Desktop: hero dwukolumnowy nie łamie `width="wide"`
 
 ### Phase 3: FAQ, odchudzenie sekcji właściciela i SEO
 
