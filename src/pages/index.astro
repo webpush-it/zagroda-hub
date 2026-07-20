@@ -24,33 +24,36 @@ const clientSteps = [
   width="wide"
   brand
 >
-  <!-- Hero klient-first (dwukolumnowy: copy + ilustracja; na mobile ilustracja pod CTA) -->
-  <section class="grid grid-cols-1 items-center gap-8 px-2 py-16 sm:py-24 lg:grid-cols-2 lg:gap-12">
-    <div class="text-center lg:text-left">
-      <h1 class="text-brand-700 mb-6 text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">
-        Znajdź zagrodę edukacyjną na wycieczkę — w swoim województwie.
-      </h1>
-      <p class="text-ink mx-auto mb-6 max-w-2xl text-lg sm:text-xl lg:mx-0">
-        Dla szkół i przedszkoli — i dla rodzin szukających pomysłu na dzień z dziećmi. Przeglądaj zagrody, sprawdź
-        dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
-      </p>
-      <div class="flex flex-col items-center gap-4 lg:items-start">
-        <a href="/katalog" class:list={primaryBtn}>Znajdź zagrodę</a>
-        {
-          user && (
-            <a href="/dashboard" class:list={secondaryBtn}>
-              Przejdź do panelu
-            </a>
-          )
-        }
+  <!-- Hero klient-first (H1 pełną szerokością na górze; niżej copy + ilustracja, na mobile ilustracja pod CTA) -->
+  <section class="px-2 py-16 sm:py-24">
+    <h1 class="text-brand-700 mb-8 text-center text-4xl leading-tight font-extrabold sm:text-5xl lg:text-6xl">
+      Znajdź zagrodę edukacyjną na wycieczkę — w Twojej okolicy.
+    </h1>
+    <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+      <div class="text-center lg:text-left">
+        <p class="text-ink mx-auto mb-6 max-w-2xl text-lg sm:text-xl lg:mx-0">
+          Dla szkół i przedszkoli — i dla rodzin szukających pomysłu na dzień z dziećmi. Przeglądaj zagrody, sprawdź
+          dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych
+          gospodarstw.
+        </p>
+        <div class="flex flex-col items-center gap-4 lg:items-start">
+          <a href="/katalog" class:list={primaryBtn}>Znajdź zagrodę</a>
+          {
+            user && (
+              <a href="/dashboard" class:list={secondaryBtn}>
+                Przejdź do panelu
+              </a>
+            )
+          }
+        </div>
+        <p class="text-ink-muted mt-4 text-sm">
+          Przeglądanie i wysłanie zapytania są bezpłatne. Konto nie jest potrzebne.
+        </p>
       </div>
-      <p class="text-ink-muted mt-4 text-sm">
-        Przeglądanie i wysłanie zapytania są bezpłatne. Konto nie jest potrzebne.
-      </p>
-    </div>
-    <div class="border-edge overflow-hidden rounded-2xl border">
-      <div class="aspect-video">
-        <ZagrodaPlaceholder class="h-full w-full" />
+      <div class="border-edge overflow-hidden rounded-2xl border">
+        <div class="aspect-video">
+          <ZagrodaPlaceholder class="h-full w-full" />
+        </div>
       </div>
     </div>
   </section>
