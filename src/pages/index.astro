@@ -27,8 +27,8 @@ const clientSteps = [
       Znajdź zagrodę edukacyjną na wycieczkę — w swoim województwie.
     </h1>
     <p class="text-ink mx-auto mb-10 max-w-2xl text-lg sm:text-xl">
-      Przeglądaj zagrody, sprawdź dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez
-      obdzwaniania kolejnych gospodarstw.
+      Dla szkół i przedszkoli — i dla rodzin szukających pomysłu na dzień z dziećmi. Przeglądaj zagrody, sprawdź
+      dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw.
     </p>
     <div class="flex flex-col items-center gap-4">
       <a href="/katalog" class:list={primaryBtn}>Znajdź zagrodę</a>
@@ -39,6 +39,165 @@ const clientSteps = [
           </a>
         )
       }
+    </div>
+  </section>
+
+  <!-- Korzyści dla szukającego (tylko funkcje na dziś) -->
+  <section class="py-8">
+    <h2 class="text-ink mb-8 text-center text-2xl font-bold sm:text-3xl">Dlaczego warto szukać tutaj</h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class:list={card}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-brand-600 mb-3 h-8 w-8"
+          aria-hidden="true"
+        >
+          <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+          <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+          <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+          <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+        </svg>
+        <h3 class="text-ink mb-2 text-lg font-semibold">Wszystkie zagrody w jednym miejscu</h3>
+        <p class="text-ink-muted text-sm leading-relaxed">
+          Zamiast obdzwaniać gospodarstwo po gospodarstwie — przeglądasz oferty w swoim województwie na jednej stronie.
+        </p>
+      </div>
+      <div class:list={card}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-brand-600 mb-3 h-8 w-8"
+          aria-hidden="true"
+        >
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <line x1="17" x2="22" y1="8" y2="13"></line>
+          <line x1="22" x2="17" y1="8" y2="13"></line>
+        </svg>
+        <h3 class="text-ink mb-2 text-lg font-semibold">Bez zakładania konta</h3>
+        <p class="text-ink-muted text-sm leading-relaxed">
+          Wysyłasz zapytanie od razu. Bez rejestracji i bez kolejnego hasła.
+        </p>
+      </div>
+      <div class:list={card}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-brand-600 mb-3 h-8 w-8"
+          aria-hidden="true"
+        >
+          <path d="M8 2v4"></path>
+          <path d="M16 2v4"></path>
+          <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+          <path d="M3 10h18"></path>
+          <path d="m9 16 2 2 4-4"></path>
+        </svg>
+        <h3 class="text-ink mb-2 text-lg font-semibold">Sprawdzisz termin od ręki</h3>
+        <p class="text-ink-muted text-sm leading-relaxed">
+          Wybierasz datę i liczbę osób, a katalog pokazuje, które zagrody są wtedy dostępne.
+        </p>
+      </div>
+      <div class:list={card}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-brand-600 mb-3 h-8 w-8"
+          aria-hidden="true"
+        >
+          <line x1="22" x2="11" y1="2" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+        <h3 class="text-ink mb-2 text-lg font-semibold">Zapytanie w kilka minut</h3>
+        <p class="text-ink-muted text-sm leading-relaxed">Krótki formularz i gotowe — trafia prosto do gospodarza.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pasek zaufania (uczciwe sygnały) -->
+  <section class="py-8">
+    <h2 class="text-ink mb-8 text-center text-2xl font-bold sm:text-3xl">Na czym możesz polegać</h2>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <div class="flex items-start gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-brand-700 mt-0.5 h-7 w-7 shrink-0"
+          aria-hidden="true"
+        >
+          <path
+            d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+          ></path>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        <p class="text-ink text-sm leading-relaxed">
+          <strong class="font-semibold">Gwarancja braku podwójnej rezerwacji</strong> — gdy gospodarz potwierdzi Twój termin,
+          jest tylko Twój; system pilnuje dziennego limitu miejsc, nawet gdy kilka grup pyta o ten sam dzień.
+        </p>
+      </div>
+      <div class="flex items-start gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-brand-700 mt-0.5 h-7 w-7 shrink-0"
+          aria-hidden="true"
+        >
+          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <p class="text-ink text-sm leading-relaxed">
+          Twoje dane kontaktowe trafiają wyłącznie do wybranego gospodarza.
+        </p>
+      </div>
+      <div class="flex items-start gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-brand-700 mt-0.5 h-7 w-7 shrink-0"
+          aria-hidden="true"
+        >
+          <path
+            d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 1 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+          ></path>
+          <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+        </svg>
+        <p class="text-ink text-sm leading-relaxed">Nie zakładamy konta i nie wysyłamy newsletterów.</p>
+      </div>
     </div>
   </section>
 

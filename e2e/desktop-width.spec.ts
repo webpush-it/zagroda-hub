@@ -23,7 +23,7 @@ test.use({ viewport: { width: 1280, height: 800 } });
 //   narrow  → max-w-sm     = 24rem = 384
 const VARIANTS = [
   { path: "/katalog", heading: "Katalog zagród", cap: 672 },
-  { path: "/", heading: "Rezerwacje wycieczek do Twojej zagrody — w jednym miejscu, prosto z telefonu.", cap: 1152 },
+  { path: "/", heading: "Znajdź zagrodę edukacyjną na wycieczkę — w swoim województwie.", cap: 1152 },
   { path: "/auth/signin", heading: "Zaloguj się", cap: 384 },
 ] as const;
 
