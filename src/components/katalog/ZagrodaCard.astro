@@ -9,16 +9,37 @@ interface Props {
   voivodeship: string;
   photoUrl: string | null;
   available: boolean | null;
+  latitude: number | null;
+  longitude: number | null;
+  locationPrecise: boolean;
 }
 
 // `name` and `location` are renamed locally — the template's type analysis
 // would otherwise resolve them to the (deprecated/always-truthy) DOM globals.
-const { id, name: zagrodaName, description, city, voivodeship, photoUrl, available } = Astro.props;
+const {
+  id,
+  name: zagrodaName,
+  description,
+  city,
+  voivodeship,
+  photoUrl,
+  available,
+  latitude,
+  longitude,
+  locationPrecise,
+} = Astro.props;
 
 // `false` mutes the card and removes the link; `null` (no date filter) and
 // `true` both render a clickable card.
 const unavailable = available === false;
 const lokalizacja = [city, voivodeship].filter(Boolean).join(", ");
+
+// Coordinates + precision are exposed as data-* so the catalog client script
+// can compute distance and re-sort without a re-fetch. Absent lat/lng → the
+// card has no location and sorts to the end. The distance badge stays empty in
+// SSR (default/deny path renders exactly the server order) and is filled by the
+// script only when the location is precise.
+const hasCoords = latitude != null && longitude != null;
 const excerpt = description.length > 120 ? `${description.slice(0, 120).trimEnd()}…` : description;
 ---
 
@@ -27,6 +48,10 @@ const excerpt = description.length > 120 ? `${description.slice(0, 120).trimEnd(
     "border-edge relative flex gap-3 rounded-xl border bg-white p-3 shadow-sm transition-colors",
     unavailable ? "opacity-60" : "hover:border-brand-200",
   ]}
+  data-zagroda-card
+  data-lat={hasCoords ? String(latitude) : undefined}
+  data-lng={hasCoords ? String(longitude) : undefined}
+  data-precise={locationPrecise ? "true" : "false"}
 >
   {
     photoUrl ? (
@@ -49,7 +74,14 @@ const excerpt = description.length > 120 ? `${description.slice(0, 120).trimEnd(
         )
       }
     </h2>
-    {lokalizacja && <p class="text-ink-muted truncate text-sm">{lokalizacja}</p>}
+    {
+      lokalizacja && (
+        <p class="text-ink-muted truncate text-sm">
+          {lokalizacja}
+          <span data-distance class="text-brand-600 font-medium" />
+        </p>
+      )
+    }
     {excerpt && <p class="text-ink-muted mt-1 line-clamp-2 text-sm">{excerpt}</p>}
     {
       unavailable && (

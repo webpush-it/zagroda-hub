@@ -52,6 +52,11 @@ interface CatalogRow {
   daily_limit: number;
   created_at: string;
   is_available: boolean | null;
+  // Locality-level coords resolved server-side. Null when city/voivodeship
+  // didn't resolve; location_precise is false for a voivodeship centroid.
+  latitude: number | null;
+  longitude: number | null;
+  location_precise: boolean;
 }
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
@@ -100,6 +105,9 @@ const results = rows.map((r) => ({
   photoUrl:
     r.photo_path && supabase ? supabase.storage.from("zagroda-photos").getPublicUrl(r.photo_path).data.publicUrl : null,
   available: r.is_available,
+  latitude: r.latitude,
+  longitude: r.longitude,
+  locationPrecise: r.location_precise,
 }));
 
 const inputClass = "input-field disabled:cursor-not-allowed disabled:opacity-50";
@@ -163,13 +171,21 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
     </form>
 
     {
+      results.length > 0 && (
+        <button type="button" id="near-me" hidden class="btn-secondary mb-4 w-full sm:w-auto">
+          📍 Pokaż najbliżej mnie
+        </button>
+      )
+    }
+
+    {
       results.length === 0 ? (
         <div class="border-edge bg-surface rounded-xl border p-6 text-center">
           <p class="text-ink font-medium">Brak wyników</p>
           <p class="text-ink-muted mt-1 text-sm">Spróbuj poszerzyć kryteria — zmień województwo, miasto lub termin.</p>
         </div>
       ) : (
-        <ul class="flex flex-col gap-3">
+        <ul id="catalog-list" class="flex flex-col gap-3">
           {results.map((r) => (
             <li>
               <ZagrodaCard {...r} />
@@ -182,6 +198,8 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
 </PageShell>
 
 <script>
+  import { formatApproxDistance, haversineKm } from "@/lib/geo";
+
   // Progressive enhancement only — the form is fully functional without JS
   // (city list shows all published cities; the server ignores osoby without data).
   const form = document.querySelector<HTMLFormElement>("#filter-form");
@@ -201,4 +219,77 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
   dateInput?.addEventListener("input", () => {
     if (osobyInput) osobyInput.disabled = dateInput.value === "";
   });
+
+  // --- Nearest-first sort (S-10) --------------------------------------------
+  // Distance is computed entirely client-side (Haversine over the ≤100 cards
+  // already on the page). The guest's location lives only in a handler-scoped
+  // variable — never sent to the server, URL, cookies or storage. The default
+  // (deny / no-consent) path leaves the SSR order untouched.
+  const nearMeBtn = document.querySelector<HTMLButtonElement>("#near-me");
+  const list = document.querySelector<HTMLUListElement>("#catalog-list");
+
+  if (nearMeBtn && list) {
+    // Reorder the existing <li> nodes by distance and fill the "~X km" badge on
+    // precise cards. Cards without coords sort to the end and never get a badge.
+    const sortByDistance = (guest: { lat: number; lng: number }) => {
+      const items = [...list.querySelectorAll<HTMLLIElement>(":scope > li")];
+      const withDistance = items.map((li) => {
+        const card = li.querySelector<HTMLElement>("[data-zagroda-card]");
+        const lat = card?.dataset.lat;
+        const lng = card?.dataset.lng;
+        const distance =
+          lat != null && lng != null ? haversineKm(guest, { lat: Number(lat), lng: Number(lng) }) : Infinity;
+        return { li, card, distance };
+      });
+
+      withDistance.sort((a, b) => a.distance - b.distance);
+
+      for (const { li, card, distance } of withDistance) {
+        list.appendChild(li);
+        const badge = card?.querySelector<HTMLElement>("[data-distance]");
+        if (badge && card?.dataset.precise === "true" && Number.isFinite(distance)) {
+          badge.textContent = ` · ${formatApproxDistance(distance)}`;
+        }
+      }
+    };
+
+    const locate = () => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => sortByDistance({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        // Denied / unavailable: keep the SSR order, show nothing, don't retry.
+        () => {},
+        { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
+      );
+    };
+
+    nearMeBtn.addEventListener("click", locate);
+
+    // Decide the initial UI from the Permissions API when available. iOS Safari
+    // historically lacks `permissions.query` for geolocation (may be undefined
+    // or reject), so anything unexpected just falls back to showing the button
+    // — the explicit-gesture path works without Permissions API entirely.
+    const showButton = () => {
+      nearMeBtn.hidden = false;
+    };
+
+    try {
+      if (navigator.permissions?.query) {
+        navigator.permissions
+          .query({ name: "geolocation" })
+          .then((status) => {
+            if (status.state === "granted") {
+              locate(); // already granted → sort silently, no tap needed
+            } else if (status.state === "prompt") {
+              showButton();
+            }
+            // "denied" → leave the button hidden, never re-prompt.
+          })
+          .catch(showButton);
+      } else {
+        showButton();
+      }
+    } catch {
+      showButton();
+    }
+  }
 </script>
