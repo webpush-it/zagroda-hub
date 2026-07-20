@@ -470,30 +470,30 @@ potwierdzenie (grant/deny/auto + filtry + NFR) przed uznaniem zmiany za gotową.
 
 #### Automated
 
-- [x] 1.1 Migracja aplikuje się czysto: `npm run db:reset`
-- [x] 1.2 Typy regenerują się bez rozjazdu: `npm run db:types`
-- [x] 1.3 Testy DB przechodzą: `npm test`
-- [x] 1.4 Typecheck czysty: `npx astro check`
-- [x] 1.5 Lint czysty: `npm run lint`
+- [x] 1.1 Migracja aplikuje się czysto: `npm run db:reset` — 3135c61
+- [x] 1.2 Typy regenerują się bez rozjazdu: `npm run db:types` — 3135c61
+- [x] 1.3 Testy DB przechodzą: `npm test` — 3135c61
+- [x] 1.4 Typecheck czysty: `npx astro check` — 3135c61
+- [x] 1.5 Lint czysty: `npm run lint` — 3135c61
 
 #### Manual
 
-- [x] 1.6 Publikacja/edycja z realnym miastem → `location_precise=true` i sensowne coords; nieznane miasto → centroid + `false`
-- [x] 1.7 Stary kształt zapytania katalogu nadal zwraca wyniki (kompatybilność wsteczna RPC)
-- [x] 1.8 Regresja: `catalog.test.ts` i `day-blocks.test.ts` zielone po drop+recreate RPC i triggerze
+- [x] 1.6 Publikacja/edycja z realnym miastem → `location_precise=true` i sensowne coords; nieznane miasto → centroid + `false` — 3135c61
+- [x] 1.7 Stary kształt zapytania katalogu nadal zwraca wyniki (kompatybilność wsteczna RPC) — 3135c61
+- [x] 1.8 Regresja: `catalog.test.ts` i `day-blocks.test.ts` zielone po drop+recreate RPC i triggerze — 3135c61
 
 ### Phase 2: Dataset miejscowości + seed i backfill
 
 #### Automated
 
-- [ ] 2.1 Skrypt idempotentny: `npm run db:seed-localities` (dwa razy — ten sam stan)
-- [ ] 2.2 Testy przechodzą: `npm test`
-- [ ] 2.3 Lint/typecheck czyste: `npm run lint`, `npx astro check`
+- [x] 2.1 Skrypt idempotentny: `npm run db:seed-localities` (dwa razy — ten sam stan)
+- [x] 2.2 Testy przechodzą: `npm test`
+- [x] 2.3 Lint/typecheck czyste: `npm run lint`, `npx astro check`
 
 #### Manual
 
-- [ ] 2.4 Match-rate ≥ 90% opublikowanych zagród (`location_precise=true`); poniżej progu — remediacja przed Fazą 3
-- [ ] 2.5 Spot-check kilku zagród: coords wskazują właściwą miejscowość
+- [x] 2.4 Match-rate ≥ 90% opublikowanych zagród (`location_precise=true`); poniżej progu — remediacja przed Fazą 3
+- [x] 2.5 Spot-check kilku zagród: coords wskazują właściwą miejscowość
 
 ### Phase 3: Klient — geolokalizacja, sort po odległości, prezentacja
 

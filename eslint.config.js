@@ -67,6 +67,14 @@ const testsConfig = tseslint.config({
   },
 });
 
+const scriptsConfig = tseslint.config({
+  files: ["scripts/**/*.ts"],
+  rules: {
+    // CLI tooling (e.g. the locality seed/backfill) reports progress to stdout by design.
+    "no-console": "off",
+  },
+});
+
 const astroConfig = tseslint.config({
   files: ["**/*.astro"],
   rules: {
@@ -90,6 +98,7 @@ export default tseslint.config(
   { ignores: ["src/db/database.types.ts", ".claude/**"] },
   baseConfig,
   testsConfig,
+  scriptsConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
