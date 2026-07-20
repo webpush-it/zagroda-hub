@@ -1,7 +1,7 @@
 ---
 change_id: landing-enrichment
 title: Wzbogacenie landing page (klient-first) wg najlepszych praktyk
-status: implementing
+status: implemented
 created: 2026-07-20
 updated: 2026-07-20
 archived_at: null

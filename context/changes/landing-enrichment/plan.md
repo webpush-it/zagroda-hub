@@ -322,16 +322,16 @@ Bez zmian schematu/danych. Ships standardową ścieżką (`npm run deploy` / CI 
 
 #### Automated
 
-- [x] 3.1 Typecheck: `npx astro check` (0 błędów)
-- [x] 3.2 Lint: `npm run lint`
-- [x] 3.3 Build: `npm run build`
-- [x] 3.4 Testy: `npm test`
-- [x] 3.5 Brak `aggregateRating` w źródle; JSON-LD buduje się bez błędów
-- [x] 3.6 E2E zielony (jeśli uruchamiany lokalnie)
+- [x] 3.1 Typecheck: `npx astro check` (0 błędów) — d0da12b
+- [x] 3.2 Lint: `npm run lint` — d0da12b
+- [x] 3.3 Build: `npm run build` — d0da12b
+- [x] 3.4 Testy: `npm test` — d0da12b
+- [x] 3.5 Brak `aggregateRating` w źródle; JSON-LD buduje się bez błędów — d0da12b
+- [x] 3.6 E2E zielony (jeśli uruchamiany lokalnie) — d0da12b
 
 #### Manual
 
-- [x] 3.7 FAQ `<details>` rozwija/zwija bez JS, obszary ≥44px, odpowiedzi uczciwe
-- [x] 3.8 Sekcja właściciela jako 2 punkty, wizualnie drugorzędna
-- [x] 3.9 canonical + Twitter Card + JSON-LD obecne; brak `aggregateRating`
-- [x] 3.10 Meta description wspomina rodziny i szkoły; podgląd OG/Twitter poprawny
+- [x] 3.7 FAQ `<details>` rozwija/zwija bez JS, obszary ≥44px, odpowiedzi uczciwe — d0da12b
+- [x] 3.8 Sekcja właściciela jako 2 punkty, wizualnie drugorzędna — d0da12b
+- [x] 3.9 canonical + Twitter Card + JSON-LD obecne; brak `aggregateRating` — d0da12b
+- [x] 3.10 Meta description wspomina rodziny i szkoły; podgląd OG/Twitter poprawny — d0da12b
