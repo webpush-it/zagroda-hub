@@ -499,16 +499,16 @@ potwierdzenie (grant/deny/auto + filtry + NFR) przed uznaniem zmiany za gotową.
 
 #### Automated
 
-- [x] 3.1 Unit testy geo przechodzą: `npm test`
-- [x] 3.2 Build przechodzi (bundling `<script>` z importem `src/lib/geo.ts`): `npm run build`
-- [x] 3.3 Typecheck czysty: `npx astro check`
-- [x] 3.4 Lint czysty: `npm run lint`
+- [x] 3.1 Unit testy geo przechodzą: `npm test` — 167c27e
+- [x] 3.2 Build przechodzi (bundling `<script>` z importem `src/lib/geo.ts`): `npm run build` — 167c27e
+- [x] 3.3 Typecheck czysty: `npx astro check` — 167c27e
+- [x] 3.4 Lint czysty: `npm run lint` — 167c27e
 
 #### Manual
 
-- [x] 3.5 Grant → lista przestawia się po odległości; precyzyjne karty mają „~X km", centroidowe bez liczby
-- [x] 3.6 Deny → kolejność SSR, brak błędu, brak ponawiania przy odświeżeniu
-- [x] 3.7 Ponowna wizyta z przyznaną zgodą → auto-sort bez dodatkowego tapnięcia
-- [x] 3.8 Sort współpracuje z filtrami województwo/miasto
-- [x] 3.9 NFR: katalog < 2 s p95 utrzymany
-- [x] 3.10 iOS Safari / brak Permissions API: przycisk działa przez gest, init się nie wywraca, auto-locate pominięte
+- [x] 3.5 Grant → lista przestawia się po odległości; precyzyjne karty mają „~X km", centroidowe bez liczby — 167c27e
+- [x] 3.6 Deny → kolejność SSR, brak błędu, brak ponawiania przy odświeżeniu — 167c27e
+- [x] 3.7 Ponowna wizyta z przyznaną zgodą → auto-sort bez dodatkowego tapnięcia — 167c27e
+- [x] 3.8 Sort współpracuje z filtrami województwo/miasto — 167c27e
+- [x] 3.9 NFR: katalog < 2 s p95 utrzymany — 167c27e
+- [x] 3.10 iOS Safari / brak Permissions API: przycisk działa przez gest, init się nie wywraca, auto-locate pominięte — 167c27e
