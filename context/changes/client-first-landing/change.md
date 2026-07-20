@@ -4,6 +4,7 @@ title: Landing klient-first — „Znajdź zagrodę" na środku (S-09)
 status: implemented
 created: 2026-07-19
 updated: 2026-07-20
+research: research.md
 ---
 
 ## Notes
