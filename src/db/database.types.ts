@@ -167,6 +167,30 @@ export type Database = {
         }
         Relationships: []
       }
+      localities: {
+        Row: {
+          latitude: number
+          longitude: number
+          name: string
+          name_normalized: string
+          voivodeship: Database["public"]["Enums"]["voivodeship"]
+        }
+        Insert: {
+          latitude: number
+          longitude: number
+          name: string
+          name_normalized: string
+          voivodeship: Database["public"]["Enums"]["voivodeship"]
+        }
+        Update: {
+          latitude?: number
+          longitude?: number
+          name?: string
+          name_normalized?: string
+          voivodeship?: Database["public"]["Enums"]["voivodeship"]
+        }
+        Relationships: []
+      }
       turnusy: {
         Row: {
           created_at: string
@@ -202,6 +226,24 @@ export type Database = {
           },
         ]
       }
+      voivodeship_centroids: {
+        Row: {
+          latitude: number
+          longitude: number
+          voivodeship: Database["public"]["Enums"]["voivodeship"]
+        }
+        Insert: {
+          latitude: number
+          longitude: number
+          voivodeship: Database["public"]["Enums"]["voivodeship"]
+        }
+        Update: {
+          latitude?: number
+          longitude?: number
+          voivodeship?: Database["public"]["Enums"]["voivodeship"]
+        }
+        Relationships: []
+      }
       zagrody: {
         Row: {
           city: string | null
@@ -210,6 +252,9 @@ export type Database = {
           description: string | null
           id: string
           is_published: boolean
+          latitude: number | null
+          location_precise: boolean
+          longitude: number | null
           name: string
           owner_id: string
           photo_path: string | null
@@ -222,6 +267,9 @@ export type Database = {
           description?: string | null
           id?: string
           is_published?: boolean
+          latitude?: number | null
+          location_precise?: boolean
+          longitude?: number | null
           name: string
           owner_id: string
           photo_path?: string | null
@@ -234,6 +282,9 @@ export type Database = {
           description?: string | null
           id?: string
           is_published?: boolean
+          latitude?: number | null
+          location_precise?: boolean
+          longitude?: number | null
           name?: string
           owner_id?: string
           photo_path?: string | null
@@ -284,6 +335,9 @@ export type Database = {
           description: string
           id: string
           is_available: boolean
+          latitude: number
+          location_precise: boolean
+          longitude: number
           name: string
           photo_path: string
           voivodeship: Database["public"]["Enums"]["voivodeship"]
@@ -330,6 +384,18 @@ export type Database = {
         }[]
       }
       email_verified: { Args: never; Returns: boolean }
+      locality_coords: {
+        Args: {
+          p_city: string
+          p_voivodeship: Database["public"]["Enums"]["voivodeship"]
+        }
+        Returns: {
+          is_precise: boolean
+          latitude: number
+          longitude: number
+        }[]
+      }
+      locality_normalize: { Args: { p_name: string }; Returns: string }
       password_account_exists: { Args: { p_email: string }; Returns: boolean }
       reject_booking_request: {
         Args: { request_id: string }

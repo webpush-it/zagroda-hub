@@ -242,7 +242,8 @@ describe("catalog_zagrody — guest-data privacy", () => {
     const { data, error } = await anon.rpc("catalog_zagrody", { p_city: city("Prywatność") });
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    // Shape check: nothing from booking_requests beyond the derived boolean.
+    // Shape check: profile fields + S-10 coordinate columns, nothing from
+    // booking_requests beyond the derived boolean.
     expect(Object.keys(data?.[0] ?? {}).sort()).toEqual([
       "city",
       "created_at",
@@ -250,6 +251,9 @@ describe("catalog_zagrody — guest-data privacy", () => {
       "description",
       "id",
       "is_available",
+      "latitude",
+      "location_precise",
+      "longitude",
       "name",
       "photo_path",
       "voivodeship",
