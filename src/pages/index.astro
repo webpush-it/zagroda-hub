@@ -20,7 +20,7 @@ const clientSteps = [
 
 <PageShell
   title="Zagroda Hub — znajdź zagrodę edukacyjną na wycieczkę"
-  description="Przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw."
+  description="Dla szkół, przedszkoli i rodzin: przeglądaj zagrody edukacyjne w swoim województwie, sprawdź dostępność na wybrany termin i wyślij zapytanie — bez zakładania konta i bez obdzwaniania kolejnych gospodarstw."
   width="wide"
   brand
 >
@@ -278,15 +278,101 @@ const clientSteps = [
     </div>
   </section>
 
+  <!-- FAQ (natywne <details>/<summary>, bez JS) -->
+  <section class="py-8">
+    <h2 class="text-ink mb-8 text-center text-2xl font-bold sm:text-3xl">Najczęstsze pytania</h2>
+    <div class="mx-auto max-w-3xl space-y-3">
+      <details class:list={card}>
+        <summary class="tap-target text-ink flex cursor-pointer items-center font-semibold">
+          Czy muszę mieć konto, żeby wysłać zapytanie?
+        </summary>
+        <p class="text-ink-muted mt-2 text-sm leading-relaxed">
+          Nie. Wybierasz zagrodę, wypełniasz krótki formularz i wysyłasz — bez rejestracji.
+        </p>
+      </details>
+      <details class:list={card}>
+        <summary class="tap-target text-ink flex cursor-pointer items-center font-semibold"> Ile to kosztuje? </summary>
+        <p class="text-ink-muted mt-2 text-sm leading-relaxed">
+          Przeglądanie katalogu i wysłanie zapytania są bezpłatne. Warunki wizyty ustalasz bezpośrednio z gospodarzem.
+        </p>
+      </details>
+      <details class:list={card}>
+        <summary class="tap-target text-ink flex cursor-pointer items-center font-semibold">
+          Czy to tylko dla szkół, czy też dla rodzin?
+        </summary>
+        <p class="text-ink-muted mt-2 text-sm leading-relaxed">
+          Dla jednych i drugich — szkoły, przedszkola i rodziny korzystają z tego samego katalogu i formularza
+          zapytania.
+        </p>
+      </details>
+      <details class:list={card}>
+        <summary class="tap-target text-ink flex cursor-pointer items-center font-semibold">
+          Jak sprawdzę, czy zagroda jest wolna w moim terminie?
+        </summary>
+        <p class="text-ink-muted mt-2 text-sm leading-relaxed">
+          Ustawiasz datę i liczbę osób, a katalog pokazuje dostępne zagrody; ostateczne potwierdzenie wysyła gospodarz.
+        </p>
+      </details>
+      <details class:list={card}>
+        <summary class="tap-target text-ink flex cursor-pointer items-center font-semibold">
+          Co się dzieje po wysłaniu zapytania?
+        </summary>
+        <p class="text-ink-muted mt-2 text-sm leading-relaxed">
+          Trafia prosto do gospodarza, który potwierdza lub odrzuca; dzięki dziennemu limitowi miejsc ten sam dzień nie
+          zostanie zarezerwowany ponad limit.
+        </p>
+      </details>
+    </div>
+  </section>
+
   <!-- Skonsolidowana sekcja ownera -->
   <section class="py-12">
     <div class:list={card}>
-      <h2 class="text-ink mb-3 text-2xl font-bold sm:text-3xl">Prowadzisz zagrodę?</h2>
-      <p class="text-ink-muted mb-6 max-w-2xl text-base leading-relaxed">
-        Przyjmuj zapytania nauczycieli online i zarządzaj rezerwacjami z telefonu, jedną ręką, prosto z terenu.
-        Akceptujesz lub odrzucasz zgłoszenia jednym tapnięciem, a system pilnuje dziennego limitu miejsc — ten sam dzień
-        nie zostanie zarezerwowany ponad limit, nawet jeśli kilku nauczycieli pisze naraz.
-      </p>
+      <h2 class="text-ink mb-4 text-2xl font-bold sm:text-3xl">Prowadzisz zagrodę?</h2>
+      <ul class="mb-6 max-w-2xl space-y-3">
+        <li class="flex items-start gap-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-ink-muted mt-0.5 h-6 w-6 shrink-0"
+            aria-hidden="true"
+          >
+            <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+            <path d="M12 18h.01"></path>
+          </svg>
+          <p class="text-ink-muted text-base leading-relaxed">
+            Zarządzaj rezerwacjami z telefonu, jedną ręką, prosto z terenu — akceptuj lub odrzucaj zgłoszenia jednym
+            tapnięciem.
+          </p>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-ink-muted mt-0.5 h-6 w-6 shrink-0"
+            aria-hidden="true"
+          >
+            <path
+              d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+            ></path>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+          <p class="text-ink-muted text-base leading-relaxed">
+            System pilnuje dziennego limitu miejsc — ten sam dzień nie zostanie zarezerwowany ponad limit, nawet gdy
+            kilku nauczycieli pisze naraz.
+          </p>
+        </li>
+      </ul>
       {
         user ? (
           <a href="/dashboard" class:list={primaryBtn}>

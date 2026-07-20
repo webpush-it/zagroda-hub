@@ -303,35 +303,35 @@ Bez zmian schematu/danych. Ships standardową ścieżką (`npm run deploy` / CI 
 
 #### Automated
 
-- [x] 2.1 Typecheck: `npx astro check` (0 błędów)
-- [x] 2.2 Lint: `npm run lint`
-- [x] 2.3 Build: `npm run build`
-- [x] 2.4 Testy: `npm test`
-- [x] 2.5 Dokładnie jeden `<h1>` w `index.astro`
-- [x] 2.6 E2E desktop-width + mobile-320 zielony (jeśli uruchamiany lokalnie)
+- [x] 2.1 Typecheck: `npx astro check` (0 błędów) — c7002da
+- [x] 2.2 Lint: `npm run lint` — c7002da
+- [x] 2.3 Build: `npm run build` — c7002da
+- [x] 2.4 Testy: `npm test` — c7002da
+- [x] 2.5 Dokładnie jeden `<h1>` w `index.astro` — c7002da
+- [x] 2.6 E2E desktop-width + mobile-320 zielony (jeśli uruchamiany lokalnie) — c7002da
 
 #### Manual
 
-- [x] 2.7 320–414px: CTA hero nad ilustracją, brak poziomego scrolla
-- [x] 2.8 Ilustracja renderuje się ostro w hero; ramka spójna z marką
-- [x] 2.9 3 kroki czytelne z ikonami (dokładnie 3)
-- [x] 2.10 Powtórzone CTA → `/katalog`; pas accent-100 kontrastuje
-- [x] 2.11 Desktop: hero dwukolumnowy nie łamie `width="wide"`
+- [x] 2.7 320–414px: CTA hero nad ilustracją, brak poziomego scrolla — c7002da
+- [x] 2.8 Ilustracja renderuje się ostro w hero; ramka spójna z marką — c7002da
+- [x] 2.9 3 kroki czytelne z ikonami (dokładnie 3) — c7002da
+- [x] 2.10 Powtórzone CTA → `/katalog`; pas accent-100 kontrastuje — c7002da
+- [x] 2.11 Desktop: hero dwukolumnowy nie łamie `width="wide"` — c7002da
 
 ### Phase 3: FAQ, odchudzenie sekcji właściciela i SEO
 
 #### Automated
 
-- [ ] 3.1 Typecheck: `npx astro check` (0 błędów)
-- [ ] 3.2 Lint: `npm run lint`
-- [ ] 3.3 Build: `npm run build`
-- [ ] 3.4 Testy: `npm test`
-- [ ] 3.5 Brak `aggregateRating` w źródle; JSON-LD buduje się bez błędów
-- [ ] 3.6 E2E zielony (jeśli uruchamiany lokalnie)
+- [x] 3.1 Typecheck: `npx astro check` (0 błędów)
+- [x] 3.2 Lint: `npm run lint`
+- [x] 3.3 Build: `npm run build`
+- [x] 3.4 Testy: `npm test`
+- [x] 3.5 Brak `aggregateRating` w źródle; JSON-LD buduje się bez błędów
+- [x] 3.6 E2E zielony (jeśli uruchamiany lokalnie)
 
 #### Manual
 
-- [ ] 3.7 FAQ `<details>` rozwija/zwija bez JS, obszary ≥44px, odpowiedzi uczciwe
-- [ ] 3.8 Sekcja właściciela jako 2 punkty, wizualnie drugorzędna
-- [ ] 3.9 canonical + Twitter Card + JSON-LD obecne; brak `aggregateRating`
-- [ ] 3.10 Meta description wspomina rodziny i szkoły; podgląd OG/Twitter poprawny
+- [x] 3.7 FAQ `<details>` rozwija/zwija bez JS, obszary ≥44px, odpowiedzi uczciwe
+- [x] 3.8 Sekcja właściciela jako 2 punkty, wizualnie drugorzędna
+- [x] 3.9 canonical + Twitter Card + JSON-LD obecne; brak `aggregateRating`
+- [x] 3.10 Meta description wspomina rodziny i szkoły; podgląd OG/Twitter poprawny

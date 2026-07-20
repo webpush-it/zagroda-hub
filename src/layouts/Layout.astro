@@ -1,4 +1,5 @@
 ---
+/* eslint-disable astro/no-set-html-directive -- The only set:html in this file is the site-wide JSON-LD script below: it needs raw output and its content is a static, controlled JSON.stringify (no user input), not injected HTML. Astro does not interpolate expressions inside a raw-text script element, and prettier-astro collapses inline JSX-expression disable comments, so the disable is scoped to this small, high-trust layout file. */
 import "../styles/global.css";
 import Banner from "@/components/Banner.astro";
 import { missingConfigs } from "@/lib/config-status";
@@ -18,6 +19,32 @@ const {
 const base = Astro.site ?? Astro.url;
 const canonicalUrl = new URL(Astro.url.pathname, base).href;
 const ogImageUrl = new URL("/og-image.png", base).href;
+const siteUrl = new URL("/", base).href;
+const logoUrl = new URL("/favicon.png", base).href;
+
+// Site-wide JSON-LD (Organization + WebSite only). No FAQPage here: Layout is
+// shared by every page and has no head-slot, so a page-specific schema would
+// leak onto pages without it. No rating/review schema (would be fake social proof).
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}#organization`,
+      name: "Zagroda Hub",
+      url: siteUrl,
+      logo: logoUrl,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}#website`,
+      name: "Zagroda Hub",
+      url: siteUrl,
+      inLanguage: "pl-PL",
+      publisher: { "@id": `${siteUrl}#organization` },
+    },
+  ],
+});
 ---
 
 <!doctype html>
@@ -30,11 +57,17 @@ const ogImageUrl = new URL("/og-image.png", base).href;
     <link rel="preload" href="/fonts/nunito-latin-pl.woff2" as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <script type="application/ld+json" set:html={jsonLd} />
   </head>
   <body>
     {
