@@ -63,9 +63,12 @@ jobs:
       # worker ships (S-10). Without this the migration leaves `localities` empty
       # and existing published rows keep NULL coords, so the catalog's distance
       # sort has nothing to work with. Idempotent (upsert + set-based backfill).
+      # Session pooler (IPv4-friendly for GitHub runners, port 5432); password
+      # comes from the existing SUPABASE_DB_PASSWORD secret so no new secret is
+      # needed. GitHub masks the secret in logs.
       - run: npm run db:seed-localities
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_URL: postgresql://postgres.viuusqzijkwykfoohulo:${{ secrets.SUPABASE_DB_PASSWORD }}@aws-1-eu-central-2.pooler.supabase.com:5432/postgres
       - run: npx astro sync
       - run: npm run build
         env:
