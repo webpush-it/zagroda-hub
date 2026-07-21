@@ -49,6 +49,7 @@ const excerpt = description.length > 120 ? `${description.slice(0, 120).trimEnd(
     unavailable ? "opacity-60" : "hover:border-brand-200",
   ]}
   data-zagroda-card
+  data-id={id}
   data-lat={hasCoords ? String(latitude) : undefined}
   data-lng={hasCoords ? String(longitude) : undefined}
   data-precise={locationPrecise ? "true" : "false"}

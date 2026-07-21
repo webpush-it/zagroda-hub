@@ -274,16 +274,37 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
       // comparator never returns NaN; coord-less cards still sink to the end.
       withDistance.sort((a, b) => (a.distance === b.distance ? 0 : a.distance - b.distance));
 
-      let withCoords = 0;
-      for (const { li, card, distance } of withDistance) {
-        list.appendChild(li);
-        if (Number.isFinite(distance)) withCoords += 1;
-        const badge = card?.querySelector<HTMLElement>("[data-distance]");
-        if (badge && card?.dataset.precise === "true" && Number.isFinite(distance)) {
-          badge.textContent = ` · ${formatApproxDistance(distance)}`;
+      // Move the nodes into sorted order and fill precise badges.
+      const applyOrder = () => {
+        for (const { li, card, distance } of withDistance) {
+          list.appendChild(li);
+          const badge = card?.querySelector<HTMLElement>("[data-distance]");
+          if (badge && card?.dataset.precise === "true" && Number.isFinite(distance)) {
+            badge.textContent = ` · ${formatApproxDistance(distance)}`;
+          }
         }
+      };
+
+      // Soften the reorder: give each card a stable view-transition-name so the
+      // browser tweens it from its old to new position (a slide, not a jump).
+      // Feature-detected and skipped under reduced-motion; unsupported browsers
+      // keep the instant reorder. Names are cleared after so they don't leak.
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (typeof document.startViewTransition === "function" && !prefersReducedMotion) {
+        for (const { card } of withDistance) {
+          if (card?.dataset.id) card.style.viewTransitionName = `zag-${card.dataset.id}`;
+        }
+        const transition = document.startViewTransition(applyOrder);
+        void transition.finished.finally(() => {
+          for (const { card } of withDistance) {
+            if (card) card.style.viewTransitionName = "";
+          }
+        });
+      } else {
+        applyOrder();
       }
-      return withCoords;
+
+      return withDistance.filter(({ distance }) => Number.isFinite(distance)).length;
     };
 
     // `auto` (returning granted guest) stays fully silent on failure — only an
