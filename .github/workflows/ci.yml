@@ -59,6 +59,13 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      # Load the localities dictionary + backfill zagrody coordinates BEFORE the
+      # worker ships (S-10). Without this the migration leaves `localities` empty
+      # and existing published rows keep NULL coords, so the catalog's distance
+      # sort has nothing to work with. Idempotent (upsert + set-based backfill).
+      - run: npm run db:seed-localities
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       - run: npx astro sync
       - run: npm run build
         env:

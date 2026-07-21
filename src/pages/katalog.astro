@@ -172,9 +172,12 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
 
     {
       results.length > 0 && (
-        <button type="button" id="near-me" hidden class="btn-secondary mb-4 w-full sm:w-auto">
-          📍 Pokaż najbliżej mnie
-        </button>
+        <div class="mb-4">
+          <button type="button" id="near-me" hidden class="btn-secondary w-full sm:w-auto">
+            📍 Pokaż najbliżej mnie
+          </button>
+          <p id="near-me-status" role="status" aria-live="polite" class="text-ink-muted mt-2 text-sm empty:hidden" />
+        </div>
       )
     }
 
@@ -245,11 +248,18 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
   // (deny / no-consent) path leaves the SSR order untouched.
   const nearMeBtn = document.querySelector<HTMLButtonElement>("#near-me");
   const list = document.querySelector<HTMLUListElement>("#catalog-list");
+  const nearMeStatus = document.querySelector<HTMLParagraphElement>("#near-me-status");
 
   if (nearMeBtn && list) {
+    const setStatus = (msg: string) => {
+      if (nearMeStatus) nearMeStatus.textContent = msg;
+    };
+
     // Reorder the existing <li> nodes by distance and fill the "~X km" badge on
     // precise cards. Cards without coords sort to the end and never get a badge.
-    const sortByDistance = (guest: { lat: number; lng: number }) => {
+    // Returns how many cards actually had coordinates, so the caller can tell
+    // "sorted" from "nothing to sort" and give the guest feedback.
+    const sortByDistance = (guest: { lat: number; lng: number }): number => {
       const items = [...list.querySelectorAll<HTMLLIElement>(":scope > li")];
       const withDistance = items.map((li) => {
         const card = li.querySelector<HTMLElement>("[data-zagroda-card]");
@@ -264,27 +274,55 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
       // comparator never returns NaN; coord-less cards still sink to the end.
       withDistance.sort((a, b) => (a.distance === b.distance ? 0 : a.distance - b.distance));
 
+      let withCoords = 0;
       for (const { li, card, distance } of withDistance) {
         list.appendChild(li);
+        if (Number.isFinite(distance)) withCoords += 1;
         const badge = card?.querySelector<HTMLElement>("[data-distance]");
         if (badge && card?.dataset.precise === "true" && Number.isFinite(distance)) {
           badge.textContent = ` · ${formatApproxDistance(distance)}`;
         }
       }
+      return withCoords;
     };
 
-    const locate = () => {
+    // `auto` (returning granted guest) stays fully silent on failure — only an
+    // explicit tap gets feedback, so we never nag someone who didn't ask.
+    const locate = (auto = false) => {
       // Absent in a non-secure context — bail so the click path can't throw.
-      if (!navigator.geolocation) return;
+      if (!navigator.geolocation) {
+        if (!auto) setStatus("Twoja przeglądarka nie udostępnia lokalizacji.");
+        return;
+      }
+      if (!auto) {
+        nearMeBtn.disabled = true;
+        setStatus("Ustalam Twoją lokalizację…");
+      }
       navigator.geolocation.getCurrentPosition(
-        (pos) => sortByDistance({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        // Denied / unavailable: keep the SSR order, show nothing, don't retry.
-        () => {},
+        (pos) => {
+          const withCoords = sortByDistance({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          nearMeBtn.disabled = false;
+          nearMeBtn.hidden = true; // sorted — the button has done its job
+          setStatus(
+            withCoords > 0
+              ? "Zagrody uszeregowane od najbliższych."
+              : "Te zagrody nie mają jeszcze danych lokalizacji, więc nie dało się ich uszeregować.",
+          );
+        },
+        // Denied / unavailable / timeout: keep SSR order. Give a neutral hint on
+        // an explicit tap; stay silent on the auto path. Never reveal a reason
+        // beyond "couldn't get it", and don't retry.
+        () => {
+          if (!auto) {
+            nearMeBtn.disabled = false;
+            setStatus("Nie udało się pobrać lokalizacji — katalog zostaje w dotychczasowej kolejności.");
+          }
+        },
         { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
       );
     };
 
-    nearMeBtn.addEventListener("click", locate);
+    nearMeBtn.addEventListener("click", () => locate(false));
 
     // Decide the initial UI from the Permissions API when available. iOS Safari
     // historically lacks `permissions.query` for geolocation (may be undefined
@@ -300,7 +338,7 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
           .query({ name: "geolocation" })
           .then((status) => {
             if (status.state === "granted") {
-              locate(); // already granted → sort silently, no tap needed
+              locate(true); // already granted → sort silently, no tap needed
             } else if (status.state === "prompt") {
               showButton();
             }
