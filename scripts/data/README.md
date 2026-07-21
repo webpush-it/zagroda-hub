@@ -19,9 +19,20 @@ into `latitude`/`longitude` for distance sorting (FR-020, FR-030, US-04).
 `public.locality_normalize` at load time so the dictionary key and the
 `locality_coords` lookup can never diverge (plan-review F2).
 
-One row per `(voivodeship, normalized-name)`: on a name clash the most prominent
-settlement wins (town → village → other standalone → part-of-locality), so e.g.
-`Kraków` resolves to the city, not a namesake hamlet.
+One row per `(voivodeship, normalized-name)`, resolved **honestly** when a name
+repeats within a voivodeship:
+
+- a single dominant **town** wins (so `Kraków` is the city, not a hamlet);
+- otherwise, if all namesakes cluster within 5 km, the most prominent one wins
+  (a few km is within locality-level approximation);
+- otherwise the name is **ambiguous and omitted** — `city` + voivodeship cannot
+  tell two far-apart villages apart, so rather than pick one at random (and show
+  a confidently-wrong distance) we drop it. Such a zagroda falls back to the
+  voivodeship centroid: `location_precise = false`, sorted coarsely, no `~X km`.
+
+This drops ~12% of names (≈11k of ~90k) as genuinely ambiguous — the price of
+not lying about distance. The seed prunes any locality no longer in the asset,
+so re-running removes previously-loaded ambiguous names.
 
 ## Source & licence
 

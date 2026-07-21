@@ -87,6 +87,32 @@ describe("loadLocalities — upsert", () => {
     );
     expect(rows[0]).toMatchObject({ latitude: 52.9, longitude: 20.1 });
   });
+
+  it("(d) prune removes a locality dropped from the asset; default upsert keeps it", async () => {
+    // Isolated in a transaction rolled back at the end, because prune is a full
+    // sync — it would otherwise delete every other row in the shared dictionary.
+    const keep = `Zostaje${RUN}`;
+    const drop = `Znika${RUN}`;
+    await pg.query("begin");
+    try {
+      await pg.query("delete from public.localities"); // clean slate inside the tx
+      await loadLocalities(pg, [
+        { voivodeship: "mazowieckie", name: keep, latitude: 52.1, longitude: 20.1 },
+        { voivodeship: "mazowieckie", name: drop, latitude: 53.2, longitude: 21.2 },
+      ]);
+      expect(await countLocality(keep)).toBe(1);
+      expect(await countLocality(drop)).toBe(1);
+
+      // Re-seed WITHOUT `drop`, pruning: the vanished name is deleted, `keep` stays.
+      await loadLocalities(pg, [{ voivodeship: "mazowieckie", name: keep, latitude: 52.1, longitude: 20.1 }], {
+        prune: true,
+      });
+      expect(await countLocality(keep)).toBe(1);
+      expect(await countLocality(drop)).toBe(0);
+    } finally {
+      await pg.query("rollback");
+    }
+  });
 });
 
 describe("backfillZagrody", () => {

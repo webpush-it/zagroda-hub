@@ -104,13 +104,18 @@ export function parseLocalitiesCsv(text: string): LocalityRow[] {
 }
 
 /**
- * Upsert dictionary rows into public.localities. name_normalized is computed by
- * the DB (locality_normalize) so it can never drift from the lookup. `distinct
- * on` collapses any rows that normalize to the same key within one statement
- * (ON CONFLICT cannot touch a row twice); `do update` makes re-runs converge.
- * Returns the number of rows upserted.
+ * Upsert dictionary rows into public.localities. With `opts.prune` (the CLI
+ * path), also DELETE any locality no longer present in the asset — a full sync.
+ * The prune is what makes a name the generator now drops (ambiguous far-apart
+ * namesakes, S-10 impl fix) actually leave the DB on re-seed; otherwise its
+ * stale, wrong coordinates would linger and keep resolving. It is OFF by default
+ * so unit tests can load a small fixture without wiping the shared dictionary.
+ * name_normalized is computed by the DB (locality_normalize) so it can never
+ * drift from the lookup. `distinct on` collapses rows that normalize to the same
+ * key within one statement (ON CONFLICT cannot touch a row twice); `do update`
+ * makes re-runs converge. Returns the number of rows upserted.
  */
-export async function loadLocalities(pg: Client, rows: LocalityRow[]): Promise<number> {
+export async function loadLocalities(pg: Client, rows: LocalityRow[], opts: { prune?: boolean } = {}): Promise<number> {
   await pg.query("drop table if exists _localities_stage");
   await pg.query(
     `create temp table _localities_stage (
@@ -149,6 +154,21 @@ export async function loadLocalities(pg: Client, rows: LocalityRow[]): Promise<n
            latitude = excluded.latitude,
            longitude = excluded.longitude`,
   );
+
+  // Full sync (CLI only): drop localities no longer in the asset (e.g. names the
+  // generator reclassified as ambiguous). Keyed on the same normalized value the
+  // insert used, so the comparison is exact.
+  if (opts.prune) {
+    await pg.query(
+      `delete from public.localities l
+       where not exists (
+         select 1 from _localities_stage s
+         where s.voivodeship::public.voivodeship = l.voivodeship
+           and public.locality_normalize(s.name) = l.name_normalized
+       )`,
+    );
+  }
+
   await pg.query("drop table if exists _localities_stage");
   return result.rowCount ?? 0;
 }
@@ -212,7 +232,7 @@ export async function computeMatchStats(pg: Client): Promise<MatchStats> {
 
 /** Load the asset, backfill, and report coverage. Returns the collected stats. */
 export async function seedLocalities(pg: Client, rows: LocalityRow[]): Promise<MatchStats> {
-  const upserted = await loadLocalities(pg, rows);
+  const upserted = await loadLocalities(pg, rows, { prune: true });
   const { rows: dictCountRows } = await pg.query<{ count: string }>("select count(*) as count from public.localities");
   const updated = await backfillZagrody(pg);
   const stats = await computeMatchStats(pg);
