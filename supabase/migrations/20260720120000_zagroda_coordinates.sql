@@ -237,4 +237,7 @@ as $$
   limit 100
 $$;
 
+-- PUBLIC gets EXECUTE by default on a freshly created function — revoke, then
+-- grant the two intended roles (matches 20260607090000_catalog_zagrody.sql).
+revoke execute on function public.catalog_zagrody(public.voivodeship, text, date, integer) from public;
 grant execute on function public.catalog_zagrody(public.voivodeship, text, date, integer) to anon, authenticated;

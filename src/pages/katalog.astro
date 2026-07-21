@@ -194,6 +194,24 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
         </ul>
       )
     }
+
+    {
+      /* CC BY 4.0 attribution for the locality-coordinate dataset (PRNG/GUGiK)
+        that powers the „najbliżej mnie" distance sort — shown on the page that
+        actually consumes the derived data. */
+    }
+    <footer class="text-ink-muted mt-6 text-xs">
+      Współrzędne miejscowości pochodzą z{" "}
+      <a
+        href="https://dane.gov.pl/pl/dataset/780"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline hover:no-underline"
+      >
+        Państwowego Rejestru Nazw Geograficznych (PRNG, GUGiK)
+      </a>{" "}
+      — licencja CC BY 4.0 (PZGiK).
+    </footer>
   </main>
 </PageShell>
 
@@ -242,7 +260,9 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
         return { li, card, distance };
       });
 
-      withDistance.sort((a, b) => a.distance - b.distance);
+      // Equal distances (incl. two coord-less cards, both Infinity) → 0 so the
+      // comparator never returns NaN; coord-less cards still sink to the end.
+      withDistance.sort((a, b) => (a.distance === b.distance ? 0 : a.distance - b.distance));
 
       for (const { li, card, distance } of withDistance) {
         list.appendChild(li);
@@ -254,6 +274,8 @@ const labelClass = "text-ink-muted mb-1 block text-sm";
     };
 
     const locate = () => {
+      // Absent in a non-secure context — bail so the click path can't throw.
+      if (!navigator.geolocation) return;
       navigator.geolocation.getCurrentPosition(
         (pos) => sortByDistance({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
         // Denied / unavailable: keep the SSR order, show nothing, don't retry.
