@@ -318,29 +318,29 @@ Let the owner optionally record a group type when logging a phone booking, wirin
 
 #### Automated
 
-- [x] 2.1 Type checking passes (`npm run typecheck`)
-- [x] 2.2 Linting passes
-- [x] 2.3 API tests for booking-request pass (`npm test`)
+- [x] 2.1 Type checking passes (`npm run typecheck`) — 5e5a71b
+- [x] 2.2 Linting passes — 5e5a71b
+- [x] 2.3 API tests for booking-request pass (`npm test`) — 5e5a71b
 
 #### Manual
 
-- [x] 2.4 Submitting without a type shows a field error and blocks submit
-- [x] 2.5 Submitting each of the four types stores the correct enum value
-- [x] 2.6 Confirmation email + cancel-token flow behave exactly as before (FR-029)
+- [x] 2.4 Submitting without a type shows a field error and blocks submit — 5e5a71b
+- [x] 2.5 Submitting each of the four types stores the correct enum value — 5e5a71b
+- [x] 2.6 Confirmation email + cancel-token flow behave exactly as before (FR-029) — 5e5a71b
 
 ### Phase 3: Owner surfacing + neutral wording
 
 #### Automated
 
-- [ ] 3.1 Type checking passes (`npm run typecheck`)
-- [ ] 3.2 Linting passes
-- [ ] 3.3 Existing email + decision tests pass unchanged (`npm test`)
+- [x] 3.1 Type checking passes (`npm run typecheck`)
+- [x] 3.2 Linting passes
+- [x] 3.3 Existing email + decision tests pass unchanged (`npm test`)
 
 #### Manual
 
-- [ ] 3.4 Owner notification email shows the group type (and „—" for a phone/legacy row)
-- [ ] 3.5 Owner detail + list render the type; a legacy no-type row renders „—" without error
-- [ ] 3.6 No "nauczyciel" remains in the request flow; guest-facing email bodies unchanged
+- [x] 3.4 Owner notification email shows the group type (and „—" for a phone/legacy row)
+- [x] 3.5 Owner detail + list render the type; a legacy no-type row renders „—" without error
+- [x] 3.6 No "nauczyciel" remains in the request flow; guest-facing email bodies unchanged
 
 ### Phase 4: Manual (phone) booking group type
 

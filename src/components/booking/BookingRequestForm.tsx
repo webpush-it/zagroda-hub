@@ -3,21 +3,13 @@ import { Calendar, CircleAlert, CircleCheck, Loader2, Mail, Phone, Send, User, U
 import { FormField } from "@/components/auth/FormField";
 import { ServerError } from "@/components/auth/ServerError";
 import { cn } from "@/lib/utils";
-import { bookingRequestSchema, fieldErrorsFromZod, GROUP_TYPE_VALUES } from "@/lib/booking";
+import { bookingRequestSchema, fieldErrorsFromZod, GROUP_TYPE_LABELS, GROUP_TYPE_VALUES } from "@/lib/booking";
 
 interface TurnusOption {
   id: string;
   label: string;
   time: string;
 }
-
-/** Human labels for the group-type storage tokens (presentation layer). */
-const GROUP_TYPE_LABELS: Record<(typeof GROUP_TYPE_VALUES)[number], string> = {
-  szkola: "Szkoła",
-  przedszkole: "Przedszkole",
-  grupa_indywidualna: "Grupa indywidualna",
-  inna: "Inna",
-};
 
 interface Props {
   zagrodaId: string;

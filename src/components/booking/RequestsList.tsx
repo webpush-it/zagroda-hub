@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Calendar, ChevronRight, Clock, Inbox, Phone, User, Users } from "lucide-react";
+import { Calendar, ChevronRight, Clock, Inbox, Phone, Tag, User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StatusBadge, type RequestStatus } from "@/components/booking/StatusBadge";
+import { GROUP_TYPE_LABELS, type GroupType } from "@/lib/booking";
 
 export type BookingSource = "app" | "phone";
 
@@ -10,6 +11,8 @@ export interface RequestRow {
   trip_date: string;
   turnus_label: string;
   participants_count: number;
+  // Null for legacy/phone rows created before the group-type field existed.
+  group_type: GroupType | null;
   guest_name: string;
   source: BookingSource;
   status: RequestStatus;
@@ -22,6 +25,16 @@ function SourceBadge() {
     <span className="border-brand-200 bg-brand-50 text-brand-700 inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap">
       <Phone className="size-3" aria-hidden="true" />
       Telefon
+    </span>
+  );
+}
+
+/** Group-type chip — omitted for legacy/phone rows with no type. */
+function GroupTypeBadge({ groupType }: { groupType: GroupType }) {
+  return (
+    <span className="border-edge bg-surface text-ink-muted inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap">
+      <Tag className="size-3" aria-hidden="true" />
+      {GROUP_TYPE_LABELS[groupType]}
     </span>
   );
 }
@@ -85,6 +98,7 @@ export default function RequestsList({ rows }: { rows: RequestRow[] }) {
                   <div className="flex items-center gap-2">
                     <StatusBadge status={r.status} />
                     {r.source === "phone" && <SourceBadge />}
+                    {r.group_type && <GroupTypeBadge groupType={r.group_type} />}
                     <span className="text-ink-muted shrink-0 text-xs whitespace-nowrap">
                       Wysłano {r.created_at.slice(0, 10)}
                     </span>

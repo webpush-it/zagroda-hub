@@ -37,7 +37,7 @@ if (supabase && user) {
     const [{ data: requestRows }, { data: blockRows }] = await Promise.all([
       supabase
         .from("booking_requests")
-        .select("id, trip_date, participants_count, guest_name, source, status, created_at, turnusy(label)")
+        .select("id, trip_date, participants_count, group_type, guest_name, source, status, created_at, turnusy(label)")
         .eq("zagroda_id", zagroda.id)
         .order("created_at", { ascending: false })
         // Bound the SSR payload — the list (incl. cancelled/withdrawn history) is
@@ -57,6 +57,7 @@ if (supabase && user) {
       trip_date: r.trip_date,
       turnus_label: r.turnusy.label,
       participants_count: r.participants_count,
+      group_type: r.group_type,
       // Phone entries (S-08) have no guest contact — a fixed label stands in.
       guest_name: r.guest_name ?? "Wpis telefoniczny",
       source: r.source,

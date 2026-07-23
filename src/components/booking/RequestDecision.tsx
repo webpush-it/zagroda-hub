@@ -91,19 +91,21 @@ export default function RequestDecision({ id, initialStatus, source }: Props) {
       {notice?.kind === "accepted" && (
         <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
           <CircleCheck className="mt-0.5 size-4 shrink-0" />
-          Zaakceptowano — nauczyciel dostanie e-mail
+          Zaakceptowano — osoba kontaktowa dostanie e-mail
         </p>
       )}
       {notice?.kind === "rejected" && (
         <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
           <CircleCheck className="mt-0.5 size-4 shrink-0" />
-          Odrzucono — nauczyciel dostanie e-mail
+          Odrzucono — osoba kontaktowa dostanie e-mail
         </p>
       )}
       {notice?.kind === "withdrawn" && (
         <p className="flex items-start gap-2 rounded-lg border border-green-300 bg-green-100 px-3 py-3 text-sm text-green-900">
           <CircleCheck className="mt-0.5 size-4 shrink-0" />
-          {source === "phone" ? "Usunięto wpis — miejsca zostały zwolnione" : "Wycofano — nauczyciel dostanie e-mail"}
+          {source === "phone"
+            ? "Usunięto wpis — miejsca zostały zwolnione"
+            : "Wycofano — osoba kontaktowa dostanie e-mail"}
         </p>
       )}
       {notice?.kind === "day_blocked" && (

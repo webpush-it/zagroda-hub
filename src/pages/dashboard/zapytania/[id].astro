@@ -3,6 +3,7 @@ import PageShell from "@/components/PageShell.astro";
 import RequestDecision from "@/components/booking/RequestDecision";
 import { StatusBadge, type RequestStatus } from "@/components/booking/StatusBadge";
 import type { BookingSource } from "@/components/booking/RequestsList";
+import { GROUP_TYPE_LABELS, type GroupType } from "@/lib/booking";
 import { createClient } from "@/lib/supabase";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -15,6 +16,8 @@ interface RequestDetail {
   turnus_label: string;
   turnus_time: string;
   participants_count: number;
+  // Null for legacy/phone rows created before the group-type field existed.
+  group_type: GroupType | null;
   // Phone entries (S-08) have no guest contact — the contact section renders
   // only for app rows, so the nulls never reach the markup.
   guest_name: string | null;
@@ -37,7 +40,7 @@ if (supabase && user && id) {
   const { data } = await supabase
     .from("booking_requests")
     .select(
-      "trip_date, participants_count, guest_name, guest_email, guest_phone, source, note, status, created_at, turnusy(label, start_time, end_time)",
+      "trip_date, participants_count, group_type, guest_name, guest_email, guest_phone, source, note, status, created_at, turnusy(label, start_time, end_time)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -49,6 +52,7 @@ if (supabase && user && id) {
       turnus_label: data.turnusy.label,
       turnus_time: `${data.turnusy.start_time.slice(0, 5)}–${data.turnusy.end_time.slice(0, 5)}`,
       participants_count: data.participants_count,
+      group_type: data.group_type,
       guest_name: data.guest_name,
       guest_email: data.guest_email,
       guest_phone: data.guest_phone,
@@ -67,7 +71,7 @@ if (!request) {
 const TERMINAL_COPY: Partial<Record<RequestStatus, string>> = {
   accepted: "To zapytanie zostało zaakceptowane.",
   rejected: "To zapytanie zostało odrzucone.",
-  cancelled_by_guest: "To zapytanie zostało anulowane przez nauczyciela.",
+  cancelled_by_guest: "To zapytanie zostało anulowane przez osobę kontaktową.",
   withdrawn_by_owner: "Akceptacja tego zapytania została wycofana.",
 };
 
@@ -112,6 +116,10 @@ const terminalCopy = request
               <dd class="text-ink font-medium">{request.participants_count}</dd>
             </div>
             <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+              <dt class="text-ink-muted">Typ grupy</dt>
+              <dd class="text-ink font-medium">{request.group_type ? GROUP_TYPE_LABELS[request.group_type] : "—"}</dd>
+            </div>
+            <div class="border-edge bg-surface flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
               <dt class="text-ink-muted">Źródło</dt>
               <dd class="text-ink font-medium">{request.source === "phone" ? "telefon" : "aplikacja"}</dd>
             </div>
@@ -128,7 +136,7 @@ const terminalCopy = request
             )
           ) : (
             <section class="mt-6">
-              <h2 class="text-ink mb-2 text-base font-semibold">Kontakt do nauczyciela</h2>
+              <h2 class="text-ink mb-2 text-base font-semibold">Kontakt do osoby kontaktowej</h2>
               <dl class="flex flex-col gap-2">
                 <div class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
                   <dt class="text-ink-muted shrink-0">Imię i nazwisko</dt>

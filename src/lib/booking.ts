@@ -16,6 +16,16 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
  */
 export const GROUP_TYPE_VALUES = ["szkola", "przedszkole", "grupa_indywidualna", "inna"] as const;
 
+export type GroupType = (typeof GROUP_TYPE_VALUES)[number];
+
+/** Human labels for the group-type storage tokens (presentation layer). */
+export const GROUP_TYPE_LABELS: Record<GroupType, string> = {
+  szkola: "Szkoła",
+  przedszkole: "Przedszkole",
+  grupa_indywidualna: "Grupa indywidualna",
+  inna: "Inna",
+};
+
 /** Strip the cosmetic separators a user may type in a phone number. */
 export function normalizePhone(raw: string): string {
   return raw.replace(/[\s\-()]/g, "");
@@ -123,6 +133,8 @@ export interface BookingEmailContext {
   guest_phone: string;
   trip_date: string;
   participants_count: number;
+  /** Group type chosen by the guest; null for legacy/untyped rows. */
+  group_type: GroupType | null;
 }
 
 /**
@@ -169,6 +181,11 @@ export function buildBookingEmails(ctx: BookingEmailContext): { guest: EmailMess
   const requestUrl = `${ctx.origin}/dashboard/zapytania/${ctx.requestId}`;
   const requestUrlHtml = escapeHtml(requestUrl);
 
+  // Owner-only: the request summary carries the group type. The guest email
+  // (summaryRows above) is unchanged — the type surfaces only owner-side.
+  const groupTypeLabel = ctx.group_type ? GROUP_TYPE_LABELS[ctx.group_type] : "—";
+  const ownerSummaryRows = `${summaryRows}<li>Typ grupy: <strong>${escapeHtml(groupTypeLabel)}</strong></li>`;
+
   const owner: EmailMessage = {
     to: ctx.ownerEmail,
     replyTo: ctx.guest_email,
@@ -176,15 +193,15 @@ export function buildBookingEmails(ctx: BookingEmailContext): { guest: EmailMess
     html: renderEmailLayout({
       title: "Nowe zapytanie o pobyt",
       bodyHtml: `<p>Otrzymałeś nowe zapytanie o pobyt w zagrodzie <strong>${name}</strong>.</p>
-<ul>${summaryRows}</ul>
-<p>Dane kontaktowe nauczyciela:</p>
+<ul>${ownerSummaryRows}</ul>
+<p>Dane kontaktowe osoby kontaktowej:</p>
 <ul>
 <li>Imię i nazwisko: <strong>${guestName}</strong></li>
 <li>E-mail: <strong>${guestEmail}</strong></li>
 <li>Telefon: <strong>${guestPhone}</strong></li>
 </ul>
 <p><a href="${requestUrlHtml}">Zobacz zapytanie</a></p>
-<p>Aby odpowiedzieć, użyj opcji „Odpowiedz” — wiadomość trafi bezpośrednio do nauczyciela.</p>`,
+<p>Aby odpowiedzieć, użyj opcji „Odpowiedz” — wiadomość trafi bezpośrednio do osoby kontaktowej.</p>`,
     }),
   };
 

@@ -176,6 +176,7 @@ describe("buildBookingEmails", () => {
     guest_phone: "600700800",
     trip_date: "2999-12-31",
     participants_count: 12,
+    group_type: "szkola" as const,
   };
 
   it("escapes guest-supplied data in the owner email", () => {
@@ -192,6 +193,22 @@ describe("buildBookingEmails", () => {
     const { guest } = buildBookingEmails(ctx);
     expect(guest.to).toBe("ala@example.com");
     expect(guest.html).toContain("https://zagroda.test/anuluj?token=33333333-3333-3333-3333-333333333333");
+  });
+
+  it("surfaces the group type in the owner email but not the guest email", () => {
+    const { guest, owner } = buildBookingEmails(ctx);
+    expect(owner).not.toBeNull();
+    if (!owner) return;
+    expect(owner.html).toContain("Typ grupy:");
+    expect(owner.html).toContain("Szkoła");
+    expect(guest.html).not.toContain("Typ grupy:");
+  });
+
+  it('renders „—" as the owner group type when none was chosen', () => {
+    const { owner } = buildBookingEmails({ ...ctx, group_type: null });
+    expect(owner).not.toBeNull();
+    if (!owner) return;
+    expect(owner.html).toContain("Typ grupy: <strong>—</strong>");
   });
 
   it("returns owner: null when no owner address resolved", () => {

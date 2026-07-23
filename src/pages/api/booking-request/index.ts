@@ -125,6 +125,7 @@ async function enqueueBookingEmails(
       guest_phone: data.guest_phone,
       trip_date: data.trip_date,
       participants_count: data.participants_count,
+      group_type: data.group_type,
     });
 
     const deps = { admin, config: getEmailConfig(), waitUntil: getWaitUntil(context.locals) };
