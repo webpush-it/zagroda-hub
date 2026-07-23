@@ -186,6 +186,9 @@ export async function backfillZagrody(pg: Client): Promise<number> {
   // (empty city) — lat/lng go NULL and location_precise coalesces to false,
   // matching the trigger's zero-row-safety (plan-review F5). Semantics are the
   // plan's set-based backfill; the shape is what Postgres accepts.
+  // location_source <> 'manual' guards owner-dropped pins: a re-seed at deploy
+  // time must never overwrite a manual pin with name-derived coords, mirroring
+  // the trigger's manual branch (zagroda-map-location Phase 1).
   const result = await pg.query(
     `update public.zagrody z
      set latitude = c.latitude,
@@ -196,6 +199,7 @@ export async function backfillZagrody(pg: Client): Promise<number> {
        from public.zagrody zz
        left join lateral public.locality_coords(zz.voivodeship, zz.city) lc on true
        where zz.voivodeship is not null
+         and zz.location_source <> 'manual'
      ) c
      where c.id = z.id`,
   );

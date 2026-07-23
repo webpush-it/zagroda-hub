@@ -368,16 +368,16 @@ potwierdzenie przed uznaniem zmiany za gotową.
 
 #### Automated
 
-- [ ] 1.1 Migracja aplikuje się czysto: `npm run db:reset`
-- [ ] 1.2 Typy bez rozjazdu: `npm run db:types`
-- [ ] 1.3 Testy DB przechodzą: `npm test`
-- [ ] 1.4 Typecheck czysty: `npx astro check`
-- [ ] 1.5 Lint czysty: `npm run lint`
+- [x] 1.1 Migracja aplikuje się czysto: `npm run db:reset`
+- [x] 1.2 Typy bez rozjazdu: `npm run db:types`
+- [x] 1.3 Testy DB przechodzą: `npm test`
+- [x] 1.4 Typecheck czysty: `npx astro check`
+- [x] 1.5 Lint czysty: `npm run lint`
 
 #### Manual
 
-- [ ] 1.6 Studio: manual przeżywa zmianę miasta; auto przywraca derywację
-- [ ] 1.7 Suity S-10 (`zagroda-coordinates`, `localities-seed`, `catalog`) zielone
+- [x] 1.6 Studio: manual przeżywa zmianę miasta; auto przywraca derywację
+- [x] 1.7 Suity S-10 (`zagroda-coordinates`, `localities-seed`, `catalog`) zielone
 
 ### Phase 2: Map-picker w formularzu właściciela
 

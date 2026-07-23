@@ -254,6 +254,7 @@ export type Database = {
           is_published: boolean
           latitude: number | null
           location_precise: boolean
+          location_source: string
           longitude: number | null
           name: string
           owner_id: string
@@ -269,6 +270,7 @@ export type Database = {
           is_published?: boolean
           latitude?: number | null
           location_precise?: boolean
+          location_source?: string
           longitude?: number | null
           name: string
           owner_id: string
@@ -284,6 +286,7 @@ export type Database = {
           is_published?: boolean
           latitude?: number | null
           location_precise?: boolean
+          location_source?: string
           longitude?: number | null
           name?: string
           owner_id?: string
