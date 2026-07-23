@@ -399,13 +399,13 @@ potwierdzenie przed uznaniem zmiany za gotową.
 
 #### Automated
 
-- [x] 3.1 Build: `npm run build`
-- [x] 3.2 Typecheck czysty: `npx astro check`
-- [x] 3.3 Lint czysty: `npm run lint`
-- [x] 3.4 Testy przechodzą: `npm test`
+- [x] 3.1 Build: `npm run build` — f356209
+- [x] 3.2 Typecheck czysty: `npx astro check` — f356209
+- [x] 3.3 Lint czysty: `npm run lint` — f356209
+- [x] 3.4 Testy przechodzą: `npm test` — f356209
 
 #### Manual
 
-- [x] 3.5 Strona zagrody z coords pokazuje mapę z markerem we właściwym miejscu + atrybucja
-- [x] 3.6 Zagroda bez coords: brak mapy, brak błędu w konsoli
-- [x] 3.7 NFR: strona szczegółów ładuje się płynnie (mapa leniwie hydratowana)
+- [x] 3.5 Strona zagrody z coords pokazuje mapę z markerem we właściwym miejscu + atrybucja — f356209
+- [x] 3.6 Zagroda bez coords: brak mapy, brak błędu w konsoli — f356209
+- [x] 3.7 NFR: strona szczegółów ładuje się płynnie (mapa leniwie hydratowana) — f356209
