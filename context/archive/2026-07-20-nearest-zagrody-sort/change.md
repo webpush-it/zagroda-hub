@@ -1,10 +1,10 @@
 ---
 change_id: nearest-zagrody-sort
 title: Najbliższe zagrody — sortowanie katalogu po odległości od gościa (S-10)
-status: impl_reviewed
+status: archived
 created: 2026-07-20
-updated: 2026-07-21
-archived_at: null
+updated: 2026-07-23
+archived_at: 2026-07-23T11:45:59Z
 ---
 
 ## Notes
