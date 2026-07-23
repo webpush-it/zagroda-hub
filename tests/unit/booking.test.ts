@@ -19,6 +19,7 @@ const VALID = {
   turnus_id: "22222222-2222-4222-8222-222222222222",
   trip_date: "2999-12-31",
   participants_count: 5,
+  group_type: "szkola",
   guest_name: "Jan Kowalski",
   guest_email: "jan@example.com",
   guest_phone: "600700800",
@@ -88,6 +89,22 @@ describe("bookingRequestSchema — other fields", () => {
   it("rejects an empty name and a non-uuid turnus", () => {
     expect(bookingRequestSchema.safeParse({ ...VALID, guest_name: "   " }).success).toBe(false);
     expect(bookingRequestSchema.safeParse({ ...VALID, turnus_id: "nope" }).success).toBe(false);
+  });
+});
+
+describe("bookingRequestSchema — group_type (required)", () => {
+  it("accepts each of the four group-type tokens", () => {
+    for (const group_type of ["szkola", "przedszkole", "grupa_indywidualna", "inna"]) {
+      expect(bookingRequestSchema.safeParse({ ...VALID, group_type }).success).toBe(true);
+    }
+  });
+
+  it("rejects a missing, empty or unknown group type", () => {
+    const { group_type: _omitted, ...withoutType } = VALID;
+    void _omitted;
+    expect(bookingRequestSchema.safeParse(withoutType).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...VALID, group_type: "" }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...VALID, group_type: "liceum" }).success).toBe(false);
   });
 });
 

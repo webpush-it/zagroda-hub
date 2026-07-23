@@ -10,6 +10,12 @@ export { fieldErrorsFromZod } from "@/lib/zagroda";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
+/**
+ * Group-type storage tokens (ASCII, mirroring booking_source/request_status
+ * style). Human labels live in the presentation layer, mapped from these.
+ */
+export const GROUP_TYPE_VALUES = ["szkola", "przedszkole", "grupa_indywidualna", "inna"] as const;
+
 /** Strip the cosmetic separators a user may type in a phone number. */
 export function normalizePhone(raw: string): string {
   return raw.replace(/[\s\-()]/g, "");
@@ -51,6 +57,7 @@ export const bookingRequestSchema = z.object({
     .int("Liczba uczestników musi być liczbą całkowitą")
     .min(1, "Co najmniej 1 uczestnik")
     .max(1000, "Maksymalnie 1000 uczestników"),
+  group_type: z.enum(GROUP_TYPE_VALUES, "Wybierz typ grupy"),
   guest_name: z
     .string("Podaj imię i nazwisko")
     .trim()

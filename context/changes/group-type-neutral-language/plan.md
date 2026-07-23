@@ -306,27 +306,27 @@ Let the owner optionally record a group type when logging a phone booking, wirin
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly against a fresh DB
-- [x] 1.2 Type generation produces a `group_type` enum + column with no diff drift (`npm run typecheck`)
-- [x] 1.3 DB test suite passes (`npm test`, manual-bookings.test.ts green)
+- [x] 1.1 Migration applies cleanly against a fresh DB — 9a38d0d
+- [x] 1.2 Type generation produces a `group_type` enum + column with no diff drift (`npm run typecheck`) — 9a38d0d
+- [x] 1.3 DB test suite passes (`npm test`, manual-bookings.test.ts green) — 9a38d0d
 
 #### Manual
 
-- [x] 1.4 `create_manual_booking` shows exactly one overload with the authenticated-only grant intact
+- [x] 1.4 `create_manual_booking` shows exactly one overload with the authenticated-only grant intact — 9a38d0d
 
 ### Phase 2: Guest form + API
 
 #### Automated
 
-- [ ] 2.1 Type checking passes (`npm run typecheck`)
-- [ ] 2.2 Linting passes
-- [ ] 2.3 API tests for booking-request pass (`npm test`)
+- [x] 2.1 Type checking passes (`npm run typecheck`)
+- [x] 2.2 Linting passes
+- [x] 2.3 API tests for booking-request pass (`npm test`)
 
 #### Manual
 
-- [ ] 2.4 Submitting without a type shows a field error and blocks submit
-- [ ] 2.5 Submitting each of the four types stores the correct enum value
-- [ ] 2.6 Confirmation email + cancel-token flow behave exactly as before (FR-029)
+- [x] 2.4 Submitting without a type shows a field error and blocks submit
+- [x] 2.5 Submitting each of the four types stores the correct enum value
+- [x] 2.6 Confirmation email + cancel-token flow behave exactly as before (FR-029)
 
 ### Phase 3: Owner surfacing + neutral wording
 

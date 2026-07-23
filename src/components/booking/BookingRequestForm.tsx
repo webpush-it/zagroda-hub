@@ -3,13 +3,21 @@ import { Calendar, CircleAlert, CircleCheck, Loader2, Mail, Phone, Send, User, U
 import { FormField } from "@/components/auth/FormField";
 import { ServerError } from "@/components/auth/ServerError";
 import { cn } from "@/lib/utils";
-import { bookingRequestSchema, fieldErrorsFromZod } from "@/lib/booking";
+import { bookingRequestSchema, fieldErrorsFromZod, GROUP_TYPE_VALUES } from "@/lib/booking";
 
 interface TurnusOption {
   id: string;
   label: string;
   time: string;
 }
+
+/** Human labels for the group-type storage tokens (presentation layer). */
+const GROUP_TYPE_LABELS: Record<(typeof GROUP_TYPE_VALUES)[number], string> = {
+  szkola: "Szkoła",
+  przedszkole: "Przedszkole",
+  grupa_indywidualna: "Grupa indywidualna",
+  inna: "Inna",
+};
 
 interface Props {
   zagrodaId: string;
@@ -45,6 +53,7 @@ function today(): string {
 
 export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: Props) {
   const [turnusId, setTurnusId] = useState("");
+  const [groupType, setGroupType] = useState("");
   const [tripDate, setTripDate] = useState("");
   const [participants, setParticipants] = useState("");
   const [name, setName] = useState("");
@@ -65,6 +74,7 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
     const payload = {
       zagroda_id: zagrodaId,
       turnus_id: turnusId,
+      group_type: groupType,
       trip_date: tripDate,
       participants_count: participants.trim() === "" ? Number.NaN : Number(participants),
       guest_name: name,
@@ -141,6 +151,29 @@ export default function BookingRequestForm({ zagrodaId, turnusy, dailyLimit }: P
           ))}
         </select>
         <FieldError message={fieldErrors.turnus_id || undefined} />
+      </div>
+
+      <div>
+        <label htmlFor="group_type" className="text-ink-muted mb-1 block text-sm">
+          Typ grupy
+        </label>
+        <select
+          id="group_type"
+          value={groupType}
+          onChange={(e) => {
+            setGroupType(e.target.value);
+            clearError("group_type");
+          }}
+          className={cn(fieldClass(fieldErrors.group_type || undefined), "appearance-none")}
+        >
+          <option value="">— wybierz typ grupy —</option>
+          {GROUP_TYPE_VALUES.map((value) => (
+            <option key={value} value={value}>
+              {GROUP_TYPE_LABELS[value]}
+            </option>
+          ))}
+        </select>
+        <FieldError message={fieldErrors.group_type || undefined} />
       </div>
 
       <div>
