@@ -41,6 +41,7 @@ export const POST: APIRoute = async (context) => {
     p_turnus_id: input.turnus_id,
     p_trip_date: input.trip_date,
     p_participants: input.participants_count,
+    ...(input.group_type ? { p_group_type: input.group_type } : {}),
     ...(input.note ? { p_note: input.note } : {}),
   });
   if (rpcError) {

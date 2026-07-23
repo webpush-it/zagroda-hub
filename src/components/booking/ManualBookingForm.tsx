@@ -3,7 +3,7 @@ import { Calendar, ChevronDown, CircleAlert, Loader2, Phone, Plus, Users } from 
 import { FormField } from "@/components/auth/FormField";
 import { ServerError } from "@/components/auth/ServerError";
 import { cn } from "@/lib/utils";
-import { manualBookingSchema, fieldErrorsFromZod } from "@/lib/booking";
+import { manualBookingSchema, fieldErrorsFromZod, GROUP_TYPE_LABELS, GROUP_TYPE_VALUES } from "@/lib/booking";
 
 // S-08 FR-021: owner records a phone booking from /dashboard/zapytania.
 // Collapsible expand-in-place (no modal) so the form is one tap away — the
@@ -49,6 +49,7 @@ function today(): string {
 export default function ManualBookingForm({ zagrodaId, turnusy }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [turnusId, setTurnusId] = useState("");
+  const [groupType, setGroupType] = useState("");
   const [tripDate, setTripDate] = useState("");
   const [participants, setParticipants] = useState("");
   const [note, setNote] = useState("");
@@ -68,6 +69,7 @@ export default function ManualBookingForm({ zagrodaId, turnusy }: Props) {
       turnus_id: turnusId,
       trip_date: tripDate,
       participants_count: participants.trim() === "" ? Number.NaN : Number(participants),
+      group_type: groupType === "" ? undefined : groupType,
       note: note.trim() === "" ? undefined : note,
     };
     const parsed = manualBookingSchema.safeParse(payload);
@@ -178,6 +180,29 @@ export default function ManualBookingForm({ zagrodaId, turnusy }: Props) {
           ))}
         </select>
         <FieldError message={fieldErrors.turnus_id || undefined} />
+      </div>
+
+      <div>
+        <label htmlFor="manual_group_type" className="text-ink-muted mb-1 block text-sm">
+          Typ grupy (opcjonalnie)
+        </label>
+        <select
+          id="manual_group_type"
+          value={groupType}
+          onChange={(e) => {
+            setGroupType(e.target.value);
+            clearError("group_type");
+          }}
+          className={cn(fieldClass(fieldErrors.group_type || undefined), "appearance-none")}
+        >
+          <option value="">— wybierz typ grupy —</option>
+          {GROUP_TYPE_VALUES.map((value) => (
+            <option key={value} value={value}>
+              {GROUP_TYPE_LABELS[value]}
+            </option>
+          ))}
+        </select>
+        <FieldError message={fieldErrors.group_type || undefined} />
       </div>
 
       <FormField

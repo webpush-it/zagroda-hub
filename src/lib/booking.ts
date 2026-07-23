@@ -100,6 +100,7 @@ export const manualBookingSchema = z.object({
     .int("Liczba uczestników musi być liczbą całkowitą")
     .min(1, "Co najmniej 1 uczestnik")
     .max(1000, "Maksymalnie 1000 uczestników"),
+  group_type: z.enum(GROUP_TYPE_VALUES, "Wybierz typ grupy").optional(),
   note: z.string().trim().max(500, "Maksymalnie 500 znaków").optional(),
 });
 

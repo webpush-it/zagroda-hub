@@ -332,26 +332,26 @@ Let the owner optionally record a group type when logging a phone booking, wirin
 
 #### Automated
 
-- [x] 3.1 Type checking passes (`npm run typecheck`)
-- [x] 3.2 Linting passes
-- [x] 3.3 Existing email + decision tests pass unchanged (`npm test`)
+- [x] 3.1 Type checking passes (`npm run typecheck`) — a07e7aa
+- [x] 3.2 Linting passes — a07e7aa
+- [x] 3.3 Existing email + decision tests pass unchanged (`npm test`) — a07e7aa
 
 #### Manual
 
-- [x] 3.4 Owner notification email shows the group type (and „—" for a phone/legacy row)
-- [x] 3.5 Owner detail + list render the type; a legacy no-type row renders „—" without error
-- [x] 3.6 No "nauczyciel" remains in the request flow; guest-facing email bodies unchanged
+- [x] 3.4 Owner notification email shows the group type (and „—" for a phone/legacy row) — a07e7aa
+- [x] 3.5 Owner detail + list render the type; a legacy no-type row renders „—" without error — a07e7aa
+- [x] 3.6 No "nauczyciel" remains in the request flow; guest-facing email bodies unchanged — a07e7aa
 
 ### Phase 4: Manual (phone) booking group type
 
 #### Automated
 
-- [ ] 4.1 Type checking passes (`npm run typecheck`)
-- [ ] 4.2 Linting passes
-- [ ] 4.3 Manual-booking API + DB tests pass (`npm test`)
+- [x] 4.1 Type checking passes (`npm run typecheck`)
+- [x] 4.2 Linting passes
+- [x] 4.3 Manual-booking API + DB tests pass (`npm test`)
 
 #### Manual
 
-- [ ] 4.4 Logging a phone booking with a group type stores it; panel/detail show it
-- [ ] 4.5 Logging a phone booking without a type stores NULL and renders „—"
-- [ ] 4.6 Manual-booking flow otherwise unchanged (capacity, day-block, over-limit)
+- [x] 4.4 Logging a phone booking with a group type stores it; panel/detail show it
+- [x] 4.5 Logging a phone booking without a type stores NULL and renders „—"
+- [x] 4.6 Manual-booking flow otherwise unchanged (capacity, day-block, over-limit)
