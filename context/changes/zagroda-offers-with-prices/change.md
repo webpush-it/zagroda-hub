@@ -1,7 +1,7 @@
 ---
 change_id: zagroda-offers-with-prices
 title: Oferty zagrody z cenami (S-12)
-status: implementing
+status: implemented
 created: 2026-07-23
 updated: 2026-07-23
 archived_at: null

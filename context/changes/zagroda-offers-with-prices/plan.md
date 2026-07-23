@@ -477,13 +477,13 @@ negligible write cost and prepare S-13 filters. No pagination needed at MVP scal
 
 #### Automated
 
-- [x] 4.1 Type checking passes (`npx astro check`)
-- [x] 4.2 Linting passes (`npm run lint`)
-- [x] 4.3 Build succeeds + existing tests pass (`npm run build`, `npm test`)
+- [x] 4.1 Type checking passes (`npx astro check`) — ab52ec9
+- [x] 4.2 Linting passes (`npm run lint`) — ab52ec9
+- [x] 4.3 Build succeeds + existing tests pass (`npm run build`, `npm test`) — ab52ec9
 
 #### Manual
 
-- [x] 4.4 Published zagroda shows offers in order with correct prices/labels
-- [x] 4.5 Zero/all-inactive offers → no section, no error
-- [x] 4.6 Unpublished zagroda's offers invisible to logged-out guest
-- [x] 4.7 Booking request form + flow unchanged (FR-029)
+- [x] 4.4 Published zagroda shows offers in order with correct prices/labels — ab52ec9
+- [x] 4.5 Zero/all-inactive offers → no section, no error — ab52ec9
+- [x] 4.6 Unpublished zagroda's offers invisible to logged-out guest — ab52ec9
+- [x] 4.7 Booking request form + flow unchanged (FR-029) — ab52ec9
