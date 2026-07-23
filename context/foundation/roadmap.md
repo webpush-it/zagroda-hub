@@ -30,7 +30,7 @@ MVP Zagroda Hub działa na produkcji, a pierwszy strukturalny feedback od realne
 | ID   | Change ID                   | Outcome (user can …)                                                          | Prerequisites | PRD refs                                    | Status  |
 | ---- | --------------------------- | ------------------------------------------------------------------------------ | ------------- | -------------------------------------------- | ------- |
 | S-08 | phone-bookings-and-day-blocks | właściciel wpisuje rezerwację telefoniczną / blokuje dzień; gwarancja trzyma między kanałami; źródło widoczne | —             | FR-021, FR-022, FR-023, FR-028, FR-031, US-03 | done    |
-| S-09 | client-first-landing        | gość widzi stronę główną klient-first z centralnym CTA „Znajdź zagrodę"        | —             | FR-019, US-04                                | ready   |
+| S-09 | client-first-landing        | gość widzi stronę główną klient-first z centralnym CTA „Znajdź zagrodę"        | —             | FR-019, US-04                                | done    |
 | S-10 | nearest-zagrody-sort        | gość po udostępnieniu lokalizacji widzi katalog od najbliższej zagrody         | —             | FR-020, FR-030, US-04                        | done    |
 | S-11 | group-type-neutral-language | gość wybiera typ grupy w zapytaniu, formularz mówi neutralnym językiem         | —             | FR-027, FR-029, US-04                        | ready   |
 | S-12 | zagroda-offers-with-prices  | właściciel zarządza ofertami z cenami; gość widzi je na stronie zagrody        | —             | FR-024, FR-025, FR-031, US-04                | blocked |
@@ -77,7 +77,7 @@ Brak fundamentów w tym pakiecie. Baseline raportuje wszystkie warstwy jako obec
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Czysto prezentacyjny i najmniejszy slice pakietu — układ zgodny 1:1 z feedbackiem właściciela, więc tani punkt w pętli feedbacku. Sekwencjonowany wcześnie, bo razem z S-10 domyka kryterium sukcesu #2 („maksymalnie 2 interakcje od strony głównej do katalogu od najbliższych"); ryzyko ograniczone do osłabienia pozyskiwania właścicieli przez landing — zaakceptowane w PRD (podaż idzie kanałami bezpośrednimi).
-- **Status:** ready
+- **Status:** done
 
 ### S-10: Najbliższe zagrody — sortowanie po odległości
 
@@ -162,3 +162,4 @@ Brak fundamentów w tym pakiecie. Baseline raportuje wszystkie warstwy jako obec
 
 - **S-08: właściciel może dodać z telefonu ręczną rezerwację przyjętą telefonicznie (data, turnus, liczba uczestników, opcjonalna notatka) oraz zablokować i odblokować cały dzień; wpis konsumuje miejsca z dziennego limitu tą samą regułą co akceptacje z aplikacji („dokładnie jeden sukces" pod współbieżnością), zablokowany dzień nie przyjmuje zapytań ani akceptacji i znika z filtra dostępności, usunięcie wpisu/blokady natychmiast zwalnia miejsca, a każda rezerwacja pokazuje źródło (aplikacja / telefon).** — Archived 2026-07-19 → `context/archive/2026-07-19-phone-bookings-and-day-blocks/`. Lesson: —.
 - **S-10: gość, który udostępni lokalizację urządzenia, widzi katalog posortowany rosnąco po odległości od siebie, z przybliżoną odległością (dokładność na poziomie miejscowości) na każdej karcie; odmowa lokalizacji zostawia katalog dokładnie w obecnym kształcie (filtry województwo/miasto), bez błędów i bez ponawiania prośby; sortowanie współpracuje z istniejącymi filtrami, a lokalizacja gościa nie jest utrwalana.** — Archived 2026-07-23 → `context/archive/2026-07-20-nearest-zagrody-sort/`. Lesson: —.
+- **S-09: gość widzi stronę główną mówiącą do szukającego — powitanie i główne CTA „Znajdź zagrodę" na środku, sekcja „Prowadzisz zagrodę?" z własnym CTA niżej, logowanie/rejestracja na dole strony i w topbarze.** — Archived 2026-07-23 → `context/archive/2026-07-19-client-first-landing/`. Lesson: —.

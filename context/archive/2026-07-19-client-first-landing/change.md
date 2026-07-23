@@ -1,9 +1,10 @@
 ---
 change_id: client-first-landing
 title: Landing klient-first — „Znajdź zagrodę" na środku (S-09)
-status: impl_reviewed
+status: archived
 created: 2026-07-19
 updated: 2026-07-23
+archived_at: 2026-07-23T11:51:41Z
 research: research.md
 ---
 
