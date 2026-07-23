@@ -25,19 +25,23 @@ describe("zagrodaProfileSchema coordinates", () => {
     expect(r.success).toBe(true);
   });
 
-  it("accepts the coordinate extremes", () => {
-    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 90, longitude: 180 }).success).toBe(true);
-    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: -90, longitude: -180 }).success).toBe(true);
+  it("accepts pins at the Poland bounding-box edges", () => {
+    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 49.0, longitude: 14.5 }).success).toBe(true);
+    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 54.9, longitude: 24.0 }).success).toBe(true);
   });
 
-  it("rejects latitude out of range", () => {
+  it("rejects latitude outside Poland", () => {
+    // North of the box (Baltic), south of the box (Slovakia), and far off-planet.
+    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 56, longitude: 21 }).success).toBe(false);
+    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 48, longitude: 21 }).success).toBe(false);
     expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 91, longitude: 21 }).success).toBe(false);
-    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: -91, longitude: 21 }).success).toBe(false);
   });
 
-  it("rejects longitude out of range", () => {
+  it("rejects longitude outside Poland", () => {
+    // East of the box (Belarus/Ukraine), west of the box (Germany), and far off-planet.
+    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 52, longitude: 25 }).success).toBe(false);
+    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 52, longitude: 13 }).success).toBe(false);
     expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 52, longitude: 181 }).success).toBe(false);
-    expect(zagrodaProfileSchema.safeParse({ ...base, latitude: 52, longitude: -181 }).success).toBe(false);
   });
 
   it("rejects only latitude set", () => {

@@ -7,6 +7,9 @@ export type Voivodeship = (typeof VOIVODESHIPS)[number];
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
+/** Padded bounding box for Poland — manual pins outside it are rejected (a pin must be roughly at the farm). */
+const POLAND_BBOX = { minLat: 48.9, maxLat: 55.0, minLng: 14.0, maxLng: 24.2 } as const;
+
 export const turnusSchema = z
   .object({
     id: z.uuid().optional(),
@@ -39,9 +42,18 @@ export const zagrodaProfileSchema = z
       .max(1000, "Limit nie może przekraczać 1000"),
     // Manual map pin (optional). Both present -> API stores location_source='manual';
     // both null -> 'auto' (name-derivation via the DB trigger). Server derives source,
-    // so the client only carries the coordinates.
-    latitude: z.number().min(-90, "Szerokość poza zakresem").max(90, "Szerokość poza zakresem").nullable(),
-    longitude: z.number().min(-180, "Długość poza zakresem").max(180, "Długość poza zakresem").nullable(),
+    // so the client only carries the coordinates. Bounded to Poland (padded bbox) so a
+    // manual pin can't be trusted as a precise location outside the served region.
+    latitude: z
+      .number()
+      .min(POLAND_BBOX.minLat, "Punkt poza granicami Polski")
+      .max(POLAND_BBOX.maxLat, "Punkt poza granicami Polski")
+      .nullable(),
+    longitude: z
+      .number()
+      .min(POLAND_BBOX.minLng, "Punkt poza granicami Polski")
+      .max(POLAND_BBOX.maxLng, "Punkt poza granicami Polski")
+      .nullable(),
     turnusy: z.array(turnusSchema).max(20, "Maksymalnie 20 turnusów"),
   })
   .refine((v) => (v.latitude === null) === (v.longitude === null), {

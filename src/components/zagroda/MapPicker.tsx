@@ -33,6 +33,10 @@ export default function MapPicker({ latitude, longitude, fallback, onChange }: P
   useEffect(() => {
     onChangeRef.current = onChange;
   }, [onChange]);
+  // The coords the marker itself last emitted (drag/click). The sync effect uses this
+  // to recenter only on *external* prop changes (e.g. the parent clearing the pin) and
+  // leave the view alone when the change originated from the user moving the marker.
+  const lastEmittedRef = useRef<Coords | null>(null);
   // Snapshot the props at first render for the initial view; the sync effect below
   // owns every subsequent update, so the mount effect stays dependency-stable.
   const [initialView] = useState(() => ({ latitude, longitude, fallback }));
@@ -54,11 +58,14 @@ export default function MapPicker({ latitude, longitude, fallback, onChange }: P
     const marker = L.marker([start.lat, start.lng], { draggable: true, icon: defaultIcon }).addTo(map);
     marker.on("dragend", () => {
       const { lat, lng } = marker.getLatLng();
+      lastEmittedRef.current = { lat, lng };
       onChangeRef.current({ lat, lng });
     });
     map.on("click", (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
       marker.setLatLng(e.latlng);
-      onChangeRef.current({ lat: e.latlng.lat, lng: e.latlng.lng });
+      lastEmittedRef.current = { lat, lng };
+      onChangeRef.current({ lat, lng });
     });
 
     mapRef.current = map;
@@ -71,13 +78,16 @@ export default function MapPicker({ latitude, longitude, fallback, onChange }: P
   }, [initialView]);
 
   // Sync the marker to prop changes driven from outside the map (e.g. the parent
-  // clearing the pin via "Użyj lokalizacji miasta"). Dragging updates props to the
-  // same coords the marker already holds, so this is a no-op on that path.
+  // clearing the pin via "Użyj lokalizacji miasta"). When the change originated from
+  // the marker itself (drag/click round-tripped through props), skip it so the map
+  // view isn't yanked back to center on every user interaction.
   useEffect(() => {
     const map = mapRef.current;
     const marker = markerRef.current;
     if (!map || !marker) return;
     const pos = effectivePosition(latitude, longitude, fallback);
+    const last = lastEmittedRef.current;
+    if (last?.lat === pos.lat && last.lng === pos.lng) return;
     marker.setLatLng([pos.lat, pos.lng]);
     map.setView([pos.lat, pos.lng]);
   }, [latitude, longitude, fallback]);
