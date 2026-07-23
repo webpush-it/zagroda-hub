@@ -38,6 +38,7 @@ export type Database = {
         Row: {
           cancel_token: string
           created_at: string
+          group_type: Database["public"]["Enums"]["group_type"] | null
           guest_email: string | null
           guest_name: string | null
           guest_phone: string | null
@@ -54,6 +55,7 @@ export type Database = {
         Insert: {
           cancel_token?: string
           created_at?: string
+          group_type?: Database["public"]["Enums"]["group_type"] | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
@@ -70,6 +72,7 @@ export type Database = {
         Update: {
           cancel_token?: string
           created_at?: string
+          group_type?: Database["public"]["Enums"]["group_type"] | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
@@ -371,6 +374,7 @@ export type Database = {
       }
       create_manual_booking: {
         Args: {
+          p_group_type?: Database["public"]["Enums"]["group_type"]
           p_note?: string
           p_participants: number
           p_trip_date: string
@@ -427,6 +431,7 @@ export type Database = {
     }
     Enums: {
       booking_source: "app" | "phone"
+      group_type: "szkola" | "przedszkole" | "grupa_indywidualna" | "inna"
       request_status:
         | "pending"
         | "accepted"
@@ -581,6 +586,7 @@ export const Constants = {
   public: {
     Enums: {
       booking_source: ["app", "phone"],
+      group_type: ["szkola", "przedszkole", "grupa_indywidualna", "inna"],
       request_status: [
         "pending",
         "accepted",

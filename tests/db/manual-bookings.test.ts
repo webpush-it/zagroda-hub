@@ -38,7 +38,14 @@ beforeAll(async () => {
 
 async function createManual(
   client: TypedClient,
-  opts: { tripDate: string; participants: number; note?: string; zagroda?: string; turnus?: string },
+  opts: {
+    tripDate: string;
+    participants: number;
+    note?: string;
+    groupType?: "szkola" | "przedszkole" | "grupa_indywidualna" | "inna";
+    zagroda?: string;
+    turnus?: string;
+  },
 ) {
   const { data, error } = await client.rpc("create_manual_booking", {
     p_zagroda_id: opts.zagroda ?? zagrodaId,
@@ -46,6 +53,7 @@ async function createManual(
     p_trip_date: opts.tripDate,
     p_participants: opts.participants,
     ...(opts.note !== undefined ? { p_note: opts.note } : {}),
+    ...(opts.groupType !== undefined ? { p_group_type: opts.groupType } : {}),
   });
   return { row: data?.[0], error };
 }
@@ -56,11 +64,12 @@ async function accept(client: TypedClient, requestId: string) {
 }
 
 describe("create_manual_booking — manual phone entries", () => {
-  it("(a) creates an accepted phone row with note and no guest contact", async () => {
+  it("(a) creates an accepted phone row with note, group type and no guest contact", async () => {
     const { row, error } = await createManual(owner, {
       tripDate: isoDate(30),
       participants: 10,
       note: "Pani Kasia, szkoła nr 5",
+      groupType: "szkola",
     });
 
     expect(error).toBeNull();
@@ -69,7 +78,7 @@ describe("create_manual_booking — manual phone entries", () => {
 
     const { data, error: readError } = await admin
       .from("booking_requests")
-      .select("status, source, note, participants_count, guest_name, guest_email, guest_phone")
+      .select("status, source, note, group_type, participants_count, guest_name, guest_email, guest_phone")
       .eq("id", row?.request_id ?? "")
       .single();
     expect(readError).toBeNull();
@@ -77,11 +86,27 @@ describe("create_manual_booking — manual phone entries", () => {
       status: "accepted",
       source: "phone",
       note: "Pani Kasia, szkoła nr 5",
+      group_type: "szkola",
       participants_count: 10,
       guest_name: null,
       guest_email: null,
       guest_phone: null,
     });
+  });
+
+  it("(a2) a phone entry created without a group type stores group_type null (defaulted param)", async () => {
+    const { row, error } = await createManual(owner, { tripDate: isoDate(37), participants: 5 });
+
+    expect(error).toBeNull();
+    expect(row?.created).toBe(true);
+
+    const { data, error: readError } = await admin
+      .from("booking_requests")
+      .select("group_type, source")
+      .eq("id", row?.request_id ?? "")
+      .single();
+    expect(readError).toBeNull();
+    expect(data).toMatchObject({ group_type: null, source: "phone" });
   });
 
   it("(b) an entry consumes capacity: a colliding acceptance is refused with the entry's seats", async () => {
