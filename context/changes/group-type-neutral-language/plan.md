@@ -346,12 +346,12 @@ Let the owner optionally record a group type when logging a phone booking, wirin
 
 #### Automated
 
-- [x] 4.1 Type checking passes (`npm run typecheck`)
-- [x] 4.2 Linting passes
-- [x] 4.3 Manual-booking API + DB tests pass (`npm test`)
+- [x] 4.1 Type checking passes (`npm run typecheck`) — 84dd6ad
+- [x] 4.2 Linting passes — 84dd6ad
+- [x] 4.3 Manual-booking API + DB tests pass (`npm test`) — 84dd6ad
 
 #### Manual
 
-- [x] 4.4 Logging a phone booking with a group type stores it; panel/detail show it
-- [x] 4.5 Logging a phone booking without a type stores NULL and renders „—"
-- [x] 4.6 Manual-booking flow otherwise unchanged (capacity, day-block, over-limit)
+- [x] 4.4 Logging a phone booking with a group type stores it; panel/detail show it — 84dd6ad
+- [x] 4.5 Logging a phone booking without a type stores NULL and renders „—" — 84dd6ad
+- [x] 4.6 Manual-booking flow otherwise unchanged (capacity, day-block, over-limit) — 84dd6ad
