@@ -1,28 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { defaultIcon, OSM_ATTRIBUTION, OSM_MAX_ZOOM, OSM_TILE_URL, type Coords } from "./leaflet";
 
-// Leaflet's default icon resolves its own image paths relative to the CSS, which
-// breaks under a bundler (Vite rewrites the asset URLs). Rebind the default icon
-// to the bundled asset URLs so the marker renders instead of showing a broken image.
-const defaultIcon = L.icon({
-  iconUrl: markerIcon.src,
-  iconRetinaUrl: markerIcon2x.src,
-  shadowUrl: markerShadow.src,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
-export interface Coords {
-  lat: number;
-  lng: number;
-}
+export type { Coords };
 
 interface Props {
   /** Manual pin coordinates, or null when the zagroda has no manual pin. */
@@ -68,10 +49,7 @@ export default function MapPicker({ latitude, longitude, fallback, onChange }: P
     const startZoom = lat0 != null || fb0 != null ? PIN_ZOOM : COUNTRY_ZOOM;
 
     const map = L.map(container).setView([start.lat, start.lng], startZoom);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(map);
+    L.tileLayer(OSM_TILE_URL, { attribution: OSM_ATTRIBUTION, maxZoom: OSM_MAX_ZOOM }).addTo(map);
 
     const marker = L.marker([start.lat, start.lng], { draggable: true, icon: defaultIcon }).addTo(map);
     marker.on("dragend", () => {

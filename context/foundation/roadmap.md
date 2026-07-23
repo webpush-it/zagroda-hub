@@ -152,7 +152,7 @@ Brak fundamentów w tym pakiecie. Baseline raportuje wszystkie warstwy jako obec
 - **Rytm tygodnia (szablon dostępności)** — Why parked: PRD §Non-Goals; pomysł właściciela „5 minut w niedzielę" to duży moduł kalendarza — wraca, gdy będzie więcej niż jeden aktywny właściciel (v2).
 - **Widok kalendarza / pojedynczego dnia** — Why parked: PRD §Non-Goals; lista zapytań + wpisy ręczne wystarczą do domknięcia pętli (v2).
 - **Tryb „sama prośba o kontakt"** — Why parked: PRD §Non-Goals; lżejszy typ zapytania bez daty/liczby osób odłożony (v2).
-- **Mapa w UI** — Why parked: PRD §Non-Goals; geolokalizacja to wyłącznie sortowanie listy po odległości — non-goal MVP zniesiony tylko w tym zawężeniu.
+- **Mapa w UI** — Why parked: PRD §Non-Goals; geolokalizacja to wyłącznie sortowanie listy po odległości — non-goal MVP zniesiony tylko w tym zawężeniu. **Zniesiony w v2 (2026-07-23) przez zmianę `zagroda-map-location`**: map-picker Leaflet/OSM w formularzu właściciela + interaktywna mapa na stronie szczegółów zagrody. Bez zewnętrznego geokodowania.
 - **Non-goals MVP (płatności, oceny/recenzje, SMS/push, multi-zagroda, konto gościa, moderacja admin, negocjacja poza limit)** — Why parked: PRD §Non-Goals; ten pakiet niczego z tej listy nie otwiera.
 - **Model biznesowy (abonament / darmowa)** — Why parked: PRD §Non-Goals; decyzja go-to-market, nie produktowa — nie blokuje żadnego FR pakietu.
 

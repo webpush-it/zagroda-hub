@@ -185,7 +185,7 @@ Bez zmian w modelu ról i logowania. Gość (nauczyciel / klient indywidualny) n
 - **Rytm tygodnia (szablon dostępności)** — pomysł właściciela „5 minut w niedzielę": duży moduł kalendarza; wraca gdy będzie więcej niż jeden aktywny właściciel (v2).
 - **Widok kalendarza / pojedynczego dnia** — wizualny kalendarz w panelu odłożony; lista zapytań + wpisy ręczne wystarczą do domknięcia pętli (v2).
 - **Tryb „sama prośba o kontakt"** — lżejszy typ zapytania bez daty/liczby osób odłożony (v2).
-- **Mapa w UI** — geolokalizacja to wyłącznie sortowanie listy po odległości; żadnego widoku mapy (podtrzymany non-goal MVP w zawężonej formie — zniesiony tylko dla sortowania).
+- **Mapa w UI** — ~~geolokalizacja to wyłącznie sortowanie listy po odległości; żadnego widoku mapy~~ **Zniesiony w v2 (2026-07-23) przez zmianę `zagroda-map-location`**: właściciel przypina dokładny punkt na mapie Leaflet/OSM w formularzu (`location_source='manual'` z precedencją nad derywacją z nazwy), a strona szczegółów zagrody pokazuje interaktywną mapę z markerem. Nadal bez zewnętrznego geokodowania/wyszukiwarki adresu.
 - **Non-goals MVP pozostają w mocy:** płatności online, oceny/recenzje, SMS/push, multi-zagroda na konto, konto gościa, moderacja admin, negocjacja liczby uczestników poza limit — ta zmiana niczego z tej listy nie otwiera.
 - **Model biznesowy (abonament/darmowa)** — decyzja go-to-market, nie produktowa; nie blokuje żadnego FR tego pakietu.
 

@@ -383,29 +383,29 @@ potwierdzenie przed uznaniem zmiany za gotową.
 
 #### Automated
 
-- [x] 2.1 Testy jednostkowe: `npm test`
-- [x] 2.2 Build (bundling Leaflet + island): `npm run build`
-- [x] 2.3 Typecheck czysty: `npx astro check`
-- [x] 2.4 Lint czysty: `npm run lint`
+- [x] 2.1 Testy jednostkowe: `npm test` — f1638af
+- [x] 2.2 Build (bundling Leaflet + island): `npm run build` — f1638af
+- [x] 2.3 Typecheck czysty: `npx astro check` — f1638af
+- [x] 2.4 Lint czysty: `npm run lint` — f1638af
 
 #### Manual
 
-- [x] 2.5 Przeciągnięcie pinu + zapis → reload pokazuje pin; `location_source='manual'`
-- [x] 2.6 „Użyj lokalizacji miasta" → pin znika, powrót do derywacji z nazwy
-- [x] 2.7 Katalog: zagroda z pinem ma precyzyjne „~X km" i poprawną kolejność
-- [x] 2.8 Edycja miasta przy pinie nie przesuwa pinu
+- [x] 2.5 Przeciągnięcie pinu + zapis → reload pokazuje pin; `location_source='manual'` — f1638af
+- [x] 2.6 „Użyj lokalizacji miasta" → pin znika, powrót do derywacji z nazwy — f1638af
+- [x] 2.7 Katalog: zagroda z pinem ma precyzyjne „~X km" i poprawną kolejność — f1638af
+- [x] 2.8 Edycja miasta przy pinie nie przesuwa pinu — f1638af
 
 ### Phase 3: Embed mapy na stronie zagrody + odwrócenie non-goali
 
 #### Automated
 
-- [ ] 3.1 Build: `npm run build`
-- [ ] 3.2 Typecheck czysty: `npx astro check`
-- [ ] 3.3 Lint czysty: `npm run lint`
-- [ ] 3.4 Testy przechodzą: `npm test`
+- [x] 3.1 Build: `npm run build`
+- [x] 3.2 Typecheck czysty: `npx astro check`
+- [x] 3.3 Lint czysty: `npm run lint`
+- [x] 3.4 Testy przechodzą: `npm test`
 
 #### Manual
 
-- [ ] 3.5 Strona zagrody z coords pokazuje mapę z markerem we właściwym miejscu + atrybucja
-- [ ] 3.6 Zagroda bez coords: brak mapy, brak błędu w konsoli
-- [ ] 3.7 NFR: strona szczegółów ładuje się płynnie (mapa leniwie hydratowana)
+- [x] 3.5 Strona zagrody z coords pokazuje mapę z markerem we właściwym miejscu + atrybucja
+- [x] 3.6 Zagroda bez coords: brak mapy, brak błędu w konsoli
+- [x] 3.7 NFR: strona szczegółów ładuje się płynnie (mapa leniwie hydratowana)

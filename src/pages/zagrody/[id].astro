@@ -1,6 +1,7 @@
 ---
 import PageShell from "@/components/PageShell.astro";
 import BookingRequestForm from "@/components/booking/BookingRequestForm";
+import ZagrodaMapEmbed from "@/components/zagroda/ZagrodaMapEmbed";
 import ZagrodaPlaceholder from "@/components/brand/ZagrodaPlaceholder.astro";
 import { createClient } from "@/lib/supabase";
 
@@ -13,6 +14,8 @@ interface ZagrodaProfile {
   name: string;
   description: string;
   lokalizacja: string;
+  latitude: number | null;
+  longitude: number | null;
   dailyLimit: number;
   photoUrl: string | null;
   turnusy: { id: string; label: string; time: string }[];
@@ -27,7 +30,9 @@ if (supabase && id) {
   // an owner open their own draft; drafts must 404 here like for anon.
   const { data: zagroda } = await supabase
     .from("zagrody")
-    .select("name, description, voivodeship, city, daily_limit, photo_path, turnusy(id, label, start_time, end_time)")
+    .select(
+      "name, description, voivodeship, city, daily_limit, latitude, longitude, photo_path, turnusy(id, label, start_time, end_time)",
+    )
     .eq("id", id)
     .eq("is_published", true)
     .maybeSingle();
@@ -40,6 +45,8 @@ if (supabase && id) {
       name: zagroda.name,
       description: zagroda.description ?? "",
       lokalizacja: [zagroda.city ?? "", zagroda.voivodeship ?? ""].filter(Boolean).join(", "),
+      latitude: zagroda.latitude,
+      longitude: zagroda.longitude,
       dailyLimit: zagroda.daily_limit,
       photoUrl: zagroda.photo_path
         ? supabase.storage.from("zagroda-photos").getPublicUrl(zagroda.photo_path).data.publicUrl
@@ -79,6 +86,13 @@ if (!profile) {
 
           <h1 class="text-brand-700 text-2xl font-bold break-words">{profile.name}</h1>
           {profile.lokalizacja && <p class="text-ink-muted mt-1 text-sm">{profile.lokalizacja}</p>}
+
+          {profile.latitude != null && profile.longitude != null && (
+            <div class="mt-4">
+              {/* Lazy-hydrated on scroll; the wrapper is server-safe and defers Leaflet to the client. */}
+              <ZagrodaMapEmbed client:visible latitude={profile.latitude} longitude={profile.longitude} />
+            </div>
+          )}
 
           {profile.description && <p class="text-ink mt-4 text-sm whitespace-pre-line">{profile.description}</p>}
 
