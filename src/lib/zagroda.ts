@@ -26,18 +26,28 @@ export const turnusSchema = z
  * voivodeship and city may stay empty — completeness is enforced at publish
  * time by the DB function set_zagroda_published().
  */
-export const zagrodaProfileSchema = z.object({
-  name: z.string("Podaj nazwę zagrody").trim().min(1, "Podaj nazwę zagrody").max(120, "Maksymalnie 120 znaków"),
-  description: z.string().trim().max(2000, "Maksymalnie 2000 znaków"),
-  voivodeship: z.enum(VOIVODESHIPS, "Wybierz województwo z listy").nullable(),
-  city: z.string().trim().max(120, "Maksymalnie 120 znaków"),
-  daily_limit: z
-    .number("Podaj dzienny limit uczestników")
-    .int("Limit musi być liczbą całkowitą")
-    .min(1, "Limit musi wynosić co najmniej 1")
-    .max(1000, "Limit nie może przekraczać 1000"),
-  turnusy: z.array(turnusSchema).max(20, "Maksymalnie 20 turnusów"),
-});
+export const zagrodaProfileSchema = z
+  .object({
+    name: z.string("Podaj nazwę zagrody").trim().min(1, "Podaj nazwę zagrody").max(120, "Maksymalnie 120 znaków"),
+    description: z.string().trim().max(2000, "Maksymalnie 2000 znaków"),
+    voivodeship: z.enum(VOIVODESHIPS, "Wybierz województwo z listy").nullable(),
+    city: z.string().trim().max(120, "Maksymalnie 120 znaków"),
+    daily_limit: z
+      .number("Podaj dzienny limit uczestników")
+      .int("Limit musi być liczbą całkowitą")
+      .min(1, "Limit musi wynosić co najmniej 1")
+      .max(1000, "Limit nie może przekraczać 1000"),
+    // Manual map pin (optional). Both present -> API stores location_source='manual';
+    // both null -> 'auto' (name-derivation via the DB trigger). Server derives source,
+    // so the client only carries the coordinates.
+    latitude: z.number().min(-90, "Szerokość poza zakresem").max(90, "Szerokość poza zakresem").nullable(),
+    longitude: z.number().min(-180, "Długość poza zakresem").max(180, "Długość poza zakresem").nullable(),
+    turnusy: z.array(turnusSchema).max(20, "Maksymalnie 20 turnusów"),
+  })
+  .refine((v) => (v.latitude === null) === (v.longitude === null), {
+    message: "Podaj obie współrzędne albo żadną",
+    path: ["latitude"],
+  });
 
 export type ZagrodaProfileInput = z.infer<typeof zagrodaProfileSchema>;
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Suspense, useState, useSyncExternalStore } from "react";
 import { CircleAlert, CircleCheck, Eye, EyeOff, Home, Loader2, MapPin, Save, Users } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { ServerError } from "@/components/auth/ServerError";
@@ -7,6 +7,11 @@ import { VOIVODESHIPS, zagrodaProfileSchema, fieldErrorsFromZod, type Voivodeshi
 import { TurnusyEditor, type TurnusRow } from "@/components/zagroda/TurnusyEditor";
 import { PhotoUpload } from "@/components/zagroda/PhotoUpload";
 
+// Leaflet touches `window` at import, so the picker is loaded lazily and only
+// rendered after hydration — never on the server (this island is client:load,
+// which still SSRs its initial HTML).
+const MapPicker = React.lazy(() => import("@/components/zagroda/MapPicker"));
+
 export interface ZagrodaInitialData {
   name: string;
   description: string;
@@ -14,6 +19,11 @@ export interface ZagrodaInitialData {
   city: string;
   daily_limit: number;
   is_published: boolean;
+  /** Manual pin coordinates (only set when location_source='manual'); null otherwise. */
+  latitude: number | null;
+  longitude: number | null;
+  /** Name-derived coordinates for the "Użyj lokalizacji miasta" anchor. */
+  fallback: { lat: number; lng: number } | null;
   turnusy: { id: string; label: string; start_time: string; end_time: string }[];
 }
 
@@ -55,6 +65,8 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
   const [voivodeship, setVoivodeship] = useState<string>(initialData?.voivodeship ?? "");
   const [city, setCity] = useState(initialData?.city ?? "");
   const [dailyLimit, setDailyLimit] = useState(initialData ? String(initialData.daily_limit) : "");
+  const [latitude, setLatitude] = useState<number | null>(initialData?.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(initialData?.longitude ?? null);
   const [rows, setRows] = useState<TurnusRow[]>(() => (initialData?.turnusy ?? []).map((t) => ({ key: t.id, ...t })));
   const [profileExists, setProfileExists] = useState(initialData !== null);
   const [isPublished, setIsPublished] = useState(initialData?.is_published ?? false);
@@ -65,6 +77,16 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
   const [saving, setSaving] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
+
+  // Defer the map to the client. Leaflet touches `window` at import, so it must not
+  // render during SSR (this island is client:load, which SSRs its initial HTML).
+  // useSyncExternalStore returns false on the server and during hydration, then true
+  // on the client — hydration-safe without a setState-in-effect.
+  const mapReady = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
 
   function clearError(field: string) {
     if (fieldErrors[field]) setFieldErrors((prev) => ({ ...prev, [field]: "" }));
@@ -81,6 +103,8 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
       voivodeship: voivodeship === "" ? null : voivodeship,
       city,
       daily_limit: dailyLimit.trim() === "" ? Number.NaN : Number(dailyLimit),
+      latitude,
+      longitude,
       turnusy: rows.map((row) => ({
         id: row.id,
         label: row.label,
@@ -228,6 +252,29 @@ export default function ZagrodaProfileForm({ initialData, photoUrl: initialPhoto
         error={fieldErrors.city || undefined}
         icon={<MapPin className="size-4" />}
       />
+
+      <div>
+        <label className="text-ink-muted mb-1 block text-sm">Dokładna lokalizacja na mapie</label>
+        <p className="text-ink-muted mb-2 text-xs">
+          Przeciągnij znacznik lub kliknij mapę, aby wskazać dokładne miejsce. Bez własnego punktu użyjemy lokalizacji z
+          nazwy miejscowości.
+        </p>
+        {mapReady ? (
+          <Suspense fallback={<div className="border-edge bg-surface h-64 w-full rounded-xl border" />}>
+            <MapPicker
+              latitude={latitude}
+              longitude={longitude}
+              fallback={initialData?.fallback ?? null}
+              onChange={(c) => {
+                setLatitude(c ? c.lat : null);
+                setLongitude(c ? c.lng : null);
+              }}
+            />
+          </Suspense>
+        ) : (
+          <div className="border-edge bg-surface h-64 w-full rounded-xl border" />
+        )}
+      </div>
 
       <FormField
         id="daily_limit"

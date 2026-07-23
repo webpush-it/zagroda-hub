@@ -13,12 +13,27 @@ if (supabase && user) {
   const { data: zagroda } = await supabase
     .from("zagrody")
     .select(
-      "name, description, voivodeship, city, daily_limit, is_published, photo_path, turnusy(id, label, start_time, end_time)",
+      "name, description, voivodeship, city, daily_limit, is_published, photo_path, latitude, longitude, location_source, turnusy(id, label, start_time, end_time)",
     )
     .eq("owner_id", user.id)
     .maybeSingle();
 
   if (zagroda) {
+    // The manual pin is only meaningful when location_source='manual'; for 'auto'
+    // rows the stored coords are name-derived and must NOT seed the form as a pin
+    // (that would flip the row to manual on the next save).
+    const isManual = zagroda.location_source === "manual";
+    // Name-derived coords power the "Użyj lokalizacji miasta" anchor. Computed
+    // server-side from the current city/voivodeship, independent of the pin.
+    let fallback: { lat: number; lng: number } | null = null;
+    if (zagroda.voivodeship && zagroda.city) {
+      const { data: coords } = await supabase.rpc("locality_coords", {
+        p_voivodeship: zagroda.voivodeship,
+        p_city: zagroda.city,
+      });
+      const hit = coords?.[0];
+      if (hit) fallback = { lat: hit.latitude, lng: hit.longitude };
+    }
     initialData = {
       name: zagroda.name,
       description: zagroda.description ?? "",
@@ -26,6 +41,9 @@ if (supabase && user) {
       city: zagroda.city ?? "",
       daily_limit: zagroda.daily_limit,
       is_published: zagroda.is_published,
+      latitude: isManual ? zagroda.latitude : null,
+      longitude: isManual ? zagroda.longitude : null,
+      fallback,
       turnusy: zagroda.turnusy
         .map((t) => ({
           id: t.id,

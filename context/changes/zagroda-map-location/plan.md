@@ -368,32 +368,32 @@ potwierdzenie przed uznaniem zmiany za gotową.
 
 #### Automated
 
-- [x] 1.1 Migracja aplikuje się czysto: `npm run db:reset`
-- [x] 1.2 Typy bez rozjazdu: `npm run db:types`
-- [x] 1.3 Testy DB przechodzą: `npm test`
-- [x] 1.4 Typecheck czysty: `npx astro check`
-- [x] 1.5 Lint czysty: `npm run lint`
+- [x] 1.1 Migracja aplikuje się czysto: `npm run db:reset` — d5dda06
+- [x] 1.2 Typy bez rozjazdu: `npm run db:types` — d5dda06
+- [x] 1.3 Testy DB przechodzą: `npm test` — d5dda06
+- [x] 1.4 Typecheck czysty: `npx astro check` — d5dda06
+- [x] 1.5 Lint czysty: `npm run lint` — d5dda06
 
 #### Manual
 
-- [x] 1.6 Studio: manual przeżywa zmianę miasta; auto przywraca derywację
-- [x] 1.7 Suity S-10 (`zagroda-coordinates`, `localities-seed`, `catalog`) zielone
+- [x] 1.6 Studio: manual przeżywa zmianę miasta; auto przywraca derywację — d5dda06
+- [x] 1.7 Suity S-10 (`zagroda-coordinates`, `localities-seed`, `catalog`) zielone — d5dda06
 
 ### Phase 2: Map-picker w formularzu właściciela
 
 #### Automated
 
-- [ ] 2.1 Testy jednostkowe: `npm test`
-- [ ] 2.2 Build (bundling Leaflet + island): `npm run build`
-- [ ] 2.3 Typecheck czysty: `npx astro check`
-- [ ] 2.4 Lint czysty: `npm run lint`
+- [x] 2.1 Testy jednostkowe: `npm test`
+- [x] 2.2 Build (bundling Leaflet + island): `npm run build`
+- [x] 2.3 Typecheck czysty: `npx astro check`
+- [x] 2.4 Lint czysty: `npm run lint`
 
 #### Manual
 
-- [ ] 2.5 Przeciągnięcie pinu + zapis → reload pokazuje pin; `location_source='manual'`
-- [ ] 2.6 „Użyj lokalizacji miasta" → pin znika, powrót do derywacji z nazwy
-- [ ] 2.7 Katalog: zagroda z pinem ma precyzyjne „~X km" i poprawną kolejność
-- [ ] 2.8 Edycja miasta przy pinie nie przesuwa pinu
+- [x] 2.5 Przeciągnięcie pinu + zapis → reload pokazuje pin; `location_source='manual'`
+- [x] 2.6 „Użyj lokalizacji miasta" → pin znika, powrót do derywacji z nazwy
+- [x] 2.7 Katalog: zagroda z pinem ma precyzyjne „~X km" i poprawną kolejność
+- [x] 2.8 Edycja miasta przy pinie nie przesuwa pinu
 
 ### Phase 3: Embed mapy na stronie zagrody + odwrócenie non-goali
 

@@ -33,12 +33,21 @@ export const PUT: APIRoute = async (context) => {
 
   // Draft model: empty optional fields are stored as NULL (= draft-incomplete);
   // completeness is enforced by set_zagroda_published(), not here.
+  //
+  // Coordinate precedence (zagroda-map-location): both coords present means the
+  // owner dropped a pin -> location_source='manual' (the trigger keeps it, marks
+  // precise). Otherwise 'auto' -> the trigger re-derives lat/lng from city/
+  // voivodeship, so the coords we send here are irrelevant on the auto branch.
+  const manualPin = input.latitude != null && input.longitude != null;
   const profile = {
     name: input.name,
     description: input.description || null,
     voivodeship: input.voivodeship,
     city: input.city || null,
     daily_limit: input.daily_limit,
+    latitude: input.latitude,
+    longitude: input.longitude,
+    location_source: manualPin ? "manual" : "auto",
   };
 
   // Upsert the caller's zagroda (owner_id UNIQUE — one zagroda per owner). RLS
