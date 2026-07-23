@@ -194,6 +194,62 @@ export type Database = {
         }
         Relationships: []
       }
+      oferty: {
+        Row: {
+          adresaci: Database["public"]["Enums"]["oferta_adresat"][]
+          amount_grosze: number | null
+          created_at: string
+          czas_trwania: string | null
+          id: string
+          is_active: boolean
+          nazwa: string
+          opis: string | null
+          price_unit: Database["public"]["Enums"]["price_unit"] | null
+          sort_order: number
+          temat: Database["public"]["Enums"]["oferta_temat"][]
+          updated_at: string
+          zagroda_id: string
+        }
+        Insert: {
+          adresaci: Database["public"]["Enums"]["oferta_adresat"][]
+          amount_grosze?: number | null
+          created_at?: string
+          czas_trwania?: string | null
+          id?: string
+          is_active?: boolean
+          nazwa: string
+          opis?: string | null
+          price_unit?: Database["public"]["Enums"]["price_unit"] | null
+          sort_order?: number
+          temat: Database["public"]["Enums"]["oferta_temat"][]
+          updated_at?: string
+          zagroda_id: string
+        }
+        Update: {
+          adresaci?: Database["public"]["Enums"]["oferta_adresat"][]
+          amount_grosze?: number | null
+          created_at?: string
+          czas_trwania?: string | null
+          id?: string
+          is_active?: boolean
+          nazwa?: string
+          opis?: string | null
+          price_unit?: Database["public"]["Enums"]["price_unit"] | null
+          sort_order?: number
+          temat?: Database["public"]["Enums"]["oferta_temat"][]
+          updated_at?: string
+          zagroda_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "oferty_zagroda_id_fkey"
+            columns: ["zagroda_id"]
+            isOneToOne: false
+            referencedRelation: "zagrody"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       turnusy: {
         Row: {
           created_at: string
@@ -432,6 +488,26 @@ export type Database = {
     Enums: {
       booking_source: "app" | "phone"
       group_type: "szkola" | "przedszkole" | "grupa_indywidualna" | "inna"
+      oferta_adresat:
+        | "przedszkola"
+        | "szkoly_podstawowe"
+        | "szkoly_ponadpodstawowe"
+        | "rodziny"
+        | "dorosli"
+        | "seniorzy"
+      oferta_temat:
+        | "edukacja_regionalna"
+        | "ekologia"
+        | "ginace_zawody"
+        | "kuchnia_domowa"
+        | "przyroda"
+        | "rekodzielo_artystyczne"
+        | "rolnictwo"
+        | "tradycyjna_zywnosc"
+        | "zajecia_rekreacyjne"
+        | "zajecia_sportowe"
+        | "zwyczaje_obrzedy"
+      price_unit: "za_osobe" | "za_grupe"
       request_status:
         | "pending"
         | "accepted"
@@ -587,6 +663,28 @@ export const Constants = {
     Enums: {
       booking_source: ["app", "phone"],
       group_type: ["szkola", "przedszkole", "grupa_indywidualna", "inna"],
+      oferta_adresat: [
+        "przedszkola",
+        "szkoly_podstawowe",
+        "szkoly_ponadpodstawowe",
+        "rodziny",
+        "dorosli",
+        "seniorzy",
+      ],
+      oferta_temat: [
+        "edukacja_regionalna",
+        "ekologia",
+        "ginace_zawody",
+        "kuchnia_domowa",
+        "przyroda",
+        "rekodzielo_artystyczne",
+        "rolnictwo",
+        "tradycyjna_zywnosc",
+        "zajecia_rekreacyjne",
+        "zajecia_sportowe",
+        "zwyczaje_obrzedy",
+      ],
+      price_unit: ["za_osobe", "za_grupe"],
       request_status: [
         "pending",
         "accepted",
