@@ -35,6 +35,12 @@ beforeAll(async () => {
   draftZagrodaId = (await seedZagroda(admin, { ownerId: draft.userId, dailyLimit: 30, published: false })).zagrodaId;
 });
 
+/** Narrows a possibly-null query result, failing loudly instead of via a non-null assertion. */
+function must<T>(value: T | null | undefined): T {
+  if (value == null) throw new Error("expected a non-null query result");
+  return value;
+}
+
 /** Inserts an offer as the given owner client (authenticated, under RLS). */
 async function insertOffer(client: TypedClient, zagrodaId: string, overrides: Record<string, unknown> = {}) {
   return client
@@ -69,8 +75,9 @@ describe("oferty — owner CRUD + taxonomy", () => {
       is_active: true,
     });
 
-    const { data: readBack } = await owner.from("oferty").select("id").eq("id", data!.id).single();
-    expect(readBack?.id).toBe(data!.id);
+    const inserted = must(data);
+    const { data: readBack } = await owner.from("oferty").select("id").eq("id", inserted.id).single();
+    expect(readBack?.id).toBe(inserted.id);
   });
 });
 
@@ -81,45 +88,47 @@ describe("oferty — publish + active gated public read", () => {
 
     const anon = createAnonClient();
 
-    const { data: visible, error: visErr } = await anon.from("oferty").select("id").eq("id", onPublished!.id);
+    const { data: visible, error: visErr } = await anon.from("oferty").select("id").eq("id", must(onPublished).id);
     expect(visErr).toBeNull();
     expect(visible).toHaveLength(1);
 
-    const { data: hidden } = await anon.from("oferty").select("id").eq("id", onDraft!.id);
+    const { data: hidden } = await anon.from("oferty").select("id").eq("id", must(onDraft).id);
     expect(hidden).toHaveLength(0);
   });
 
   it("(d) a soft-deleted offer is invisible to anon but still visible to its owner", async () => {
-    const { data: offer } = await insertOffer(owner, publishedZagrodaId);
+    const { data } = await insertOffer(owner, publishedZagrodaId);
+    const offer = must(data);
 
     // Soft delete.
-    const { error: delErr } = await owner.from("oferty").update({ is_active: false }).eq("id", offer!.id);
+    const { error: delErr } = await owner.from("oferty").update({ is_active: false }).eq("id", offer.id);
     expect(delErr).toBeNull();
 
     const anon = createAnonClient();
-    const { data: anonSees } = await anon.from("oferty").select("id").eq("id", offer!.id);
+    const { data: anonSees } = await anon.from("oferty").select("id").eq("id", offer.id);
     expect(anonSees).toHaveLength(0);
 
-    const { data: ownerSees } = await owner.from("oferty").select("id, is_active").eq("id", offer!.id).single();
-    expect(ownerSees).toMatchObject({ id: offer!.id, is_active: false });
+    const { data: ownerSees } = await owner.from("oferty").select("id, is_active").eq("id", offer.id).single();
+    expect(ownerSees).toMatchObject({ id: offer.id, is_active: false });
   });
 });
 
 describe("oferty — owner isolation (RLS)", () => {
   it("(c) a second owner cannot update or delete the first owner's offer", async () => {
-    const { data: offer } = await insertOffer(owner, publishedZagrodaId, { nazwa: "Tylko moja oferta" });
+    const { data } = await insertOffer(owner, publishedZagrodaId, { nazwa: "Tylko moja oferta" });
+    const offer = must(data);
     const { client: stranger } = await createOwnerClient(uniqueEmail("oferty-stranger"), PASSWORD);
 
     // Update: RLS scopes to ownership → matches 0 rows, no error, row unchanged.
-    const { error: updErr } = await stranger.from("oferty").update({ nazwa: "Przejęta" }).eq("id", offer!.id);
+    const { error: updErr } = await stranger.from("oferty").update({ nazwa: "Przejęta" }).eq("id", offer.id);
     expect(updErr).toBeNull();
 
     // Delete (hard): also scoped out → 0 rows.
-    const { error: hardDelErr } = await stranger.from("oferty").delete().eq("id", offer!.id);
+    const { error: hardDelErr } = await stranger.from("oferty").delete().eq("id", offer.id);
     expect(hardDelErr).toBeNull();
 
     // The owner's row is untouched and still present.
-    const { data: after } = await owner.from("oferty").select("nazwa").eq("id", offer!.id).single();
+    const { data: after } = await owner.from("oferty").select("nazwa").eq("id", offer.id).single();
     expect(after?.nazwa).toBe("Tylko moja oferta");
   });
 });

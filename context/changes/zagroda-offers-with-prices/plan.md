@@ -438,25 +438,25 @@ negligible write cost and prepare S-13 filters. No pagination needed at MVP scal
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly against a fresh DB (`npm run db:reset`)
-- [x] 1.2 Type generation produces `oferty` + 3 enums with no diff drift (`npm run db:types` + `npx astro check`)
-- [x] 1.3 DB test suite passes (`npm test`, `oferty.test.ts` green)
+- [x] 1.1 Migration applies cleanly against a fresh DB (`npm run db:reset`) — 37bf73e
+- [x] 1.2 Type generation produces `oferty` + 3 enums with no diff drift (`npm run db:types` + `npx astro check`) — 37bf73e
+- [x] 1.3 DB test suite passes (`npm test`, `oferty.test.ts` green) — 37bf73e
 
 #### Manual
 
-- [x] 1.4 Unpublished-zagroda offer invisible to anon; publish reveals; soft-delete hides
+- [x] 1.4 Unpublished-zagroda offer invisible to anon; publish reveals; soft-delete hides — 37bf73e
 
 ### Phase 2: Shared schema + owner API
 
 #### Automated
 
-- [ ] 2.1 Type checking passes (`npx astro check`)
-- [ ] 2.2 Linting passes (`npm run lint`)
-- [ ] 2.3 Offer API + schema tests pass (`npm test`)
+- [x] 2.1 Type checking passes (`npx astro check`)
+- [x] 2.2 Linting passes (`npm run lint`)
+- [x] 2.3 Offer API + schema tests pass (`npm test`)
 
 #### Manual
 
-- [ ] 2.4 Create/edit/soft-delete/reorder via direct API behaves as specified; foreign owner denied
+- [x] 2.4 Create/edit/soft-delete/reorder via direct API behaves as specified; foreign owner denied
 
 ### Phase 3: Owner UI (dashboard page + manager island)
 
