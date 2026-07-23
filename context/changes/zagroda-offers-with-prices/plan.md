@@ -450,28 +450,28 @@ negligible write cost and prepare S-13 filters. No pagination needed at MVP scal
 
 #### Automated
 
-- [x] 2.1 Type checking passes (`npx astro check`)
-- [x] 2.2 Linting passes (`npm run lint`)
-- [x] 2.3 Offer API + schema tests pass (`npm test`)
+- [x] 2.1 Type checking passes (`npx astro check`) — 4a2bf6b
+- [x] 2.2 Linting passes (`npm run lint`) — 4a2bf6b
+- [x] 2.3 Offer API + schema tests pass (`npm test`) — 4a2bf6b
 
 #### Manual
 
-- [x] 2.4 Create/edit/soft-delete/reorder via direct API behaves as specified; foreign owner denied
+- [x] 2.4 Create/edit/soft-delete/reorder via direct API behaves as specified; foreign owner denied — 4a2bf6b
 
 ### Phase 3: Owner UI (dashboard page + manager island)
 
 #### Automated
 
-- [ ] 3.1 Type checking passes (`npx astro check`)
-- [ ] 3.2 Linting passes (`npm run lint`)
-- [ ] 3.3 Build succeeds (`npm run build`)
+- [x] 3.1 Type checking passes (`npx astro check`)
+- [x] 3.2 Linting passes (`npm run lint`)
+- [x] 3.3 Build succeeds (`npm run build`)
 
 #### Manual
 
-- [ ] 3.4 Owner can add (required nazwa + ≥1 temat + ≥1 adresat), edit, soft-delete, reorder; blank price → „cena ustalana indywidualnie"
-- [ ] 3.5 Złoty↔grosze round-trip correct
-- [ ] 3.6 Owner with no zagroda sees create-profile prompt, not an error
-- [ ] 3.7 Manager usable one-handed on mobile
+- [x] 3.4 Owner can add (required nazwa + ≥1 temat + ≥1 adresat), edit, soft-delete, reorder; blank price → „cena ustalana indywidualnie"
+- [x] 3.5 Złoty↔grosze round-trip correct
+- [x] 3.6 Owner with no zagroda sees create-profile prompt, not an error
+- [x] 3.7 Manager usable one-handed on mobile
 
 ### Phase 4: Public display on the zagroda page
 

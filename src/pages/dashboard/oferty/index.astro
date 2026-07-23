@@ -1,0 +1,65 @@
+---
+import PageShell from "@/components/PageShell.astro";
+import OffersManager, { type OfferRow } from "@/components/offer/OffersManager";
+import { createClient } from "@/lib/supabase";
+
+// S-12 (FR-024/FR-025/FR-031): owner CRUD + reorder for the zagroda's offers.
+// Mirrors dashboard/zapytania: SSR-resolve the owner's zagroda (owner_id is
+// UNIQUE — one per owner) and hand the island the offers as server truth. If
+// there's no profile yet, prompt to create one first instead of erroring.
+
+const { user } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let hasZagroda = false;
+let offers: OfferRow[] = [];
+
+if (supabase && user) {
+  const { data: zagroda } = await supabase.from("zagrody").select("id").eq("owner_id", user.id).maybeSingle();
+
+  if (zagroda) {
+    hasZagroda = true;
+    // All offers (incl. inactive) for the owner, in their chosen order. The
+    // owner ALL policy scopes this to the caller's zagroda under RLS.
+    const { data: offerRows } = await supabase
+      .from("oferty")
+      .select("id, nazwa, opis, czas_trwania, temat, adresaci, amount_grosze, price_unit, is_active, sort_order")
+      .eq("zagroda_id", zagroda.id)
+      .order("sort_order", { ascending: true });
+
+    offers = (offerRows ?? []).map((o) => ({
+      id: o.id,
+      nazwa: o.nazwa,
+      opis: o.opis,
+      czas_trwania: o.czas_trwania,
+      temat: o.temat,
+      adresaci: o.adresaci,
+      amount_grosze: o.amount_grosze,
+      price_unit: o.price_unit,
+      is_active: o.is_active,
+    }));
+  }
+}
+---
+
+<PageShell title="Oferty">
+  <main class="card-surface">
+    <h1 class="text-brand-700 mb-6 text-2xl font-bold">Oferty</h1>
+    {
+      hasZagroda ? (
+        <OffersManager client:load offers={offers} />
+      ) : (
+        <div class="border-edge bg-surface rounded-xl border p-6 text-center">
+          <p class="text-ink font-medium">Brak profilu zagrody</p>
+          <p class="text-ink-muted mt-1 text-sm">
+            Uzupełnij profil zagrody, aby dodawać oferty.{" "}
+            <a href="/dashboard" class="text-link hover:text-link-hover hover:underline">
+              Przejdź do panelu
+            </a>
+            .
+          </p>
+        </div>
+      )
+    }
+  </main>
+</PageShell>
