@@ -1,10 +1,10 @@
 ---
 change_id: zagroda-map-location
 title: Map-picker lokalizacji zagrody (Leaflet/OSM) z precedencją nad coords z nazwy
-status: impl_reviewed
+status: archived
 created: 2026-07-22
 updated: 2026-07-23
-archived_at: null
+archived_at: 2026-07-23T10:08:58Z
 ---
 
 ## Notes
