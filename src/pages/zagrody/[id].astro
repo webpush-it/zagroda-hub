@@ -4,6 +4,13 @@ import BookingRequestForm from "@/components/booking/BookingRequestForm";
 import ZagrodaMapEmbed from "@/components/zagroda/ZagrodaMapEmbed";
 import ZagrodaPlaceholder from "@/components/brand/ZagrodaPlaceholder.astro";
 import { createClient } from "@/lib/supabase";
+import {
+  OFERTA_ADRESAT_LABELS,
+  OFERTA_TEMAT_LABELS,
+  formatOfferPrice,
+  type OfertaAdresat,
+  type OfertaTemat,
+} from "@/lib/offer";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const rawId = Astro.params.id ?? "";
@@ -20,6 +27,15 @@ interface ZagrodaProfile {
   dailyLimit: number;
   photoUrl: string | null;
   turnusy: { id: string; label: string; time: string }[];
+  offers: {
+    id: string;
+    nazwa: string;
+    opis: string | null;
+    czas_trwania: string | null;
+    temat: OfertaTemat[];
+    adresaci: OfertaAdresat[];
+    price: string;
+  }[];
 }
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
@@ -32,7 +48,7 @@ if (supabase && id) {
   const { data: zagroda } = await supabase
     .from("zagrody")
     .select(
-      "name, description, voivodeship, city, daily_limit, latitude, longitude, location_precise, photo_path, turnusy(id, label, start_time, end_time)",
+      "name, description, voivodeship, city, daily_limit, latitude, longitude, location_precise, photo_path, turnusy(id, label, start_time, end_time), oferty(id, nazwa, opis, czas_trwania, temat, adresaci, amount_grosze, price_unit, sort_order)",
     )
     .eq("id", id)
     .eq("is_published", true)
@@ -61,6 +77,20 @@ if (supabase && id) {
           time: `${t.start_time.slice(0, 5)}–${t.end_time.slice(0, 5)}`,
         }))
         .sort((a, b) => a.time.localeCompare(b.time)),
+      // Public-read RLS returns only active offers on a published zagroda;
+      // owner sort_order drives display order.
+      offers: zagroda.oferty
+        .slice()
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((o) => ({
+          id: o.id,
+          nazwa: o.nazwa,
+          opis: o.opis,
+          czas_trwania: o.czas_trwania,
+          temat: o.temat,
+          adresaci: o.adresaci,
+          price: formatOfferPrice(o.amount_grosze, o.price_unit),
+        })),
     };
   }
 }
@@ -111,6 +141,36 @@ if (!profile) {
                   <li class="border-edge bg-surface flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm">
                     <span class="text-ink min-w-0 truncate">{t.label}</span>
                     <span class="text-ink-muted shrink-0">{t.time}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {profile.offers.length > 0 && (
+            <section class="mt-6">
+              <h2 class="text-ink mb-2 text-base font-semibold">Oferty</h2>
+              <ul class="flex flex-col gap-3">
+                {profile.offers.map((o) => (
+                  <li class="border-edge bg-surface rounded-lg border p-3">
+                    <div class="flex items-start justify-between gap-2">
+                      <p class="text-ink min-w-0 font-medium break-words">{o.nazwa}</p>
+                      <span class="text-brand-700 shrink-0 text-sm font-semibold">{o.price}</span>
+                    </div>
+                    {o.czas_trwania && <p class="text-ink-muted mt-1 text-sm">{o.czas_trwania}</p>}
+                    {o.opis && <p class="text-ink mt-1 text-sm whitespace-pre-line">{o.opis}</p>}
+                    <div class="mt-2 flex flex-wrap gap-1">
+                      {o.temat.map((t) => (
+                        <span class="border-edge text-ink-muted rounded-full border bg-white px-2 py-0.5 text-xs">
+                          {OFERTA_TEMAT_LABELS[t]}
+                        </span>
+                      ))}
+                      {o.adresaci.map((a) => (
+                        <span class="border-brand-200 bg-brand-50 text-brand-700 rounded-full border px-2 py-0.5 text-xs">
+                          {OFERTA_ADRESAT_LABELS[a]}
+                        </span>
+                      ))}
+                    </div>
                   </li>
                 ))}
               </ul>

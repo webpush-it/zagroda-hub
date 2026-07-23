@@ -462,28 +462,28 @@ negligible write cost and prepare S-13 filters. No pagination needed at MVP scal
 
 #### Automated
 
-- [x] 3.1 Type checking passes (`npx astro check`)
-- [x] 3.2 Linting passes (`npm run lint`)
-- [x] 3.3 Build succeeds (`npm run build`)
+- [x] 3.1 Type checking passes (`npx astro check`) — ba4a17a
+- [x] 3.2 Linting passes (`npm run lint`) — ba4a17a
+- [x] 3.3 Build succeeds (`npm run build`) — ba4a17a
 
 #### Manual
 
-- [x] 3.4 Owner can add (required nazwa + ≥1 temat + ≥1 adresat), edit, soft-delete, reorder; blank price → „cena ustalana indywidualnie"
-- [x] 3.5 Złoty↔grosze round-trip correct
-- [x] 3.6 Owner with no zagroda sees create-profile prompt, not an error
-- [x] 3.7 Manager usable one-handed on mobile
+- [x] 3.4 Owner can add (required nazwa + ≥1 temat + ≥1 adresat), edit, soft-delete, reorder; blank price → „cena ustalana indywidualnie" — ba4a17a
+- [x] 3.5 Złoty↔grosze round-trip correct — ba4a17a
+- [x] 3.6 Owner with no zagroda sees create-profile prompt, not an error — ba4a17a
+- [x] 3.7 Manager usable one-handed on mobile — ba4a17a
 
 ### Phase 4: Public display on the zagroda page
 
 #### Automated
 
-- [ ] 4.1 Type checking passes (`npx astro check`)
-- [ ] 4.2 Linting passes (`npm run lint`)
-- [ ] 4.3 Build succeeds + existing tests pass (`npm run build`, `npm test`)
+- [x] 4.1 Type checking passes (`npx astro check`)
+- [x] 4.2 Linting passes (`npm run lint`)
+- [x] 4.3 Build succeeds + existing tests pass (`npm run build`, `npm test`)
 
 #### Manual
 
-- [ ] 4.4 Published zagroda shows offers in order with correct prices/labels
-- [ ] 4.5 Zero/all-inactive offers → no section, no error
-- [ ] 4.6 Unpublished zagroda's offers invisible to logged-out guest
-- [ ] 4.7 Booking request form + flow unchanged (FR-029)
+- [x] 4.4 Published zagroda shows offers in order with correct prices/labels
+- [x] 4.5 Zero/all-inactive offers → no section, no error
+- [x] 4.6 Unpublished zagroda's offers invisible to logged-out guest
+- [x] 4.7 Booking request form + flow unchanged (FR-029)
