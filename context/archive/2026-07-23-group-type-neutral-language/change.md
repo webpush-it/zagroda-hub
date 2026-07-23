@@ -1,9 +1,10 @@
 ---
 change_id: group-type-neutral-language
 title: Typ grupy w zapytaniu + neutralny język formularza (S-11)
-status: impl_reviewed
+status: archived
 created: 2026-07-23
 updated: 2026-07-23
+archived_at: 2026-07-23T16:42:39Z
 ---
 
 ## Notes
